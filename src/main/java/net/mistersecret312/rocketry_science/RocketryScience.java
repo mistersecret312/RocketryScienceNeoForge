@@ -1,5 +1,7 @@
 package net.mistersecret312.rocketry_science;
 
+import net.mistersecret312.rocketry_science.init.ItemInit;
+import net.mistersecret312.rocketry_science.init.ItemTabInit;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -18,6 +20,9 @@ public class RocketryScience
 
 	public RocketryScience(IEventBus modEventBus, ModContainer modContainer)
 	{
+		ItemInit.register(modEventBus);
+		ItemTabInit.register(modEventBus);
+
 		modEventBus.addListener(this::commonSetup);
 		NeoForge.EVENT_BUS.register(this);
 	}
