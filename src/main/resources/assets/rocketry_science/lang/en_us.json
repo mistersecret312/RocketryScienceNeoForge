@@ -2,6 +2,8 @@
   "tabs.rocketry_science": "Rocketry Science",
 
   "item.rocketry_science.chromium_ingot": "Chromium Ingot",
+  "item.rocketry_science.stainless_steel_ingot": "Stainless Steel Ingot",
+
   "item.rocketry_science.stainless_steel_combustion_chamber": "Combustion Chamber",
   "item.rocketry_science.stainless_steel_turbopump": "Turbopump",
   "item.rocketry_science.liquid_hydrogen_bucket": "Liquid Hydrogen Bucket",

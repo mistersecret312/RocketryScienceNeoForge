@@ -11,6 +11,7 @@ public class ItemInit
 	public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(RocketryScience.MODID);
 
 	public static final DeferredItem<Item> CHROMIUM_INGOT = ITEMS.registerSimpleItem("chromium_ingot");
+	public static final DeferredItem<Item> STAINLESS_STEEL_INGOT = ITEMS.registerSimpleItem("stainless_steel_ingot");
 
 	public static final DeferredItem<Item> STAINLESS_STEEL_COMBUSTION_CHAMBER = ITEMS.registerSimpleItem("stainless_steel_combustion_chamber");
 	public static final DeferredItem<Item> STAINLESS_STEEL_TURBOPUMP = ITEMS.registerSimpleItem("stainless_steel_turbopump");

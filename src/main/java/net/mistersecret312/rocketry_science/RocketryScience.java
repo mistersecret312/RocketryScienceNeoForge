@@ -1,5 +1,8 @@
 package net.mistersecret312.rocketry_science;
 
+import net.mistersecret312.rocketry_science.client.renderer.block.RocketAssemblerRenderer;
+import net.mistersecret312.rocketry_science.init.BlockEntityInit;
+import net.mistersecret312.rocketry_science.init.BlockInit;
 import net.mistersecret312.rocketry_science.init.ItemInit;
 import net.mistersecret312.rocketry_science.init.ItemTabInit;
 import net.neoforged.api.distmarker.Dist;
@@ -10,6 +13,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 
@@ -22,6 +26,9 @@ public class RocketryScience
 	{
 		ItemInit.register(modEventBus);
 		ItemTabInit.register(modEventBus);
+
+		BlockInit.register(modEventBus);
+		BlockEntityInit.register(modEventBus);
 
 		modEventBus.addListener(this::commonSetup);
 		NeoForge.EVENT_BUS.register(this);
@@ -44,6 +51,12 @@ public class RocketryScience
 		public static void onClientSetup(FMLClientSetupEvent event)
 		{
 
+		}
+
+		@SubscribeEvent
+		public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event)
+		{
+			event.registerBlockEntityRenderer(BlockEntityInit.ROCKET_ASSEMBLER.get(), RocketAssemblerRenderer::new);
 		}
 	}
 }
