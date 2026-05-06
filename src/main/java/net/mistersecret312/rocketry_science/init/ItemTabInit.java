@@ -26,6 +26,8 @@ public class ItemTabInit
 										 output.accept(ItemInit.LAUNCH_CONTROLLER);
 										 output.accept(ItemInit.ROCKET_ASSEMBLER);
 
+										 output.accept(BlockInit.ROCKET_PAD);
+
 										 output.accept(ItemInit.STAINLESS_STEEL_COMBUSTION_CHAMBER);
 										 output.accept(ItemInit.STAINLESS_STEEL_TURBOPUMP);
 

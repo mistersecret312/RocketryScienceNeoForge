@@ -10,5 +10,6 @@
   "item.rocketry_science.liquid_oxygen_bucket": "Liquid Oxygen Bucket",
 
   "block.rocketry_science.launch_controller": "Launch Controller",
-  "block.rocketry_science.rocket_assembler": "Rocket Assembler"
+  "block.rocketry_science.rocket_assembler": "Rocket Assembler",
+  "block.rocketry_science.rocket_pad": "Rocket Pad"
 }
