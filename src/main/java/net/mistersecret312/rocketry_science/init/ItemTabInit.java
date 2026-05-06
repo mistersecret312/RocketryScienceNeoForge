@@ -23,8 +23,8 @@ public class ItemTabInit
 										 output.accept(ItemInit.CHROMIUM_INGOT);
 										 output.accept(ItemInit.STAINLESS_STEEL_INGOT);
 
-										 output.accept(BlockInit.LAUNCH_CONTROLLER);
-										 output.accept(BlockInit.ROCKET_ASSEMBLER);
+										 output.accept(ItemInit.LAUNCH_CONTROLLER);
+										 output.accept(ItemInit.ROCKET_ASSEMBLER);
 
 										 output.accept(ItemInit.STAINLESS_STEEL_COMBUSTION_CHAMBER);
 										 output.accept(ItemInit.STAINLESS_STEEL_TURBOPUMP);

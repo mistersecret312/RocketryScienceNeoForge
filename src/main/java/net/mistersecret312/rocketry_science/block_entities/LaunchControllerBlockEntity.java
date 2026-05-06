@@ -3,14 +3,10 @@ package net.mistersecret312.rocketry_science.block_entities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.mistersecret312.rocketry_science.init.BlockEntityInit;
-import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.*;
@@ -18,17 +14,14 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.UUID;
 
-public class RocketAssemblerBlockEntity extends BlockEntity implements GeoBlockEntity
+public class LaunchControllerBlockEntity extends BlockEntity implements GeoBlockEntity
 {
 	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
-
-	protected static final RawAnimation SPIN = RawAnimation.begin().thenPlay("spin");
-
 	private UUID uuid = UUID.randomUUID();
 
-	public RocketAssemblerBlockEntity(BlockPos pos, BlockState blockState)
+	public LaunchControllerBlockEntity(BlockPos pos, BlockState blockState)
 	{
-		super(BlockEntityInit.ROCKET_ASSEMBLER.get(), pos, blockState);
+		super(BlockEntityInit.LAUNCH_CONTROLLER.get(), pos, blockState);
 	}
 
 	@Override
@@ -62,15 +55,7 @@ public class RocketAssemblerBlockEntity extends BlockEntity implements GeoBlockE
 	@Override
 	public void registerControllers(AnimatableManager.ControllerRegistrar controllers)
 	{
-		AnimationController<RocketAssemblerBlockEntity> controller =
-				new AnimationController<>(this, "spin", 0, this::spinController);
-		controller.triggerableAnim("spin", SPIN);
-		controllers.add(controller);
-	}
 
-	private PlayState spinController(AnimationState<RocketAssemblerBlockEntity> state)
-	{
-		return PlayState.STOP;
 	}
 
 	@Override

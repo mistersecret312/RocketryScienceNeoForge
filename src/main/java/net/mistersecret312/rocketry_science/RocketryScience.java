@@ -1,5 +1,6 @@
 package net.mistersecret312.rocketry_science;
 
+import net.mistersecret312.rocketry_science.client.renderer.block.LaunchControllerRenderer;
 import net.mistersecret312.rocketry_science.client.renderer.block.RocketAssemblerRenderer;
 import net.mistersecret312.rocketry_science.init.BlockEntityInit;
 import net.mistersecret312.rocketry_science.init.BlockInit;
@@ -57,6 +58,7 @@ public class RocketryScience
 		public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event)
 		{
 			event.registerBlockEntityRenderer(BlockEntityInit.ROCKET_ASSEMBLER.get(), RocketAssemblerRenderer::new);
+			event.registerBlockEntityRenderer(BlockEntityInit.LAUNCH_CONTROLLER.get(), LaunchControllerRenderer::new);
 		}
 	}
 }

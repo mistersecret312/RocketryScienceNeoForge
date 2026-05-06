@@ -7,5 +7,8 @@
   "item.rocketry_science.stainless_steel_combustion_chamber": "Combustion Chamber",
   "item.rocketry_science.stainless_steel_turbopump": "Turbopump",
   "item.rocketry_science.liquid_hydrogen_bucket": "Liquid Hydrogen Bucket",
-  "item.rocketry_science.liquid_oxygen_bucket": "Liquid Oxygen Bucket"
+  "item.rocketry_science.liquid_oxygen_bucket": "Liquid Oxygen Bucket",
+
+  "block.rocketry_science.launch_controller": "Launch Controller",
+  "block.rocketry_science.rocket_assembler": "Rocket Assembler"
 }

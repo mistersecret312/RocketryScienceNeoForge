@@ -6,6 +6,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.mistersecret312.rocketry_science.RocketryScience;
+import net.mistersecret312.rocketry_science.blocks.LaunchControllerBlock;
 import net.mistersecret312.rocketry_science.blocks.RocketAssemblerBlock;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredBlock;
@@ -18,11 +19,11 @@ public class BlockInit
 {
 	public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(RocketryScience.MODID);
 
-	public static final DeferredBlock<Block> LAUNCH_CONTROLLER = registerBlock("launch_controller", () -> new Block(
-			BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK)));
+	public static final DeferredBlock<LaunchControllerBlock> LAUNCH_CONTROLLER = BLOCKS.register("launch_controller",
+			() -> new LaunchControllerBlock(BlockBehaviour.Properties.of().noOcclusion()));
 
-	public static final DeferredBlock<RocketAssemblerBlock> ROCKET_ASSEMBLER = registerBlock("rocket_assembler", () -> new RocketAssemblerBlock(
-			BlockBehaviour.Properties.of().noOcclusion()));
+	public static final DeferredBlock<RocketAssemblerBlock> ROCKET_ASSEMBLER = BLOCKS.register("rocket_assembler",
+			() -> new RocketAssemblerBlock(BlockBehaviour.Properties.of().noOcclusion()));
 
 	private static <T extends Block> DeferredBlock<T> registerBlock(String name, Supplier<T> block)
 	{

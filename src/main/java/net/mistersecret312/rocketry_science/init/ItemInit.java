@@ -2,6 +2,8 @@ package net.mistersecret312.rocketry_science.init;
 
 import net.minecraft.world.item.Item;
 import net.mistersecret312.rocketry_science.RocketryScience;
+import net.mistersecret312.rocketry_science.items.LaunchControllerBlockItem;
+import net.mistersecret312.rocketry_science.items.RocketAssemblerBlockItem;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -18,6 +20,11 @@ public class ItemInit
 
 	public static final DeferredItem<Item> LIQUID_HYDROGEN_BUCKET = ITEMS.registerSimpleItem("liquid_hydrogen_bucket", new Item.Properties().stacksTo(1));
 	public static final DeferredItem<Item> LIQUID_OXYGEN_BUCKET = ITEMS.registerSimpleItem("liquid_oxygen_bucket", new Item.Properties().stacksTo(1));
+
+	public static final DeferredItem<Item> LAUNCH_CONTROLLER = ITEMS.register("launch_controller",
+			() -> new LaunchControllerBlockItem(BlockInit.LAUNCH_CONTROLLER.get(), new Item.Properties()));
+	public static final DeferredItem<Item> ROCKET_ASSEMBLER = ITEMS.register("rocket_assembler",
+			() -> new RocketAssemblerBlockItem(BlockInit.ROCKET_ASSEMBLER.get(), new Item.Properties()));
 
 	public static void register(IEventBus bus)
 	{
