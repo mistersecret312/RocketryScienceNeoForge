@@ -7,6 +7,7 @@ import net.mistersecret312.rocketry_science.RocketryScience;
 import net.mistersecret312.rocketry_science.data.orbits.OrbitType;
 import net.mistersecret312.rocketry_science.orbit_requirements.OrbitRequirement;
 import net.mistersecret312.rocketry_science.orbit_types.DefaultOrbitConfig;
+import net.mistersecret312.rocketry_science.orbit_types.VanAllenOrbit;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -22,6 +23,8 @@ public class OrbitTypeInit
 
 	public static final DeferredHolder<OrbitType<?>, OrbitType<?>> DEFAULT = TYPES.register("default",
 			() -> new OrbitType<>(DefaultOrbitConfig.CODEC));
+	public static final DeferredHolder<OrbitType<?>, OrbitType<?>> VAN_ALLEN = TYPES.register("van_allen",
+			() -> new OrbitType<>(VanAllenOrbit.CODEC));
 
 	public static void register(IEventBus bus)
 	{

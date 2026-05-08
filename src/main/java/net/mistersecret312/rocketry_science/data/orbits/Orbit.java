@@ -1,14 +1,14 @@
 package net.mistersecret312.rocketry_science.data.orbits;
 
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.phys.Vec2;
 import net.mistersecret312.rocketry_science.data.orbiting_objects.IOrbitObject;
 import net.mistersecret312.rocketry_science.datapack.CelestialBody;
 import org.joml.Vector2d;
 
 public abstract class Orbit<T extends IOrbitObject<?>>
 {
-	Vector2d getPosition(long tick)
+	Vector2d getPosition(long tick, RegistryAccess registryAccess)
 	{
 		double angle = getAngle(tick);
 		double radians = Math.toRadians(angle);
@@ -28,10 +28,12 @@ public abstract class Orbit<T extends IOrbitObject<?>>
 		return angle % 360D;
 	}
 
+	void tick(RegistryAccess registryAccess)
+	{}
+
 	abstract double getOrbitalPeriod();
 	abstract double getOrbitalAltitude();
 
 	abstract ResourceKey<CelestialBody> getParent();
 	abstract T getOrbitingObject();
-	abstract void setOrbitingObject(T object);
 }
