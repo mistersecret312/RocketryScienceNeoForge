@@ -1,11 +1,11 @@
 package net.mistersecret312.rocketry_science;
 
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
 import net.mistersecret312.rocketry_science.client.renderer.block.LaunchControllerRenderer;
 import net.mistersecret312.rocketry_science.client.renderer.block.RocketAssemblerRenderer;
-import net.mistersecret312.rocketry_science.init.BlockEntityInit;
-import net.mistersecret312.rocketry_science.init.BlockInit;
-import net.mistersecret312.rocketry_science.init.ItemInit;
-import net.mistersecret312.rocketry_science.init.ItemTabInit;
+import net.mistersecret312.rocketry_science.datapack.CelestialBody;
+import net.mistersecret312.rocketry_science.init.*;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -17,6 +17,10 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
+import net.neoforged.neoforge.registries.DataPackRegistryEvent;
+import net.neoforged.neoforge.registries.NewRegistryEvent;
+
+import java.util.Map;
 
 @Mod(RocketryScience.MODID)
 public class RocketryScience
@@ -31,8 +35,23 @@ public class RocketryScience
 		BlockInit.register(modEventBus);
 		BlockEntityInit.register(modEventBus);
 
+		OrbitTypeInit.register(modEventBus);
+		OrbitRequirementInit.register(modEventBus);
+
 		modEventBus.addListener(this::commonSetup);
+		modEventBus.addListener(this::registerRegistry);
 		NeoForge.EVENT_BUS.register(this);
+
+		modEventBus.addListener((DataPackRegistryEvent.NewRegistry event) ->
+			{
+				event.dataPackRegistry(CelestialBody.REGISTRY_KEY, CelestialBody.CODEC, CelestialBody.CODEC);
+			});
+	}
+
+	public void registerRegistry(NewRegistryEvent event)
+	{
+		event.register(OrbitRequirementInit.REGISTRY);
+		event.register(OrbitTypeInit.REGISTRY);
 	}
 
 	private void commonSetup(final FMLCommonSetupEvent event)
@@ -43,6 +62,15 @@ public class RocketryScience
 	@SubscribeEvent
 	public void onServerStarting(ServerStartingEvent event)
 	{
+		Registry<CelestialBody> registry = event.getServer().registryAccess().registryOrThrow(CelestialBody.REGISTRY_KEY);
+
+		for(Map.Entry<ResourceKey<CelestialBody>, CelestialBody> entry : registry.entrySet())
+		{
+			if(entry != null)
+			{
+				System.out.println("Key : " + entry.getKey().location());
+			}
+		}
 	}
 
 	@EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)

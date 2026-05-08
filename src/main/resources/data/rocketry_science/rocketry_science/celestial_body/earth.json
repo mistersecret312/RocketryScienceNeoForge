@@ -1,0 +1,35 @@
+{
+  "name": "rocketry_science:earth",
+  "parent": "rocketry_science:sun",
+  "altitude": 1,
+  "period": 1,
+  "supported_orbits": [
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:low_orbit",
+        "altitude": 100
+      },
+      "requirements": [
+        {
+          "type": "rocketry_science:true",
+          "value": true
+        }
+      ]
+    },
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:medium_orbit",
+        "altitude": 500
+      }
+    },
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:high_orbit",
+        "altitude": 1000
+      }
+    }
+  ]
+}
