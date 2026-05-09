@@ -9,6 +9,8 @@ import net.minecraft.world.level.storage.DimensionDataStorage;
 import net.mistersecret312.rocketry_science.RocketryScience;
 import net.mistersecret312.rocketry_science.data.orbiting_objects.SpaceCraft;
 import net.mistersecret312.rocketry_science.data.orbits.Orbit;
+import net.mistersecret312.rocketry_science.network.packets.ClientBoundSpacecraftSyncPacket;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
@@ -18,7 +20,7 @@ public class SpaceCraftData extends SavedData
 {
 	private static final String FILE_NAME = RocketryScience.MODID + "-spacecraft";
 
-	private static final String PORTAL_LINK = "spacecraft";
+	private static final String SPACECRAFT = "spacecraft";
 
 	public HashMap<UUID, SpaceCraft> spaceCraft = new HashMap<>();
 
@@ -32,7 +34,7 @@ public class SpaceCraftData extends SavedData
 	{
 		CompoundTag tag = new CompoundTag();
 
-		tag.put(PORTAL_LINK, serializeSpaceCraftData());
+		tag.put(SPACECRAFT, serializeSpaceCraftData());
 
 		return tag;
 	}
@@ -51,7 +53,7 @@ public class SpaceCraftData extends SavedData
 
 	private void deserialize(CompoundTag tag)
 	{
-		deserializeSpaceCraftData(tag.getCompound(PORTAL_LINK));
+		deserializeSpaceCraftData(tag.getCompound(SPACECRAFT));
 	}
 
 	private void deserializeSpaceCraftData(CompoundTag tag)
@@ -90,7 +92,7 @@ public class SpaceCraftData extends SavedData
 	public void setDirty(UUID uuid)
 	{
 		SpaceCraft craft = spaceCraft.get(uuid);
-		//TODO - Send change to client
+		PacketDistributor.sendToAllPlayers(new ClientBoundSpacecraftSyncPacket(craft));
 		this.setDirty();
 	}
 

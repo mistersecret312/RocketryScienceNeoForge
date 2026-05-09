@@ -2,19 +2,25 @@ package net.mistersecret312.rocketry_science.block_entities.multiblock;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.mistersecret312.rocketry_science.data.rocket_pad.RocketPadData;
 import net.mistersecret312.rocketry_science.init.BlockEntityInit;
 import org.joml.Vector2i;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 public class RocketPadBlockEntity extends AbstractMultiBlockEntity
 {
+    private UUID uuid = UUID.randomUUID();
+
     public RocketPadBlockEntity(BlockPos pos, BlockState state)
     {
         super(BlockEntityInit.ROCKET_PAD.get(), pos, state);
@@ -24,6 +30,27 @@ public class RocketPadBlockEntity extends AbstractMultiBlockEntity
     protected boolean isValidConnection(BlockPos otherPos, BlockState otherState)
     {
         return this.worldPosition.getY() == otherPos.getY();
+    }
+
+    @Override
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries)
+    {
+        super.saveAdditional(tag, registries);
+        if(this.isMaster() && this.getUUID() != null)
+            tag.putUUID("pad_uuid", this.uuid);
+    }
+
+    @Override
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries)
+    {
+        super.loadAdditional(tag, registries);
+        if(this.isMaster())
+            this.uuid = tag.getUUID("pad_uuid");
+    }
+
+    public UUID getUUID()
+    {
+        return uuid;
     }
 
     public Vector2i getDimensions()
@@ -42,6 +69,27 @@ public class RocketPadBlockEntity extends AbstractMultiBlockEntity
         return new Vector2i(sizeX, sizeZ);
     }
 
+    @Override
+    public void formNetwork()
+    {
+        if(getLevel() != null && !getLevel().isClientSide() && isMaster())
+        {
+            RocketPadData data = RocketPadData.get(getLevel());
+            data.addRocketPad(getUUID(), getBlockPos(), getLevel().dimension());
+        }
+        super.formNetwork();
+    }
+
+    @Override
+    public void breakNetwork()
+    {
+        if(getLevel() != null && !getLevel().isClientSide() && isMaster())
+        {
+            RocketPadData data = RocketPadData.get(getLevel());
+            data.rocketPads.remove(getUUID());
+        }
+        super.breakNetwork();
+    }
 
     public boolean isComplete()
     {
