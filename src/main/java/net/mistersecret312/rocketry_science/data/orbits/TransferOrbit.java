@@ -2,6 +2,7 @@ package net.mistersecret312.rocketry_science.data.orbits;
 
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.Mth;
 import net.mistersecret312.rocketry_science.data.orbiting_objects.SpaceCraft;
@@ -10,7 +11,6 @@ import org.joml.Vector2d;
 
 public class TransferOrbit extends Orbit<SpaceCraft>
 {
-
 	private final SpaceCraft craft;
 
 	private final TravelPoint departure;
@@ -24,6 +24,14 @@ public class TransferOrbit extends Orbit<SpaceCraft>
 		this.departure = departure;
 		this.arrival = arrival;
 		this.travelDuration = travelDuration;
+	}
+
+	public TransferOrbit(SpaceCraft craft)
+	{
+		this.craft = craft;
+		this.departure = null;
+		this.arrival = null;
+		this.travelDuration = 0;
 	}
 
 	public TravelPoint getDeparture()
@@ -94,5 +102,28 @@ public class TransferOrbit extends Orbit<SpaceCraft>
 	SpaceCraft getOrbitingObject()
 	{
 		return craft;
+	}
+
+	@Override
+	public TransferOrbit load(CompoundTag tag, RegistryAccess registryAccess)
+	{
+		TravelPoint departure = TravelPoint.load(tag.getCompound("departure"));
+		TravelPoint arrival = TravelPoint.load(tag.getCompound("arrival"));
+
+		long travelDuration = tag.getLong("travel_duration");
+
+		return new TransferOrbit(this.getOrbitingObject(), departure, arrival, travelDuration);
+	}
+
+	@Override
+	public CompoundTag save(RegistryAccess registryAccess)
+	{
+		CompoundTag tag = new CompoundTag();
+
+		tag.put("departure", this.getDeparture().save());
+		tag.put("arrival", this.getArrival().save());
+		tag.putLong("travel_duration", this.getTravelDuration());
+
+		return tag;
 	}
 }

@@ -8,7 +8,8 @@
       "orbit": {
         "type": "rocketry_science:default",
         "name": "rocketry_science:low_orbit",
-        "altitude": 100
+        "altitude": 100,
+        "period": 1
       },
       "requirements": [
         {
@@ -21,14 +22,16 @@
       "orbit": {
         "type": "rocketry_science:default",
         "name": "rocketry_science:medium_orbit",
-        "altitude": 500
+        "altitude": 500,
+        "period": 5
       }
     },
     {
       "orbit": {
         "type": "rocketry_science:default",
         "name": "rocketry_science:high_orbit",
-        "altitude": 1000
+        "altitude": 1000,
+        "period": 10
       }
     }
   ]

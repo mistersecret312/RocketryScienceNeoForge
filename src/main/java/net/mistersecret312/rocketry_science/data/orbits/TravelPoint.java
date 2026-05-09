@@ -1,6 +1,10 @@
 package net.mistersecret312.rocketry_science.data.orbits;
 
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.mistersecret312.rocketry_science.datapack.CelestialBody;
 
 public class TravelPoint
@@ -29,5 +33,29 @@ public class TravelPoint
 	public ResourceKey<CelestialBody> getBody()
 	{
 		return body;
+	}
+
+	public CompoundTag save()
+	{
+		CompoundTag tag = new CompoundTag();
+
+		tag.putString("body", this.getBody().location().toString());
+		tag.putLong("tick", this.getTick());
+
+		Tag orbitTag = ConfiguredOrbit.CODEC.encodeStart(NbtOps.INSTANCE, this.getOrbit()).getOrThrow();
+		tag.put("orbit", orbitTag);
+
+		return tag;
+	}
+
+	public static TravelPoint load(CompoundTag tag)
+	{
+		String parentString = tag.getString("body");
+		ResourceKey<CelestialBody> parentKey = ResourceKey.create(CelestialBody.REGISTRY_KEY,
+				ResourceLocation.parse(parentString));
+		long tick = tag.getLong("tick");
+
+		ConfiguredOrbit configuredOrbit = ConfiguredOrbit.CODEC.decode(NbtOps.INSTANCE, tag.get("orbit")).getOrThrow().getFirst();
+		return new TravelPoint(configuredOrbit, tick, parentKey);
 	}
 }
