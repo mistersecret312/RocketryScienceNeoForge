@@ -1,5 +1,7 @@
 package net.mistersecret312.rocketry_science;
 
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -72,6 +74,9 @@ public class RocketryScience
 		Registry<CelestialBody> registry = event.getServer().registryAccess().registryOrThrow(CelestialBody.REGISTRY_KEY);
 		ResourceKey<CelestialBody> THE_EARTH = ResourceKey.create(CelestialBody.REGISTRY_KEY,
 				ResourceLocation.fromNamespaceAndPath(RocketryScience.MODID, "earth"));
+
+		if(true)
+			return;
 
 		CelestialBody earth = registry.get(THE_EARTH);
 		if(earth != null)

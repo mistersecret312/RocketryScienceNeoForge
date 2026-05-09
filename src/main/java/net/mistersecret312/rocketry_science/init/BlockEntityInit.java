@@ -5,6 +5,8 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.mistersecret312.rocketry_science.RocketryScience;
 import net.mistersecret312.rocketry_science.block_entities.LaunchControllerBlockEntity;
 import net.mistersecret312.rocketry_science.block_entities.RocketAssemblerBlockEntity;
+import net.mistersecret312.rocketry_science.block_entities.multiblock.LaunchTowerBlockEntity;
+import net.mistersecret312.rocketry_science.block_entities.multiblock.RocketPadBlockEntity;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -15,6 +17,15 @@ public class BlockEntityInit
 	public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(
 			BuiltInRegistries.BLOCK_ENTITY_TYPE, RocketryScience.MODID);
 
+	public static final Supplier<BlockEntityType<RocketPadBlockEntity>> ROCKET_PAD =
+			BLOCK_ENTITIES.register("rocket_pad",
+					() -> BlockEntityType.Builder.of(RocketPadBlockEntity::new,
+							BlockInit.ROCKET_PAD.get()).build(null));
+	public static final Supplier<BlockEntityType<LaunchTowerBlockEntity>> LAUNCH_TOWER =
+			BLOCK_ENTITIES.register("launch_tower",
+					() -> BlockEntityType.Builder.of(LaunchTowerBlockEntity::new,
+							BlockInit.LAUNCH_TOWER.get()).build(null));
+
 	public static final Supplier<BlockEntityType<RocketAssemblerBlockEntity>> ROCKET_ASSEMBLER =
 			BLOCK_ENTITIES.register("rocket_assembler",
 					() -> BlockEntityType.Builder.of(RocketAssemblerBlockEntity::new,
@@ -24,7 +35,6 @@ public class BlockEntityInit
 			BLOCK_ENTITIES.register("launch_controller",
 					() -> BlockEntityType.Builder.of(LaunchControllerBlockEntity::new,
 							BlockInit.LAUNCH_CONTROLLER.get()).build(null));
-
 
 	public static void register(IEventBus bus)
 	{

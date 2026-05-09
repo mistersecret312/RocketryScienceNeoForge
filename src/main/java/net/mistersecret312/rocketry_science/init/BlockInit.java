@@ -7,6 +7,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.mistersecret312.rocketry_science.RocketryScience;
 import net.mistersecret312.rocketry_science.blocks.LaunchControllerBlock;
+import net.mistersecret312.rocketry_science.blocks.LaunchTowerBlock;
 import net.mistersecret312.rocketry_science.blocks.RocketAssemblerBlock;
 import net.mistersecret312.rocketry_science.blocks.RocketPadBlock;
 import net.neoforged.bus.api.IEventBus;
@@ -28,6 +29,8 @@ public class BlockInit
 
 	public static final DeferredBlock<RocketPadBlock> ROCKET_PAD = registerBlock("rocket_pad",
 			() -> new RocketPadBlock(BlockBehaviour.Properties.of()));
+	public static final DeferredBlock<LaunchTowerBlock> LAUNCH_TOWER = registerBlock("launch_tower",
+			() -> new LaunchTowerBlock(BlockBehaviour.Properties.of().noOcclusion()));
 
 	private static <T extends Block> DeferredBlock<T> registerBlock(String name, Supplier<T> block)
 	{
