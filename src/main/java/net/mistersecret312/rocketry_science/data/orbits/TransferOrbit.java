@@ -50,13 +50,13 @@ public class TransferOrbit extends Orbit<SpaceCraft>
 	}
 
 	@Override
-	double getOrbitalPeriod()
+	public double getOrbitalPeriod()
 	{
 		return 0;
 	}
 
 	@Override
-	double getOrbitalAltitude()
+	public double getOrbitalAltitude()
 	{
 		return 0;
 	}
@@ -93,13 +93,13 @@ public class TransferOrbit extends Orbit<SpaceCraft>
 	}
 
 	@Override
-	ResourceKey<CelestialBody> getParent()
+	public ResourceKey<CelestialBody> getParent()
 	{
 		return getDeparture().getBody();
 	}
 
 	@Override
-	SpaceCraft getOrbitingObject()
+	public SpaceCraft getOrbitingObject()
 	{
 		return craft;
 	}

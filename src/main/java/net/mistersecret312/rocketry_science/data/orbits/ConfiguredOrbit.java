@@ -2,6 +2,9 @@ package net.mistersecret312.rocketry_science.data.orbits;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 import net.mistersecret312.rocketry_science.init.OrbitTypeInit;
 import net.mistersecret312.rocketry_science.orbit_requirements.OrbitRequirement;
@@ -14,5 +17,8 @@ public record ConfiguredOrbit(OrbitConfig orbit, List<OrbitRequirement> requirem
 			OrbitConfig.CODEC.fieldOf("orbit").forGetter(ConfiguredOrbit::orbit),
 			OrbitRequirement.CODEC.listOf().optionalFieldOf("requirements", List.of()).forGetter(ConfiguredOrbit::requirements)
 	).apply(inst, ConfiguredOrbit::new));
+
+	public static final StreamCodec<RegistryFriendlyByteBuf, ConfiguredOrbit> STREAM_CODEC =
+			ByteBufCodecs.fromCodecWithRegistries(ConfiguredOrbit.CODEC);
 }
 

@@ -44,6 +44,7 @@ public class RocketryScience
 		OrbitTypeInit.register(modEventBus);
 		OrbitRequirementInit.register(modEventBus);
 
+		modEventBus.addListener(NetworkInit::registerPackets);
 		modEventBus.addListener(this::commonSetup);
 		modEventBus.addListener(this::registerRegistry);
 		NeoForge.EVENT_BUS.register(this);

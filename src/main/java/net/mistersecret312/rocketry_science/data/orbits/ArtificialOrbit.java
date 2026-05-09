@@ -8,9 +8,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.mistersecret312.rocketry_science.data.orbiting_objects.SpaceCraft;
 import net.mistersecret312.rocketry_science.datapack.CelestialBody;
-import net.mistersecret312.rocketry_science.orbit_types.DefaultOrbitConfig;
-
-import java.util.UUID;
 
 public class ArtificialOrbit extends Orbit<SpaceCraft>
 {
@@ -57,25 +54,30 @@ public class ArtificialOrbit extends Orbit<SpaceCraft>
 	}
 
 	@Override
-	double getOrbitalPeriod()
+	public double getOrbitalPeriod()
 	{
 		return orbit.orbit().getPeriod();
 	}
 
+	public ConfiguredOrbit getOrbitData()
+	{
+		return orbit;
+	}
+
 	@Override
-	double getOrbitalAltitude()
+	public double getOrbitalAltitude()
 	{
 		return orbit.orbit().getAltitude();
 	}
 
 	@Override
-	ResourceKey<CelestialBody> getParent()
+	public ResourceKey<CelestialBody> getParent()
 	{
 		return parent;
 	}
 
 	@Override
-	SpaceCraft getOrbitingObject()
+	public SpaceCraft getOrbitingObject()
 	{
 		return craft;
 	}

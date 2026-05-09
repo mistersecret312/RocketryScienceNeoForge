@@ -3,6 +3,7 @@ package net.mistersecret312.rocketry_science.data.orbits;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.mistersecret312.rocketry_science.datapack.CelestialBody;
@@ -57,5 +58,19 @@ public class TravelPoint
 
 		ConfiguredOrbit configuredOrbit = ConfiguredOrbit.CODEC.decode(NbtOps.INSTANCE, tag.get("orbit")).getOrThrow().getFirst();
 		return new TravelPoint(configuredOrbit, tick, parentKey);
+	}
+
+	public static void writeTravelPoint(RegistryFriendlyByteBuf buf, TravelPoint point) {
+		buf.writeResourceKey(point.getBody());
+		buf.writeLong(point.getTick());
+		ConfiguredOrbit.STREAM_CODEC.encode(buf, point.getOrbit());
+	}
+
+	public static TravelPoint readTravelPoint(RegistryFriendlyByteBuf buf) {
+		ResourceKey<CelestialBody> body = buf.readResourceKey(CelestialBody.REGISTRY_KEY);
+		long tick = buf.readLong();
+		ConfiguredOrbit orbit = ConfiguredOrbit.STREAM_CODEC.decode(buf);
+
+		return new TravelPoint(orbit, tick, body);
 	}
 }

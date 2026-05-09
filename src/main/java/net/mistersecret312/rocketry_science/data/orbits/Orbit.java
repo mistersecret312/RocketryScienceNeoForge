@@ -29,15 +29,15 @@ public abstract class Orbit<T extends IOrbitObject<?>>
 		return angle % 360D;
 	}
 
-	void tick(RegistryAccess registryAccess)
+	public void tick(RegistryAccess registryAccess)
 	{}
 
 	public abstract CompoundTag save(RegistryAccess registryAccess);
 	public abstract Orbit<T> load(CompoundTag tag, RegistryAccess registryAccess);
 
-	abstract double getOrbitalPeriod();
-	abstract double getOrbitalAltitude();
+	public abstract double getOrbitalPeriod();
+	public abstract double getOrbitalAltitude();
 
-	abstract ResourceKey<CelestialBody> getParent();
-	abstract T getOrbitingObject();
+	public abstract ResourceKey<CelestialBody> getParent();
+	public abstract T getOrbitingObject();
 }

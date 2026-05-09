@@ -23,13 +23,13 @@ public class CelestialOrbit extends Orbit<CelestialBody>
 	}
 
 	@Override
-	ResourceKey<CelestialBody> getParent()
+	public ResourceKey<CelestialBody> getParent()
 	{
 		return parent;
 	}
 
 	@Override
-	CelestialBody getOrbitingObject()
+	public CelestialBody getOrbitingObject()
 	{
 		return object;
 	}
@@ -47,13 +47,13 @@ public class CelestialOrbit extends Orbit<CelestialBody>
 	}
 
 	@Override
-	double getOrbitalPeriod()
+	public double getOrbitalPeriod()
 	{
 		return period;
 	}
 
 	@Override
-	double getOrbitalAltitude()
+	public double getOrbitalAltitude()
 	{
 		return altitude;
 	}
