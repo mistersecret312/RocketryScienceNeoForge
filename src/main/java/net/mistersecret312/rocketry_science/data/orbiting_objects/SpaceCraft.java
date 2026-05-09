@@ -6,12 +6,16 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.Level;
 import net.mistersecret312.rocketry_science.data.orbits.*;
 import net.mistersecret312.rocketry_science.datapack.CelestialBody;
+import net.mistersecret312.rocketry_science.vessel.Stage;
+import net.mistersecret312.rocketry_science.vessel.VesselData;
 
+import java.util.LinkedHashSet;
 import java.util.UUID;
 
-public class SpaceCraft implements IOrbitObject<Orbit<SpaceCraft>>
+public class SpaceCraft extends VesselData implements IOrbitObject<Orbit<SpaceCraft>>
 {
 	public static final StreamCodec<RegistryFriendlyByteBuf, SpaceCraft> STREAM_CODEC =
 			StreamCodec.of(SpaceCraft::encode, SpaceCraft::decode);
@@ -120,5 +124,41 @@ public class SpaceCraft implements IOrbitObject<Orbit<SpaceCraft>>
 			}
 		}
 		return craft;
+	}
+
+	@Override
+	public Level level()
+	{
+		return null;
+	}
+
+	@Override
+	public boolean isInSpace()
+	{
+		return false;
+	}
+
+	@Override
+	public void tick(Level level)
+	{
+
+	}
+
+	@Override
+	public LinkedHashSet<Stage> getStages()
+	{
+		return null;
+	}
+
+	@Override
+	public void addStage(Stage stage)
+	{
+
+	}
+
+	@Override
+	public void removeStage(Stage stage)
+	{
+
 	}
 }

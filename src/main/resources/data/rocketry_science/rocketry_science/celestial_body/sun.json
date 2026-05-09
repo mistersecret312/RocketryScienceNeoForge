@@ -1,5 +1,8 @@
 {
   "name": "rocketry_science:sun",
-  "altitude": 0,
-  "period": 0
+  "texture": "rocketry_science:textures/gui/sun.png",
+  "gravity": 28.0,
+  "radius": 696265000,
+  "period": 0,
+  "altitude": 0
 }

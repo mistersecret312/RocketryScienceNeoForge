@@ -2,16 +2,15 @@ package net.mistersecret312.rocketry_science.util;
 
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
+import net.mistersecret312.rocketry_science.RocketryScience;
 import net.mistersecret312.rocketry_science.data.orbiting_objects.SpaceCraft;
 import net.mistersecret312.rocketry_science.data.orbits.CelestialOrbit;
 import net.mistersecret312.rocketry_science.data.orbits.Orbit;
 import net.mistersecret312.rocketry_science.datapack.CelestialBody;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class OrbitUtil
 {
@@ -27,10 +26,28 @@ public class OrbitUtil
 		return getCelestialRegistry(level).get(key);
 	}
 
+	public static CelestialBody getCelestialBody(Level level)
+	{
+		Registry<CelestialBody> registry = getCelestialRegistry(level);
+		for(Map.Entry<ResourceKey<CelestialBody>, CelestialBody> entry : registry.entrySet())
+		{
+			CelestialBody body = entry.getValue();
+			if(body.getDimension().isPresent() && body.getDimension().get().equals(level.dimension()))
+				return body;
+		}
+
+		return registry.get(ResourceLocation.fromNamespaceAndPath(RocketryScience.MODID, "earth"));
+	}
+
 	public static CelestialOrbit getCelestialOrbit(ResourceKey<CelestialBody> key, Level level)
 	{
 		CelestialBody body = getCelestialBody(key, level);
 		return body.getOrbit();
+	}
+
+	public static double getSpaceHeight(Level level)
+	{
+		return (level.getMaxBuildHeight()-level.getMinBuildHeight())*2;
 	}
 
 	public static SpaceCraft getSpaceCraft(UUID uuid)

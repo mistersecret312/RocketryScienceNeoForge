@@ -33,16 +33,6 @@ public class LaunchTowerBlock extends AbstractMultiBlock
 	}
 
 	@Override
-	protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player,
-											   BlockHitResult hitResult)
-	{
-		if(!level.isClientSide() && level.getBlockEntity(pos) instanceof LaunchTowerBlockEntity launchTower)
-			System.out.println("Launch Tower Height - " + launchTower.getTotalHeight());
-
-		return super.useWithoutItem(state, level, pos, player, hitResult);
-	}
-
-	@Override
 	public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState,
 								  LevelAccessor level, BlockPos pos, BlockPos neighborPos)
 	{

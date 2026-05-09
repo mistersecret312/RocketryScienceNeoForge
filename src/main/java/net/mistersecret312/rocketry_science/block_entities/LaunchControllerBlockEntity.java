@@ -14,7 +14,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.UUID;
 
-public class LaunchControllerBlockEntity extends BlockEntity implements GeoBlockEntity
+public class LaunchControllerBlockEntity extends BlockEntity implements GeoBlockEntity, IRocketPadConnective
 {
 	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 	private UUID uuid = UUID.randomUUID();
@@ -72,5 +72,17 @@ public class LaunchControllerBlockEntity extends BlockEntity implements GeoBlock
 	public void setUUID(UUID uuid)
 	{
 		this.uuid = uuid;
+	}
+
+	@Override
+	public void setPadUUID(UUID uuid)
+	{
+		this.uuid = uuid;
+	}
+
+	@Override
+	public UUID getPadUUID()
+	{
+		return this.uuid;
 	}
 }

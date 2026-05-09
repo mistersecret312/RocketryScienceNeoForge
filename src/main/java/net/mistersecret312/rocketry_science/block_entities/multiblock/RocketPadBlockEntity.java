@@ -50,6 +50,12 @@ public class RocketPadBlockEntity extends AbstractMultiBlockEntity
 
     public UUID getUUID()
     {
+        if(!this.isMaster() && this.level != null)
+        {
+            BlockEntity master = this.level.getBlockEntity(this.getMasterPos());
+            if(master instanceof RocketPadBlockEntity pad)
+                return pad.getUUID();
+        }
         return uuid;
     }
 

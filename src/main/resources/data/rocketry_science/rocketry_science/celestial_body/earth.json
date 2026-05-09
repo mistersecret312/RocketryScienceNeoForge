@@ -1,8 +1,12 @@
 {
   "name": "rocketry_science:earth",
+  "texture":"rocketry_science:textures/planet/sol/earth.png",
   "parent": "rocketry_science:sun",
-  "altitude": 1,
+  "dimension": "minecraft:overworld",
+  "gravity": 1.0,
+  "radius": 6378000,
   "period": 1,
+  "altitude": 1,
   "supported_orbits": [
     {
       "orbit": {

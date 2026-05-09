@@ -28,35 +28,6 @@ public class RocketPadBlock extends AbstractMultiBlock
 	}
 
 	@Override
-	protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player,
-											   BlockHitResult hitResult)
-	{
-		if(!level.isClientSide() && level.getBlockEntity(pos) instanceof RocketPadBlockEntity pad)
-		{
-			if(player.isShiftKeyDown())
-			{
-				AABB box = pad.getOnPadBox();
-				for(double x = box.minX; x < box.maxX; x++)
-					for(double y = box.minY; y < box.maxY; y++)
-						for(double z = box.minZ; z < box.maxZ; z++)
-						{
-							level.setBlock(new BlockPos((int) x, (int) y, (int) z), Blocks.GLASS.defaultBlockState(), 3);
-						}
-			}
-
-			if(pad.isComplete())
-			{
-				Vector2i size = pad.getDimensions();
-				System.out.println("Pad Dimensions - " + size);
-				System.out.println("Pad Launch Tower Height - " + pad.getTower().getTotalHeight());
-			}
-			else System.out.println("Rocket Pad is incomplete");
-		}
-
-		return super.useWithoutItem(state, level, pos, player, hitResult);
-	}
-
-	@Override
 	protected MapCodec<? extends BaseEntityBlock> codec()
 	{
 		return CODEC;

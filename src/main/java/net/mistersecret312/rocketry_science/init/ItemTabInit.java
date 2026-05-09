@@ -5,6 +5,10 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.mistersecret312.rocketry_science.RocketryScience;
+import net.mistersecret312.rocketry_science.items.CombustionChamberItem;
+import net.mistersecret312.rocketry_science.items.TurboPumpItem;
+import net.mistersecret312.rocketry_science.util.RocketFuel;
+import net.mistersecret312.rocketry_science.util.RocketMaterial;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -22,6 +26,7 @@ public class ItemTabInit
 									 {
 										 output.accept(ItemInit.CHROMIUM_INGOT);
 										 output.accept(ItemInit.STAINLESS_STEEL_INGOT);
+										 output.accept(ItemInit.PAD_LINKING);
 
 										 output.accept(ItemInit.LAUNCH_CONTROLLER);
 										 output.accept(ItemInit.ROCKET_ASSEMBLER);
@@ -29,8 +34,15 @@ public class ItemTabInit
 										 output.accept(BlockInit.ROCKET_PAD);
 										 output.accept(BlockInit.LAUNCH_TOWER);
 
-										 output.accept(ItemInit.STAINLESS_STEEL_COMBUSTION_CHAMBER);
-										 output.accept(ItemInit.STAINLESS_STEEL_TURBOPUMP);
+										 output.accept(BlockInit.FUEL_TANK);
+										 output.accept(BlockInit.STEEL_COMBUSTION_CHAMBER);
+										 output.accept(BlockInit.STEEL_NOZZLE_ATMOPSHERE);
+										 output.accept(BlockInit.SEPARATOR);
+
+										 output.accept(CombustionChamberItem.create(ItemInit.STAINLESS_STEEL_COMBUSTION_CHAMBER.get(),
+												 RocketFuel.HYDROLOX, RocketMaterial.STAINLESS_STEEL));
+										 output.accept(TurboPumpItem.create(ItemInit.STAINLESS_STEEL_TURBOPUMP.get(),
+												 RocketMaterial.STAINLESS_STEEL));
 
 										 output.accept(ItemInit.LIQUID_HYDROGEN_BUCKET);
 										 output.accept(ItemInit.LIQUID_OXYGEN_BUCKET);
