@@ -12,7 +12,9 @@ import net.mistersecret312.rocketry_science.network.packets.ClientBoundSpacecraf
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 public class SpaceCraftData extends SavedData
@@ -21,7 +23,8 @@ public class SpaceCraftData extends SavedData
 
 	private static final String SPACECRAFT = "spacecraft";
 
-	public HashMap<UUID, SpaceCraft> spaceCraft = new HashMap<>();
+	private HashMap<UUID, SpaceCraft> spaceCraft = new HashMap<>();
+	private List<UUID> toRemove = new ArrayList<>();
 
 	private MinecraftServer server;
 
@@ -81,6 +84,18 @@ public class SpaceCraftData extends SavedData
 		this.setDirty(uuid);
 
 		return craft;
+	}
+
+	public HashMap<UUID, SpaceCraft> getSpaceCraft()
+	{
+		for(UUID uuid : toRemove)
+		{
+			this.spaceCraft.remove(uuid);
+			this.setDirty();
+		}
+		toRemove.clear();
+
+		return spaceCraft;
 	}
 
 	public SpaceCraft getLink(UUID uuid)
@@ -148,5 +163,10 @@ public class SpaceCraftData extends SavedData
 		DimensionDataStorage storage = server.overworld().getDataStorage();
 
 		return storage.computeIfAbsent(dataFactory(server), FILE_NAME);
+	}
+
+	public void markForRemoval(UUID uuid)
+	{
+		this.toRemove.add(uuid);
 	}
 }

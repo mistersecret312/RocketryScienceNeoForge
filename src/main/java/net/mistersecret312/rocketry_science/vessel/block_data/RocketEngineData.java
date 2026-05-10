@@ -98,7 +98,7 @@ public class RocketEngineData extends BlockData
             if(fuelTank != null)
                 for(int i = 0; i < fuelTank.tank.getTanks(); i++)
                 {
-                    int maxFuelUsage = calculateMaxFuelUsage();
+                    int maxFuelUsage = (int) calculateMaxFuelUsage();
                     if(this.tank.getSpace(i) > maxFuelUsage)
                     {
                         FluidStack stack = fuelTank.tank.drain(new FluidStack(fuelTank.tank.getFluidInTank(i).getFluidHolder(), maxFuelUsage),
@@ -130,8 +130,9 @@ public class RocketEngineData extends BlockData
             }
             else
             {
+                int fuelUsage = Math.max(1,(int) (calculateMaxFuelUsage() * thrustPercentage));
                 FluidStack drained = this.tank.drain(new FluidStack(this.tank.getFluidInTank(i).getFluidHolder(),
-                        (int) (calculateMaxFuelUsage() * (thrustPercentage))), level.isClientSide() ? IFluidHandler.FluidAction.SIMULATE : IFluidHandler.FluidAction.EXECUTE);
+                       fuelUsage), level.isClientSide() ? IFluidHandler.FluidAction.SIMULATE : IFluidHandler.FluidAction.EXECUTE);
 
                 if(drained.isEmpty() && thrustPercentage*8 == 0 && !(thrustPercentage == 0))
                 {
@@ -151,7 +152,7 @@ public class RocketEngineData extends BlockData
         if(vessel instanceof Rocket rocket)
         {
             double mass = rocket.getMassKilogram();
-            double twr = (getThrustkN()*1000)/(mass*9.80665);
+            double twr = (getThrustkN()*1000)/(mass*stage.getVessel().getLocalGravityMS2());
             double accel = 0.025*twr*thrustPercentage;
 
             rocket.getRocketEntity().addDeltaMovement(new Vec3(0, accel, 0));
@@ -185,9 +186,9 @@ public class RocketEngineData extends BlockData
         return getBestFuelTank() != null || tanks.stream().allMatch(bool -> bool);
     }
 
-    public int calculateMaxFuelUsage()
+    public double calculateMaxFuelUsage()
     {
-        return (int) (((getThrustkN()*1000)/(getIsp()*9.8))/20);
+        return ((getThrustkN()*1000)/(getIsp()*9.8))/20;
     }
 
     public FuelTankData getBestFuelTank()

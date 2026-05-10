@@ -30,6 +30,7 @@ public class CelestialBody implements IOrbitObject<CelestialOrbit>
 			ResourceKey.codec(REGISTRY_KEY).optionalFieldOf("parent", THE_SUN).forGetter(CelestialBody::getParentKey),
 			Codec.DOUBLE.fieldOf("altitude").forGetter(CelestialBody::getAltitude),
 			Codec.DOUBLE.fieldOf("period").forGetter(CelestialBody::getPeriod),
+			Codec.BOOL.optionalFieldOf("has_atmosphere", false).forGetter(CelestialBody::hasAtmosphere),
 			Codec.INT.optionalFieldOf("day_length", 20).forGetter(CelestialBody::getDayLength),
 			Codec.DOUBLE.fieldOf("gravity").forGetter(CelestialBody::getGravity),
 			Codec.DOUBLE.fieldOf("radius").forGetter(CelestialBody::getRadius),
@@ -42,6 +43,7 @@ public class CelestialBody implements IOrbitObject<CelestialOrbit>
 	private final ResourceKey<CelestialBody> parentKey;
 	private final double altitude;
 	private final double period;
+	private final boolean hasAtmosphere;
 	private final int dayLength;
 	private final double gravity;
 	private final double radius;
@@ -50,7 +52,7 @@ public class CelestialBody implements IOrbitObject<CelestialOrbit>
 	private CelestialOrbit orbit = null;
 
 	public CelestialBody(String name, ResourceLocation texture, Optional<ResourceKey<Level>> dimension, ResourceKey<CelestialBody> parentKey, double altitude, double period,
-						 int dayLength, double gravity, double radius, List<ConfiguredOrbit> supportedOrbits)
+						 boolean hasAtmosphere, int dayLength, double gravity, double radius, List<ConfiguredOrbit> supportedOrbits)
 	{
 		this.name = name;
 		this.texture = texture;
@@ -60,6 +62,7 @@ public class CelestialBody implements IOrbitObject<CelestialOrbit>
 		this.period = period;
 		this.supportedOrbits = supportedOrbits;
 
+		this.hasAtmosphere = hasAtmosphere;
 		this.dayLength = dayLength;
 		this.gravity = gravity;
 		this.radius = radius;
@@ -105,6 +108,11 @@ public class CelestialBody implements IOrbitObject<CelestialOrbit>
 	public double getPeriod()
 	{
 		return period;
+	}
+
+	public boolean hasAtmosphere()
+	{
+		return hasAtmosphere;
 	}
 
 	public int getDayLength()

@@ -4,8 +4,11 @@
   "package": "net.mistersecret312.rocketry_science.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "LevelMixin",
+    "LevelTimeAccessMixin"
   ],
   "client": [
+    "ClientLevelMixin"
   ],
   "injectors": {
     "defaultRequire": 1

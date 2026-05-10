@@ -54,6 +54,8 @@ public class Rocket extends VesselData
 	public double landingDeltaV = 0;
 	public double takeoffDeltaV = 0;
 
+	public double accumulatedOrbitalVelocity = 0d;
+
 	public Rocket(RocketEntity rocketEntity, LinkedHashSet<Stage> stages)
 	{
 		this.rocket = rocketEntity;
@@ -88,10 +90,12 @@ public class Rocket extends VesselData
 			case LANDING ->
 			{
 				land(level);
+				this.accumulatedOrbitalVelocity = 0;
 			}
 			case TAKEOFF ->
 			{
 				takeoff(level);
+				this.accumulatedOrbitalVelocity = 0;
 			}
 			case STAGING ->
 			{
@@ -99,75 +103,65 @@ public class Rocket extends VesselData
 			}
 			case COASTING ->
 			{
-				double currentLeftDeltaV = getCurrentStage().calculateDeltaV();
-				currentLeftDeltaV -= landingDeltaV;
-				getCurrentStage().consumeFuelByDeltaV(currentLeftDeltaV);
-
-				if(this.stages.size() > 1)
-				{
-					for(Stage stage : this.stages)
-						System.out.println("Orbital - " + stage.calculateDeltaV());
-
-					stage(level);
-				}
-
-				if(!(this.getCurrentStage().calculateDeltaV() > 0))
-				{
-					setState(VesselState.IDLE);
+				ConfiguredOrbit configuredOrbit = OrbitUtil.getDefaultLaunchOrbit(level);
+				CelestialBody body = OrbitUtil.getCelestialBody(level);
+				if(configuredOrbit == null || body == null)
 					return;
-				}
 
-				double leoHeight = 300*1000;
-				double deltaVRequired = OrbitalMath.getOrbitDeltaV(OrbitUtil.getCelestialBody(level), leoHeight)-currentLeftDeltaV;
+				double height = configuredOrbit.orbit().getAltitude();
+				double deltaVRequired = OrbitalMath.getOrbitDeltaV(body, height) - accumulatedOrbitalVelocity;
+				double currentLeftDeltaV = getCurrentStage().calculateDeltaV() - landingDeltaV;
 
-				System.out.println("Has - " + this.getCurrentStage().calculateDeltaV() + " - Needed - " + deltaVRequired);
-
-				if(this.getCurrentStage().calculateDeltaV() > deltaVRequired)
+				if(currentLeftDeltaV >= deltaVRequired)
 				{
-					System.out.println("Fuel mass before " + getCurrentStage().getFuelMass());
-					System.out.println("Fuel mass to be consumed " + OrbitalMath.deltaVToFuelMass(getCurrentStage(), deltaVRequired));
 					getCurrentStage().consumeFuelByDeltaV(deltaVRequired);
-					System.out.println("Fuel mass after " + getCurrentStage().getFuelMass());
-
-					System.out.println("Capable of being in orbit, leftover - " + (this.getCurrentStage().calculateDeltaV()));
 					setState(VesselState.ORBIT);
-					return;
 				}
-				else setState(VesselState.IDLE);
-
-				if(this.getCurrentStage() == null)
-					return;
-
-				if(this.getCurrentStage().getFuelMass() == 0)
+				else
+				{
+					getCurrentStage().consumeFuelByDeltaV(currentLeftDeltaV);
+					this.accumulatedOrbitalVelocity += currentLeftDeltaV;
 					stage(level);
-
-				if(this.canLand())
-					setState(VesselState.LANDING);
+				}
 			}
 			case ORBIT ->
 			{
 				if(level.getServer() == null)
 					return;
 				this.toggleEngines(false);
+				this.accumulatedOrbitalVelocity = 0;
 
 				CelestialBody body = OrbitUtil.getCelestialBody(level);
-				ConfiguredOrbit configuredOrbit = body.getSupportedOrbits().getFirst();
+				ConfiguredOrbit configuredOrbit = OrbitUtil.getDefaultLaunchOrbit(level);
+				if(body == null || configuredOrbit == null)
+					return;
 
 				SpaceCraftData data = SpaceCraftData.get(level);
 				SpaceCraft craft = data.addFreshSpaceCraft(UUID.randomUUID());
 
-				CelestialBody sun = OrbitUtil.getCelestialBody(OrbitUtil.THE_SUN, level);
-				ConfiguredOrbit sunOrbit = sun.getSupportedOrbits().getFirst();
+				CelestialBody target;
+				if(body.getParentKey().equals(OrbitUtil.THE_SUN))
+					target = OrbitUtil.getChildren(body, level).getFirst();
+				else target = OrbitUtil.getCelestialBody(OrbitUtil.EARTH, level);
+				ConfiguredOrbit targetOrbit = target.getSupportedOrbits().getFirst();
 
 				TravelPoint departure = new TravelPoint(configuredOrbit, level.getGameTime(), OrbitUtil.getKey(body, level));
-				TravelPoint arrival = new TravelPoint(sunOrbit, level.getGameTime()+1500, OrbitUtil.getKey(sun, level));
+				TravelPoint arrival = new TravelPoint(targetOrbit, level.getGameTime()+200, OrbitUtil.getKey(target, level));
 
 				TransferOrbit transferOrbit = new TransferOrbit(craft, departure, arrival, departure.getTick()- arrival.getTick());
 				ArtificialOrbit orbit = new ArtificialOrbit(OrbitUtil.getKey(body, level), craft, configuredOrbit);
+
 				craft.stages = this.stages;
+				craft.setLevel(level);
 				craft.setOrbit(transferOrbit);
 
-				System.out.println("ORBIT!");
+				if(craft.getOrbit() instanceof TransferOrbit transfer)
+				{
+					System.out.println("Put spacecraft into a transfer orbit from - " + transfer.getDeparture().getBody().location() + ", " + departure.getOrbit().orbit().getName());
+					System.out.println("To - " + transfer.getArrival().getBody().location() + ", " + transfer.getArrival().getOrbit().orbit().getName());
+				}
+				else
+					System.out.println("Put spacecraft in orbit - " + orbit.getParent().location() + ", Type - " + orbit.getOrbitData().orbit().getName());
 
 				this.getRocketEntity().discard();
 			}
@@ -387,7 +381,7 @@ public class Rocket extends VesselData
 
 	public double getHoverThrust()
 	{
-		return (getMassKilogram()*9.80665)/(getMaxThrustKiloNewtons()*1000);
+		return (getMassKilogram()*getLocalGravityMS2())/(getMaxThrustKiloNewtons()*1000);
 	}
 
 	public void toggleEngines(boolean state)
@@ -406,8 +400,10 @@ public class Rocket extends VesselData
 
 	public double getMaxTWR()
 	{
+		double gravity = getLocalGravityMS2();
+
 		double thrust = getMaxThrustKiloNewtons()*1000;
-		double mass = getMassKilogram()*9.80665;
+		double mass = getMassKilogram()*gravity;
 		return thrust / mass;
 	}
 
@@ -438,7 +434,7 @@ public class Rocket extends VesselData
 		{
 			if(entry.getValue() instanceof RocketEngineData data)
 			{
-				fuelUse += data.calculateMaxFuelUsage();
+				fuelUse += (int) data.calculateMaxFuelUsage();
 				amount++;
 			}
 		}
@@ -511,6 +507,7 @@ public class Rocket extends VesselData
 		buffer.writeBoolean(this.canLand);
 		buffer.writeDouble(this.landingDeltaV);
 		buffer.writeDouble(this.takeoffDeltaV);
+		buffer.writeDouble(this.accumulatedOrbitalVelocity);
 	}
 
 	public static Rocket fromNetwork(RegistryFriendlyByteBuf buffer)
@@ -525,6 +522,7 @@ public class Rocket extends VesselData
 		rocket.canLand = buffer.readBoolean();
 		rocket.landingDeltaV = buffer.readDouble();
 		rocket.takeoffDeltaV = buffer.readDouble();
+		rocket.accumulatedOrbitalVelocity = buffer.readDouble();
 		return rocket;
 	}
 
@@ -542,6 +540,7 @@ public class Rocket extends VesselData
 		tag.putBoolean("can_land", this.canLand);
 		tag.putDouble("landing_deltav", this.landingDeltaV);
 		tag.putDouble("takeoff_deltav", this.takeoffDeltaV);
+		tag.putDouble("accumulated_orbital_velocity", this.accumulatedOrbitalVelocity);
 
 		return tag;
 	}
@@ -563,6 +562,7 @@ public class Rocket extends VesselData
 		this.canLand = tag.getBoolean("can_land");
 		this.landingDeltaV = tag.getDouble("landing_deltav");
 		this.takeoffDeltaV = tag.getDouble("takeoff_deltav");
+		this.accumulatedOrbitalVelocity = tag.getDouble("accumulated_orbital_velocity");
 	}
 
 	public VesselState getState()
@@ -619,6 +619,8 @@ public class Rocket extends VesselData
 		int ticks = 0;
 		Stage stage = getCurrentStage();
 
+		double gravity = getLocalGravityMS2();
+
 		double thrust = getMaxThrustKiloNewtons();
 		double fuelFlow = getAverageFuelUsage();
 		double mass = stage.getTotalMass()-takeOffFuel.get();
@@ -646,7 +648,7 @@ public class Rocket extends VesselData
 			velocity -= g;
 			velocity = Mth.clamp(velocity, -4, 0);
 
-			double twr = (thrust*1000)/(massAccounted*9.80665);
+			double twr = (thrust*1000)/(massAccounted*gravity);
 			double netAccelMax = (twr - 1.0) * g;
 
 			double stoppingDistance = 0;
@@ -703,6 +705,8 @@ public class Rocket extends VesselData
 		int ticks = 0;
 		Stage stage = getCurrentStage();
 
+		double gravity = getLocalGravityMS2();
+
 		double thrust = getMaxThrustKiloNewtons();
 		double height = this.getRocketEntity().makeBoundingBox().getYsize();
 		double fuelFlow = getAverageFuelUsage();
@@ -728,7 +732,7 @@ public class Rocket extends VesselData
 
 			velocity -= 0.025;
 			double engineThrust = 0.0D;
-			double hover = (rocketMass*9.80665)/(thrust*1000);
+			double hover = (rocketMass*gravity)/(thrust*1000);
 
 			if(altitude < height)
 				engineThrust = hover*1.1;

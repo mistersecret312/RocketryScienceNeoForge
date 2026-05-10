@@ -1,0 +1,25 @@
+{
+  "has_precipitation": false,
+  "temperature": 0.5,
+  "downfall": 0.0,
+  "effects": {
+    "fog_color": 10518688,
+    "sky_color": 0,
+    "water_color": 4159204,
+    "water_fog_color": 329011
+  },
+  "spawners": {},
+  "spawn_costs": {},
+  "carvers": {},
+  "features": [],
+  "generation_settings": {
+    "surface_builder": {
+      "type": "minecraft:default",
+      "config": {
+        "top_material": { "Name": "rocketry_science:lunar_regolith" },
+        "under_material": { "Name": "minecraft:basalt" },
+        "water_material": { "Name": "minecraft:air" }
+      }
+    }
+  }
+}

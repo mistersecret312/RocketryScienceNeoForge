@@ -1,6 +1,8 @@
 package net.mistersecret312.rocketry_science.vessel;
 
 import net.minecraft.world.level.Level;
+import net.mistersecret312.rocketry_science.datapack.CelestialBody;
+import net.mistersecret312.rocketry_science.util.OrbitUtil;
 
 import java.util.LinkedHashSet;
 
@@ -18,5 +20,15 @@ public abstract class VesselData
 	public void setState(VesselState rocketState)
 	{
 
+	}
+
+	public double getLocalGravityMS2()
+	{
+		double gravity = 9.8;
+		CelestialBody body = OrbitUtil.getCelestialBody(level());
+		if(body != null)
+			gravity = body.getGravityMS2();
+
+		return gravity;
 	}
 }

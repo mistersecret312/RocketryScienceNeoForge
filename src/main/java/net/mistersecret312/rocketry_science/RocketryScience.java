@@ -6,6 +6,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.material.Fluid;
+import net.mistersecret312.rocketry_science.client.level.RocketryDimensionSpecialEffects;
 import net.mistersecret312.rocketry_science.client.model.PlumeModel;
 import net.mistersecret312.rocketry_science.client.renderer.block.FuelTankRenderer;
 import net.mistersecret312.rocketry_science.client.renderer.block.LaunchControllerRenderer;
@@ -35,6 +36,7 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.RegisterDimensionSpecialEffectsEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
@@ -154,6 +156,12 @@ public class RocketryScience
 	public static class ClientModEvents
 	{
 		public static PlumeModel plumeModel;
+
+		@SubscribeEvent
+		public static void onDimensionEffectRegister(RegisterDimensionSpecialEffectsEvent event)
+		{
+			RocketryDimensionSpecialEffects.register(event);
+		}
 
 		@SubscribeEvent
 		public static void bakeModels(EntityRenderersEvent.RegisterLayerDefinitions event)

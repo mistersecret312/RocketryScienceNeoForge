@@ -8,6 +8,8 @@ import net.mistersecret312.rocketry_science.entities.RocketEntity;
 import net.mistersecret312.rocketry_science.util.OrbitUtil;
 import net.mistersecret312.rocketry_science.vessel.Rocket;
 
+import java.util.UUID;
+
 public class ClientPacketHandler
 {
 	public static void syncSpacecraft(SpaceCraft craft)
@@ -18,6 +20,11 @@ public class ClientPacketHandler
 	public static void clearSpacecraft()
 	{
 		OrbitUtil.clearSpaceCraft();
+	}
+
+	public static void removeSpaceCraft(UUID uuid)
+	{
+		OrbitUtil.removeSpaceCraft(uuid);
 	}
 
 	public static void updateRocket(int id, Rocket rocket)

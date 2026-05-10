@@ -12,7 +12,9 @@ import net.minecraft.world.level.Level;
 import net.mistersecret312.rocketry_science.data.orbiting_objects.IOrbitObject;
 import net.mistersecret312.rocketry_science.data.orbits.*;
 import net.mistersecret312.rocketry_science.datapack.CelestialBody;
+import net.mistersecret312.rocketry_science.entities.RocketEntity;
 import net.mistersecret312.rocketry_science.util.OrbitUtil;
+import net.mistersecret312.rocketry_science.vessel.Rocket;
 import net.mistersecret312.rocketry_science.vessel.Stage;
 import net.mistersecret312.rocketry_science.vessel.VesselData;
 import net.mistersecret312.rocketry_science.vessel.VesselState;
@@ -57,7 +59,8 @@ public class SpaceCraft extends VesselData implements IOrbitObject<Orbit<SpaceCr
 	public void setOrbit(Orbit<SpaceCraft> orbit)
 	{
 		this.orbit = orbit;
-		SpaceCraftData.get(level()).setDirty(uuid);
+		if(level() != null && !level().isClientSide())
+			SpaceCraftData.get(level()).setDirty(uuid);
 	}
 
 	@Override
@@ -178,9 +181,8 @@ public class SpaceCraft extends VesselData implements IOrbitObject<Orbit<SpaceCr
 	@Override
 	public void tick(Level level)
 	{
-		if(level == null || OrbitUtil.bodyDimensionCheck(getOrbit().getParent(), level))
+		if(level == null || !OrbitUtil.bodyDimensionCheck(getOrbit().getParent(), level))
 			this.level = OrbitUtil.getLevel(getOrbit().getParent(), level);
-
 
 		if(getOrbit() instanceof TransferOrbit transfer)
 		{
@@ -190,8 +192,47 @@ public class SpaceCraft extends VesselData implements IOrbitObject<Orbit<SpaceCr
 				System.out.println("Successfully transferred to - " + arrival.getBody().location() + " Orbit - " + arrival.getOrbit().orbit().getName());
 				ArtificialOrbit orbit = new ArtificialOrbit(arrival.getBody(), this, arrival.getOrbit());
 				this.setOrbit(orbit);
+				return;
 			}
 		}
+
+		if(true && getOrbit() instanceof ArtificialOrbit orbit)
+		{
+			land(OrbitUtil.getLevel(orbit.getParent(), level()));
+		}
+	}
+
+	public void land(Level level)
+	{
+		RocketEntity rocketEntity = new RocketEntity(level);
+		Rocket rocket = new Rocket(rocketEntity, new LinkedHashSet<>());
+
+		for(Stage stage : stages)
+		{
+			Stage rocketStage = new Stage(this);
+			rocketStage.load(stage.save(), level.registryAccess());
+			rocket.addStage(rocketStage);
+		}
+
+		rocket.setState(VesselState.LANDING);
+		rocket.canLand = true;
+		rocketEntity.setRocket(rocket);
+		rocketEntity.setPos(0.5, OrbitUtil.getSpaceHeight(level), 0.5);
+
+		level.addFreshEntity(rocketEntity);
+		System.out.println("Spacecraft Landing!");
+
+		discard();
+	}
+
+	public void discard()
+	{
+		SpaceCraftData.get(level()).markForRemoval(getUUID());
+	}
+
+	public void setLevel(Level level)
+	{
+		this.level = level;
 	}
 
 	@Override

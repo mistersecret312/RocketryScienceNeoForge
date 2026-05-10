@@ -51,6 +51,9 @@ public class BlockInit
 	public static final DeferredBlock<Block> SEPARATOR = registerBlock("separator",
 			() -> new SeparatorBlock(BlockBehaviour.Properties.of().noOcclusion()));
 
+	public static final DeferredBlock<Block> LUNAR_REGOLITH = registerBlock("lunar_regolith",
+			() -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.DIRT)));
+
 
 	private static <T extends Block> DeferredBlock<T> registerBlock(String name, Supplier<T> block)
 	{

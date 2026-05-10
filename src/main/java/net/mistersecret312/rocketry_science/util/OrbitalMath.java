@@ -1,5 +1,6 @@
 package net.mistersecret312.rocketry_science.util;
 
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
@@ -38,14 +39,14 @@ public class OrbitalMath
 	public static int deltaVToFuelMass(Stage stage, double deltaV)
 	{
 		double stageMass = stage.getTotalMass();
-		double massWithoutDeltaV = stage.getTotalMass()*Math.pow(2.718, -(deltaV/(stage.getAverageIsp()*OrbitUtil.getCelestialBody(stage.getVessel().level()).getGravityMS2())));
+		double massWithoutDeltaV = stage.getTotalMass()*Math.pow(2.718, -(deltaV/(stage.getAverageIsp()*9.81)));
 
 		return (int) (stageMass-massWithoutDeltaV);
 	}
 
-	public static void gravityAffect(LivingEntity entity)
+	public static void gravityAffect(Entity entity)
 	{
-		if(!entity.isNoGravity() && !entity.isFallFlying()
+		if(!entity.isNoGravity() && !(entity instanceof LivingEntity living && living.isFallFlying())
 				   && !entity.isInWater() && !entity.isInLava()
 				   && !entity.isSwimming() && !entity.isDescending())
 		{
@@ -54,7 +55,7 @@ public class OrbitalMath
 				if(player.getAbilities().flying)
 					return;
 			}
-			double gravity = LivingEntity.DEFAULT_BASE_GRAVITY;
+			double gravity = entity.getGravity();
 
 			CelestialBody body = OrbitUtil.getCelestialBody(entity.level());
 			if(body != null)

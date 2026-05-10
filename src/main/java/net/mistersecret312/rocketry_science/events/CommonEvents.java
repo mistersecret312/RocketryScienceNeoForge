@@ -8,9 +8,12 @@ import net.mistersecret312.rocketry_science.RocketryScience;
 import net.mistersecret312.rocketry_science.data.SpaceCraft;
 import net.mistersecret312.rocketry_science.data.SpaceCraftData;
 import net.mistersecret312.rocketry_science.network.packets.ClientBoundSpacecraftSyncPacket;
+import net.mistersecret312.rocketry_science.util.OrbitUtil;
+import net.mistersecret312.rocketry_science.util.OrbitalMath;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
@@ -27,8 +30,14 @@ public class CommonEvents
 		if(player instanceof ServerPlayer serverPlayer)
 		{
 			SpaceCraftData data = SpaceCraftData.get(serverPlayer.level());
-			data.spaceCraft.forEach((uuid, craft) -> PacketDistributor.sendToPlayer(serverPlayer, new ClientBoundSpacecraftSyncPacket(craft)));
+			data.getSpaceCraft().forEach((uuid, craft) -> PacketDistributor.sendToPlayer(serverPlayer, new ClientBoundSpacecraftSyncPacket(craft)));
 		}
+	}
+
+	@SubscribeEvent
+	public static void entityTick(EntityTickEvent.Pre event)
+	{
+		OrbitalMath.gravityAffect(event.getEntity());
 	}
 
 	@SubscribeEvent
@@ -38,7 +47,7 @@ public class CommonEvents
 		if(!level.isClientSide() && level.getServer() != null)
 		{
 			ServerLevel serverLevel = level.getServer().overworld();
-			for(Map.Entry<UUID, SpaceCraft> entry : SpaceCraftData.get(serverLevel).spaceCraft.entrySet())
+			for(Map.Entry<UUID, SpaceCraft> entry : SpaceCraftData.get(serverLevel).getSpaceCraft().entrySet())
 			{
 				SpaceCraft craft = entry.getValue();
 				craft.tick(serverLevel);

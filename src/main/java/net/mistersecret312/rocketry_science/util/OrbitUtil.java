@@ -1,12 +1,16 @@
 package net.mistersecret312.rocketry_science.util;
 
 import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.dimension.DimensionType;
 import net.mistersecret312.rocketry_science.RocketryScience;
 import net.mistersecret312.rocketry_science.data.SpaceCraft;
 import net.mistersecret312.rocketry_science.data.orbits.CelestialOrbit;
+import net.mistersecret312.rocketry_science.data.orbits.ConfiguredOrbit;
+import net.mistersecret312.rocketry_science.data.orbits.OrbitConfig;
 import net.mistersecret312.rocketry_science.datapack.CelestialBody;
 
 import java.util.*;
@@ -37,6 +41,19 @@ public class OrbitUtil
 		{
 			CelestialBody body = entry.getValue();
 			if(body.getDimension().isPresent() && body.getDimension().get().equals(level.dimension()))
+				return body;
+		}
+
+		return null;
+	}
+
+	public static CelestialBody getCelestialBodyByDimension(ResourceLocation location, Level level)
+	{
+		Registry<CelestialBody> registry = getCelestialRegistry(level);
+		for(Map.Entry<ResourceKey<CelestialBody>, CelestialBody> entry : registry.entrySet())
+		{
+			CelestialBody body = entry.getValue();
+			if(body.getDimension().isPresent() && body.getDimension().get().location().equals(location))
 				return body;
 		}
 
@@ -81,6 +98,35 @@ public class OrbitUtil
 	{
 		CelestialBody body = getCelestialBody(key, level);
 		return body.getOrbit();
+	}
+
+	public static List<CelestialBody> getChildren(CelestialBody parent, Level level)
+	{
+		Registry<CelestialBody> registry = getCelestialRegistry(level);
+		List<CelestialBody> children = new ArrayList<>();
+
+		for(Map.Entry<ResourceKey<CelestialBody>, CelestialBody> entry : registry.entrySet())
+		{
+			CelestialBody body = entry.getValue();
+			if(body.getParentKey().location().equals(registry.getKey(parent)))
+				children.add(body);
+		}
+
+		return children;
+	}
+
+	public static ConfiguredOrbit getDefaultLaunchOrbit(Level level)
+	{
+		CelestialBody body = getCelestialBody(level);
+		if(body != null)
+		{
+			List<ConfiguredOrbit> orbits = new ArrayList<>(body.getSupportedOrbits());
+			orbits.sort(Comparator.comparing(ConfiguredOrbit::orbit,
+					Comparator.comparingDouble(OrbitConfig::getAltitude)));
+
+			return orbits.getFirst();
+		}
+		return null;
 	}
 
 	public static double getSpaceHeight(Level level)

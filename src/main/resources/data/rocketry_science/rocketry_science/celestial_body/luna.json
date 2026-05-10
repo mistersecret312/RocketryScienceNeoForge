@@ -1,0 +1,37 @@
+{
+  "name": "rocketry_science:earth",
+  "texture":"rocketry_science:textures/planet/sol/earth.png",
+  "parent": "rocketry_science:earth",
+  "dimension": "rocketry_science:luna",
+  "day_length": 160,
+  "gravity": 0.165,
+  "radius": 1737400,
+  "altitude": 0.1,
+  "period": 160,
+  "supported_orbits": [
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:low_orbit",
+        "altitude": 100,
+        "period": 1
+      }
+    },
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:medium_orbit",
+        "altitude": 500,
+        "period": 5
+      }
+    },
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:high_orbit",
+        "altitude": 1000,
+        "period": 10
+      }
+    }
+  ]
+}

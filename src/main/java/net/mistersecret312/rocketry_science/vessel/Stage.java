@@ -101,7 +101,7 @@ public class Stage
 			return 0;
 		double massRatio = getTotalMass()/getTotalDryMass();
 		double log = Math.log(massRatio);
-		return OrbitUtil.getCelestialBody(getVessel().level()).getGravityMS2()*averageIsp*log;
+		return 9.81*averageIsp*log;
 	}
 
 	public double getTotalMass()
