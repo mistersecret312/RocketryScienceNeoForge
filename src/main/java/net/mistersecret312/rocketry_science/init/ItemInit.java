@@ -1,5 +1,6 @@
 package net.mistersecret312.rocketry_science.init;
 
+import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Item;
 import net.mistersecret312.rocketry_science.RocketryScience;
 import net.mistersecret312.rocketry_science.items.*;
@@ -22,8 +23,10 @@ public class ItemInit
 	public static final DeferredItem<PadLinkingItem> PAD_LINKING = ITEMS.register("pad_linking",
 			() -> new PadLinkingItem(new Item.Properties().stacksTo(1)));
 
-	public static final DeferredItem<Item> LIQUID_HYDROGEN_BUCKET = ITEMS.registerSimpleItem("liquid_hydrogen_bucket", new Item.Properties().stacksTo(1));
-	public static final DeferredItem<Item> LIQUID_OXYGEN_BUCKET = ITEMS.registerSimpleItem("liquid_oxygen_bucket", new Item.Properties().stacksTo(1));
+	public static final DeferredItem<BucketItem> LIQUID_HYDROGEN_BUCKET = ITEMS.register("liquid_hydrogen_bucket",
+			() -> new BucketItem(FluidInit.SOURCE_CRYOGENIC_HYDROGEN.get(), new Item.Properties().stacksTo(1)));
+	public static final DeferredItem<BucketItem> LIQUID_OXYGEN_BUCKET = ITEMS.register("liquid_oxygen_bucket",
+			() -> new BucketItem(FluidInit.SOURCE_CRYOGENIC_OXYGEN.get(), new Item.Properties().stacksTo(1)));
 
 	public static final DeferredItem<Item> LAUNCH_CONTROLLER = ITEMS.register("launch_controller",
 			() -> new LaunchControllerBlockItem(BlockInit.LAUNCH_CONTROLLER.get(), new Item.Properties()));

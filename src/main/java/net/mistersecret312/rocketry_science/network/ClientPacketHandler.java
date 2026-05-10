@@ -6,6 +6,7 @@ import net.minecraft.world.entity.Entity;
 import net.mistersecret312.rocketry_science.data.orbiting_objects.SpaceCraft;
 import net.mistersecret312.rocketry_science.entities.RocketEntity;
 import net.mistersecret312.rocketry_science.util.OrbitUtil;
+import net.mistersecret312.rocketry_science.vessel.Rocket;
 
 public class ClientPacketHandler
 {
@@ -17,6 +18,13 @@ public class ClientPacketHandler
 	public static void clearSpacecraft()
 	{
 		OrbitUtil.clearSpaceCraft();
+	}
+
+	public static void updateRocket(int id, Rocket rocket)
+	{
+		Entity entity = getEntity(id);
+		if(entity instanceof RocketEntity rocketEntity)
+			rocketEntity.setRocket(rocket);
 	}
 
 	public static <T extends Entity> T getEntity(int id)

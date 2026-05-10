@@ -1,5 +1,6 @@
 package net.mistersecret312.rocketry_science.init;
 
+import net.mistersecret312.rocketry_science.network.packets.ClientBoundRocketUpdatePacket;
 import net.mistersecret312.rocketry_science.network.packets.ClientBoundSpacecraftClearPacket;
 import net.mistersecret312.rocketry_science.network.packets.ClientBoundSpacecraftSyncPacket;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -23,6 +24,12 @@ public class NetworkInit
 				ClientBoundSpacecraftSyncPacket.TYPE,
 				ClientBoundSpacecraftSyncPacket.STREAM_CODEC,
 				ClientBoundSpacecraftSyncPacket::handle
+		);
+
+		registrar.playToClient(
+				ClientBoundRocketUpdatePacket.TYPE,
+				ClientBoundRocketUpdatePacket.STREAM_CODEC,
+				ClientBoundRocketUpdatePacket::handle
 		);
 	}
 }

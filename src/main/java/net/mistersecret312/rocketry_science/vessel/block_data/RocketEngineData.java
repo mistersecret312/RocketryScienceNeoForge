@@ -7,6 +7,7 @@ import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -65,13 +66,11 @@ public class RocketEngineData extends BlockData
     @Override
     public void tick(Level level)
     {
-        VesselData vessel = this.getStage().getVessel();
-
         if(level.isClientSide())
-        {
-            clientTick(level);
             return;
-        }
+
+        VesselData vessel = this.getStage().getVessel();
+        clientTick(level);
 
         if(this.tanks.isEmpty())
         {
@@ -103,7 +102,7 @@ public class RocketEngineData extends BlockData
                     if(this.tank.getSpace(i) > maxFuelUsage)
                     {
                         FluidStack stack = fuelTank.tank.drain(new FluidStack(fuelTank.tank.getFluidInTank(i).getFluidHolder(), maxFuelUsage),
-                                                               IFluidHandler.FluidAction.EXECUTE);
+                               IFluidHandler.FluidAction.EXECUTE);
                         this.tank.fill(stack, IFluidHandler.FluidAction.EXECUTE);
                     }
                 }
@@ -131,9 +130,8 @@ public class RocketEngineData extends BlockData
             }
             else
             {
-                FluidStack drained = this.tank.drain(
-                        new FluidStack(this.tank.getFluidInTank(i).getFluidHolder(), (int) (calculateMaxFuelUsage() * (thrustPercentage))),
-                        IFluidHandler.FluidAction.EXECUTE);
+                FluidStack drained = this.tank.drain(new FluidStack(this.tank.getFluidInTank(i).getFluidHolder(),
+                        (int) (calculateMaxFuelUsage() * (thrustPercentage))), level.isClientSide() ? IFluidHandler.FluidAction.SIMULATE : IFluidHandler.FluidAction.EXECUTE);
 
                 if(drained.isEmpty() && thrustPercentage*8 == 0 && !(thrustPercentage == 0))
                 {
@@ -162,9 +160,6 @@ public class RocketEngineData extends BlockData
 
     public void clientTick(Level level)
     {
-        if(!level.isClientSide())
-            return;
-
         animTick++;
         if(animTick > 10)
         {
@@ -342,6 +337,10 @@ public class RocketEngineData extends BlockData
         super.toNetwork(buffer);
         buffer.writeBoolean(this.enabled);
         buffer.writeDouble(this.thrustPercentage);
+        buffer.writeInt(this.frame);
+        buffer.writeById(Block.BLOCK_STATE_REGISTRY::getId, this.nozzleState);
+        RocketFuel.STREAM_CODEC.encode(buffer, this.fuelType);
+        RocketFuelTank.STREAM_CODEC.encode(buffer, this.tank);
     }
 
     @Override
@@ -350,6 +349,10 @@ public class RocketEngineData extends BlockData
         super.fromNetwork(buffer, pos, stage);
         this.enabled = buffer.readBoolean();
         this.thrustPercentage = buffer.readDouble();
+        this.frame = buffer.readInt();
+        this.nozzleState = buffer.readById(Block.BLOCK_STATE_REGISTRY::byId);
+        this.fuelType = RocketFuel.STREAM_CODEC.decode(buffer);
+        this.tank = RocketFuelTank.STREAM_CODEC.decode(buffer);
     }
 
     @Override

@@ -4,6 +4,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.mistersecret312.rocketry_science.RocketryScience;
@@ -18,6 +19,11 @@ import java.util.function.Supplier;
 public class BlockInit
 {
 	public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(RocketryScience.MODID);
+
+	public static final DeferredBlock<LiquidBlock> CRYOGENIC_HYDROGEN = BLOCKS.register("cryogenic_hydrogen",
+			() -> new LiquidBlock(FluidInit.SOURCE_CRYOGENIC_HYDROGEN.get(), BlockBehaviour.Properties.ofFullCopy(Blocks.WATER).noLootTable()));
+	public static final DeferredBlock<LiquidBlock> CRYOGENIC_OXYGEN = BLOCKS.register("cryogenic_oxygen",
+			() -> new LiquidBlock(FluidInit.SOURCE_CRYOGENIC_OXYGEN.get(), BlockBehaviour.Properties.ofFullCopy(Blocks.WATER).noLootTable()));
 
 	public static final DeferredBlock<LaunchControllerBlock> LAUNCH_CONTROLLER = BLOCKS.register("launch_controller",
 			() -> new LaunchControllerBlock(BlockBehaviour.Properties.of().noOcclusion()));

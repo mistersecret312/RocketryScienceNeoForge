@@ -97,7 +97,6 @@ public class RocketAssemblerBlockEntity extends BlockEntity implements GeoBlockE
 					}
 
 					if(state.getBlock() instanceof SeparatorBlock) foundSeparator = true;
-
 				}
 			if(foundSeparator)
 			{

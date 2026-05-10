@@ -2,6 +2,7 @@ package net.mistersecret312.rocketry_science.vessel.block_data;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -83,6 +84,26 @@ public class FuelTankData extends BlockData
         };
 
         tank.readFromNBT(this.extraData.getCompound("TankContent"), stage.vessel.level().registryAccess());
+    }
+
+    @Override
+    public void toNetwork(RegistryFriendlyByteBuf buffer)
+    {
+        super.toNetwork(buffer);
+        buffer.writeInt(this.height);
+        buffer.writeInt(this.width);
+        RocketFuel.STREAM_CODEC.encode(buffer, this.fuel);
+        RocketFuelTank.STREAM_CODEC.encode(buffer, this.tank);
+    }
+
+    @Override
+    public void fromNetwork(RegistryFriendlyByteBuf buffer, BlockPos pos, Stage stage)
+    {
+        super.fromNetwork(buffer, pos, stage);
+        this.height = buffer.readInt();
+        this.width = buffer.readInt();
+        this.fuel = RocketFuel.STREAM_CODEC.decode(buffer);
+        this.tank = RocketFuelTank.STREAM_CODEC.decode(buffer);
     }
 
     public AABB affectBoundingBox(AABB aabb, RocketEntity rocket)

@@ -6,6 +6,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
@@ -23,6 +25,11 @@ public class RocketFuelTank implements IFluidHandler
     private int capacity;
 
     private List<FluidTank> propellants;
+
+    public static final StreamCodec<RegistryFriendlyByteBuf, RocketFuelTank> STREAM_CODEC = StreamCodec.of(
+            RocketFuelTank::encode,
+            RocketFuelTank::decode
+    );
 
     public RocketFuelTank(List<Predicate<FluidStack>> propellants, int capacity)
     {
@@ -216,6 +223,33 @@ public class RocketFuelTank implements IFluidHandler
         tag.put("propellants", listTag);
 
          return tag;
+    }
+
+    private static void encode(RegistryFriendlyByteBuf buffer, RocketFuelTank tank) {
+        buffer.writeInt(tank.capacity);
+        buffer.writeInt(tank.tanks);
+
+        for (int i = 0; i < tank.tanks; i++)
+            FluidStack.OPTIONAL_STREAM_CODEC.encode(buffer, tank.getFluidInTank(i));
+    }
+
+    private static RocketFuelTank decode(RegistryFriendlyByteBuf buffer) {
+        int capacity = buffer.readInt();
+        int tanks = buffer.readInt();
+
+        List<Predicate<FluidStack>> dummyFilters = new ArrayList<>();
+        for (int i = 0; i < tanks; i++)
+            dummyFilters.add(stack -> true);
+
+        RocketFuelTank decodedTank = new RocketFuelTank(dummyFilters, capacity);
+
+        for (int i = 0; i < tanks; i++)
+        {
+            FluidStack fluid = FluidStack.OPTIONAL_STREAM_CODEC.decode(buffer);
+            decodedTank.getPropellants().get(i).setFluid(fluid);
+        }
+
+        return decodedTank;
     }
 
     public int getSpace(int tank)

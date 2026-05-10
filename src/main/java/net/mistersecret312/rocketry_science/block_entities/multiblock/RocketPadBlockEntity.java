@@ -129,7 +129,7 @@ public class RocketPadBlockEntity extends AbstractMultiBlockEntity
 
         return new AABB(
                 minX, padY + 1, minZ,
-                maxX + 1, padY + towerHeight, maxZ + 1
+                maxX, padY + towerHeight-1, maxZ
         );
     }
 

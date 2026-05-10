@@ -49,7 +49,11 @@ public class RocketEntity extends Entity
 		super.tick();
 		this.move(MoverType.SELF, this.getDeltaMovement());
 
-		getRocket().tick(level());
+		Rocket rocket = getRocket();
+		if(rocket.rocket == null)
+			rocket.rocket = this;
+
+		rocket.tick(level());
 
 		if(level().getGameTime() % 20 == 0)
 			this.setBoundingBox(makeBoundingBox());
@@ -119,6 +123,7 @@ public class RocketEntity extends Entity
 		if(player.getItemInHand(hand).is(Items.STICK))
 		{
 			getRocket().setState(VesselState.TAKEOFF);
+			getRocket().canLand = true;
 			return InteractionResult.SUCCESS;
 		}
 

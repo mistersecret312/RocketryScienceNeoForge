@@ -45,6 +45,11 @@ public class BlockData
 
     }
 
+    public void clientTick(Level level)
+    {
+
+    }
+
     public void orbitalTick(MinecraftServer server)
     {
 

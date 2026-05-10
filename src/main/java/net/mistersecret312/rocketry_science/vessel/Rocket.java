@@ -13,10 +13,12 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.mistersecret312.rocketry_science.entities.RocketEntity;
 import net.mistersecret312.rocketry_science.network.ClientPacketHandler;
+import net.mistersecret312.rocketry_science.network.packets.ClientBoundRocketUpdatePacket;
 import net.mistersecret312.rocketry_science.util.OrbitUtil;
 import net.mistersecret312.rocketry_science.util.OrbitalMath;
 import net.mistersecret312.rocketry_science.vessel.block_data.BlockData;
 import net.mistersecret312.rocketry_science.vessel.block_data.RocketEngineData;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -31,27 +33,23 @@ public class Rocket extends VesselData
 		@Override
 		public Rocket decode(RegistryFriendlyByteBuf buffer)
 		{
-
-			Rocket rocket = new Rocket(ClientPacketHandler.getEntity(buffer.readInt()), new LinkedHashSet<>());
-			rocket.stages = buffer.readCollection(LinkedHashSet::new,
-					buf -> Stage.fromNetwork((RegistryFriendlyByteBuf) buf, rocket));
-			rocket.state = buffer.readEnum(VesselState.class);
-
-			return rocket;
+			return Rocket.fromNetwork(buffer);
 		}
 
 		@Override
 		public void encode(RegistryFriendlyByteBuf buffer, Rocket rocket)
 		{
-			buffer.writeInt(rocket.rocket.getId());
-			buffer.writeCollection(rocket.stages, (buf, stage) -> stage.toNetwork((RegistryFriendlyByteBuf) buf));
-			buffer.writeEnum(rocket.state);
+			rocket.toNetwork(buffer);
 		}
 	};
 
 	public VesselState state;
 	public LinkedHashSet<Stage> stages;
 	public RocketEntity rocket;
+
+	public boolean canLand = false;
+	public double landingDeltaV = 0;
+	public double takeoffDeltaV = 0;
 
 	public Rocket(RocketEntity rocketEntity, LinkedHashSet<Stage> stages)
 	{
@@ -63,6 +61,11 @@ public class Rocket extends VesselData
 	@Override
 	public void tick(Level level)
 	{
+		if(!level.isClientSide())
+			PacketDistributor.sendToPlayersTrackingEntity(rocket, new ClientBoundRocketUpdatePacket(rocket.getId(), this));
+		if(level.isClientSide())
+			return;
+
 		if(stages.isEmpty())
 			rocket.discard();
 
@@ -76,19 +79,15 @@ public class Rocket extends VesselData
 				if(getCurrentStage() == null)
 					return;
 
-				if(this.canLand())
+				if(this.canLand() && this.getRocketEntity().getDeltaMovement().y < 0)
 					setState(VesselState.LANDING);
 			}
 			case LANDING ->
 			{
-				if(level.isClientSide())
-					return;
 				land(level);
 			}
 			case TAKEOFF ->
 			{
-				if(level.isClientSide())
-					return;
 				takeoff(level);
 			}
 			case STAGING ->
@@ -98,7 +97,8 @@ public class Rocket extends VesselData
 			case COASTING ->
 			{
 				double currentLeftDeltaV = getCurrentStage().calculateDeltaV();
-				getCurrentStage().consumeFuelByDeltaV(currentLeftDeltaV);
+				currentLeftDeltaV -= landingDeltaV;
+				//getCurrentStage().consumeFuelByDeltaV(currentLeftDeltaV);
 
 				if(this.stages.size() > 1)
 				{
@@ -123,12 +123,12 @@ public class Rocket extends VesselData
 				{
 					System.out.println("Fuel mass before " + getCurrentStage().getFuelMass());
 					System.out.println("Fuel mass to be consumed " + OrbitalMath.deltaVToFuelMass(getCurrentStage(), deltaVRequired));
-					getCurrentStage().consumeFuelByDeltaV(deltaVRequired);
+//					getCurrentStage().consumeFuelByDeltaV(deltaVRequired);
 					System.out.println("Fuel mass after " + getCurrentStage().getFuelMass());
 
 					System.out.println("Capable of being in orbit, leftover - " + (this.getCurrentStage().calculateDeltaV()));
-					setState(VesselState.ORBIT);
-					return;
+//					setState(VesselState.ORBIT);
+//					return;
 				}
 				else setState(VesselState.IDLE);
 
@@ -180,6 +180,7 @@ public class Rocket extends VesselData
 			this.toggleEngines(false);
 			rocket.setDeltaMovement(0, 0, 0);
 			setState(VesselState.COASTING);
+			canLand = true;
 		}
 	}
 
@@ -196,7 +197,7 @@ public class Rocket extends VesselData
 		double finalTouchdownAltitude = this.rocket.makeBoundingBox().getYsize()*1.5d;
 
 		double brakingDescentSpeed = -1.0;
-		double safeLandingSpeed = -0.1;
+		double safeLandingSpeed = -0.25;
 
 		double altitudeBuffer = 20.0;
 
@@ -256,6 +257,7 @@ public class Rocket extends VesselData
 			setState(VesselState.IDLE);
 			setEngineThrust(0.0);
 			System.out.println("LANDED" + " DeltaV Left - " + getCurrentStage().calculateDeltaV());
+			canLand = false;
 		}
 	}
 
@@ -475,26 +477,31 @@ public class Rocket extends VesselData
 
 	public boolean canLand()
 	{
-		return true && getMaxTWR() > 1.0;
+		return (canLand && getMaxTWR() > 1.0) || landingDeltaV != 0;
 	}
 
-	public void toNetwork(FriendlyByteBuf buffer)
+	public void toNetwork(RegistryFriendlyByteBuf buffer)
 	{
 		buffer.writeInt(this.rocket.getId());
 		buffer.writeEnum(this.state);
 		buffer.writeCollection(stages, (writer, stage) -> stage.toNetwork((RegistryFriendlyByteBuf) writer));
+		buffer.writeBoolean(this.canLand);
+		buffer.writeDouble(this.landingDeltaV);
+		buffer.writeDouble(this.takeoffDeltaV);
 	}
 
-	public static Rocket fromNetwork(FriendlyByteBuf buffer)
+	public static Rocket fromNetwork(RegistryFriendlyByteBuf buffer)
 	{
 		RocketEntity rocketEntity = ClientPacketHandler.getEntity(buffer.readInt());
 		VesselState state = buffer.readEnum(VesselState.class);
 		Rocket rocket = new Rocket(rocketEntity, new LinkedHashSet<>());
-		LinkedHashSet<Stage> stages = buffer.readCollection(LinkedHashSet::new, reader -> Stage.fromNetwork(
-				(RegistryFriendlyByteBuf) buffer, rocket));
+		LinkedHashSet<Stage> stages = buffer.readCollection(LinkedHashSet::new, reader -> Stage.fromNetwork(buffer, rocket));
 
 		rocket.stages = stages;
 		rocket.state = state;
+		rocket.canLand = buffer.readBoolean();
+		rocket.landingDeltaV = buffer.readDouble();
+		rocket.takeoffDeltaV = buffer.readDouble();
 		return rocket;
 	}
 
@@ -508,6 +515,10 @@ public class Rocket extends VesselData
 		for(Stage stage : stages)
 			stageTag.add(stage.save());
 		tag.put("stages", stageTag);
+
+		tag.putBoolean("can_land", this.canLand);
+		tag.putDouble("landing_deltav", this.landingDeltaV);
+		tag.putDouble("takeoff_deltav", this.takeoffDeltaV);
 
 		return tag;
 	}
@@ -526,6 +537,9 @@ public class Rocket extends VesselData
 			stages.add(stage);
 		}
 		this.stages = stages;
+		this.canLand = tag.getBoolean("can_land");
+		this.landingDeltaV = tag.getDouble("landing_deltav");
+		this.takeoffDeltaV = tag.getDouble("takeoff_deltav");
 	}
 
 	public VesselState getState()
@@ -655,6 +669,9 @@ public class Rocket extends VesselData
 		System.out.println("Landing DeltaV to fuel - " + OrbitalMath.deltaVToFuelMass(stage, deltaV));
 		System.out.println("Takeoff DeltaV to fuel - " + OrbitalMath.deltaVToFuelMass(stage, takeoffDeltaV));
 		System.out.println("Simulated deltaV - " + takeoffDeltaV + " Landing - " + deltaV);
+
+		this.landingDeltaV = deltaV;
+		this.takeoffDeltaV = takeoffDeltaV;
 	}
 
 	public double takeoffSimulation(AtomicInteger fuel)

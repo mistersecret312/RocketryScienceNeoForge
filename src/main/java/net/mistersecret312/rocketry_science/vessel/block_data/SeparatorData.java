@@ -87,6 +87,7 @@ public class SeparatorData extends BlockData
     {
         super.toNetwork(buffer);
         buffer.writeBoolean(this.extended);
+        buffer.writeInt(this.width);
     }
 
     @Override
@@ -94,6 +95,7 @@ public class SeparatorData extends BlockData
     {
         super.fromNetwork(buffer, pos, stage);
         this.extended = buffer.readBoolean();
+        this.width = buffer.readInt();
     }
 
     public AABB affectBoundingBox(AABB aabb, RocketEntity rocket)

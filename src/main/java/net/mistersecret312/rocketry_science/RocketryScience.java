@@ -66,6 +66,9 @@ public class RocketryScience
 		BlockInit.register(modEventBus);
 		BlockEntityInit.register(modEventBus);
 
+		FluidTypeInit.register(modEventBus);
+		FluidInit.register(modEventBus);
+
 		EntityInit.register(modEventBus);
 		EntityDataSerializersInit.register(modEventBus);
 
@@ -178,7 +181,11 @@ public class RocketryScience
 		@SubscribeEvent
 		public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event)
 		{
-			event.registerEntityRenderer(EntityInit.ROCKET.get(), RocketRenderer::new);
+			event.registerEntityRenderer(EntityInit.ROCKET.get(), context ->
+				{
+					plumeModel = new PlumeModel(context.bakeLayer(PlumeModel.LAYER_LOCATION));
+					return new RocketRenderer(context);
+				});
 
 			event.registerBlockEntityRenderer(BlockEntityInit.FUEL_TANK.get(), FuelTankRenderer::new);
 			event.registerBlockEntityRenderer(BlockEntityInit.SEPARATOR.get(), SeparatorRenderer::new);

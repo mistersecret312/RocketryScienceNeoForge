@@ -36,8 +36,8 @@ public class RocketEngineDataRenderer extends AbstractBlockDataRenderer<RocketEn
 		}
 		poseStack.translate(0, -1, 0);
 
-		BakedModel model = dispatcher.getBlockModel(data.getBlockState());
-		for (RenderType rt : model.getRenderTypes(data.getBlockState(), RandomSource.create(42), ModelData.EMPTY))
+		BakedModel model = dispatcher.getBlockModel(data.nozzleState);
+		for (RenderType rt : model.getRenderTypes(data.nozzleState, RandomSource.create(42), ModelData.EMPTY))
 			dispatcher.renderBatched(data.nozzleState, mutablePos.move(data.pos), level,
 					poseStack, buffer.getBuffer(rt), true, RandomSource.create(42),
 					model.getModelData(level, data.pos, data.nozzleState, ModelData.EMPTY), null);

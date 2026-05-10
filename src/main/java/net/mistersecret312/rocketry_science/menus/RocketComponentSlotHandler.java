@@ -31,6 +31,12 @@ public class RocketComponentSlotHandler extends SlotItemHandler
         return 1;
     }
 
+    @Override
+    public int getMaxStackSize(ItemStack stack)
+    {
+        return 1;
+    }
+
     public enum ComponentType
     {
         COMBUSTION_CHAMBER,
