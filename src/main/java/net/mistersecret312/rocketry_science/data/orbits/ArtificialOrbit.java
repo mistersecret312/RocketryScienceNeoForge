@@ -6,8 +6,8 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.mistersecret312.rocketry_science.data.orbiting_objects.SpaceCraft;
 import net.mistersecret312.rocketry_science.datapack.CelestialBody;
+import net.mistersecret312.rocketry_science.data.orbiting_objects.SpaceCraft;
 
 public class ArtificialOrbit extends Orbit<SpaceCraft>
 {

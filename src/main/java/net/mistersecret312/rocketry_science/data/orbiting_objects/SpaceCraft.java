@@ -1,7 +1,9 @@
 package net.mistersecret312.rocketry_science.data.orbiting_objects;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -11,6 +13,7 @@ import net.mistersecret312.rocketry_science.data.orbits.*;
 import net.mistersecret312.rocketry_science.datapack.CelestialBody;
 import net.mistersecret312.rocketry_science.vessel.Stage;
 import net.mistersecret312.rocketry_science.vessel.VesselData;
+import net.mistersecret312.rocketry_science.vessel.VesselState;
 
 import java.util.LinkedHashSet;
 import java.util.UUID;
@@ -24,9 +27,15 @@ public class SpaceCraft extends VesselData implements IOrbitObject<Orbit<SpaceCr
 
 	private Orbit<SpaceCraft> orbit;
 
-	public SpaceCraft(UUID uuid)
+	public VesselState state;
+	public LinkedHashSet<Stage> stages;
+
+
+	public SpaceCraft(UUID uuid, LinkedHashSet<Stage> stages)
 	{
 		this.uuid = uuid;
+		this.stages = stages;
+		this.state = VesselState.ORBIT;
 	}
 
 	@Override
@@ -66,16 +75,26 @@ public class SpaceCraft extends VesselData implements IOrbitObject<Orbit<SpaceCr
 		return tag;
 	}
 
-	public static SpaceCraft load(CompoundTag tag, RegistryAccess registryAccess)
+	public static SpaceCraft load(CompoundTag tag, HolderLookup.Provider lookup)
 	{
 		UUID uuid = tag.getUUID("uuid");
-		SpaceCraft craft = new SpaceCraft(uuid);
+		SpaceCraft craft = new SpaceCraft(uuid, new LinkedHashSet<>());
+
+		ListTag stageTag = tag.getList("stages", Tag.TAG_COMPOUND);
+		LinkedHashSet<Stage> stages = new LinkedHashSet<>();
+		for(Tag listTag : stageTag)
+		{
+			Stage stage = new Stage(craft);
+			stage.load((CompoundTag) listTag, lookup);
+			stages.add(stage);
+		}
+		craft.stages = stages;
 
 		Orbit<SpaceCraft> orbit;
 		CompoundTag orbitTag = tag.getCompound("craft_orbit");
 		if(tag.contains("transfer"))
-			orbit = new TransferOrbit(craft).load(orbitTag, registryAccess);
-		else orbit = new ArtificialOrbit(craft).load(orbitTag, registryAccess);
+			orbit = new TransferOrbit(craft).load(orbitTag, lookup);
+		else orbit = new ArtificialOrbit(craft).load(orbitTag, lookup);
 
 		craft.setOrbit(orbit);
 		return craft;
@@ -106,7 +125,7 @@ public class SpaceCraft extends VesselData implements IOrbitObject<Orbit<SpaceCr
 
 	public static SpaceCraft decode(RegistryFriendlyByteBuf buf) {
 		UUID uuid = buf.readUUID();
-		SpaceCraft craft = new SpaceCraft(uuid);
+		SpaceCraft craft = new SpaceCraft(uuid, new LinkedHashSet<>());
 
 		boolean hasOrbit = buf.readBoolean();
 		if (hasOrbit) {

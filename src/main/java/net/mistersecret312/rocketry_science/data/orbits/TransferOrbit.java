@@ -5,7 +5,6 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.Mth;
-import net.mistersecret312.rocketry_science.data.orbiting_objects.SpaceCraft;
 import net.mistersecret312.rocketry_science.datapack.CelestialBody;
 import org.joml.Vector2d;
 
