@@ -103,6 +103,9 @@ public class Rocket extends VesselData
 			}
 			case COASTING ->
 			{
+				if(this.stages.isEmpty())
+					return;
+
 				ConfiguredOrbit configuredOrbit = OrbitUtil.getDefaultLaunchOrbit(level);
 				CelestialBody body = OrbitUtil.getCelestialBody(level);
 				if(configuredOrbit == null || body == null)
@@ -151,7 +154,13 @@ public class Rocket extends VesselData
 				TransferOrbit transferOrbit = new TransferOrbit(craft, departure, arrival, departure.getTick()- arrival.getTick());
 				ArtificialOrbit orbit = new ArtificialOrbit(OrbitUtil.getKey(body, level), craft, configuredOrbit);
 
-				craft.stages = this.stages;
+				LinkedHashSet<Stage> spaceCraftStages = new LinkedHashSet<>();
+				for(Stage stage : this.stages)
+				{
+					stage.vessel = craft;
+					spaceCraftStages.add(stage);
+				}
+				craft.stages = spaceCraftStages;
 				craft.setLevel(level);
 				craft.setOrbit(transferOrbit);
 
@@ -370,7 +379,7 @@ public class Rocket extends VesselData
 
 	public Stage getCurrentStage()
 	{
-		Stage stage = null;
+		Stage stage = this.stages.getFirst();
 		for (Stage stageO : this.stages)
 		{
 			stage = stageO;
@@ -619,7 +628,7 @@ public class Rocket extends VesselData
 		int ticks = 0;
 		Stage stage = getCurrentStage();
 
-		double gravity = getLocalGravityMS2();
+		double gravity = 0.025*getLocalGravity();
 
 		double thrust = getMaxThrustKiloNewtons();
 		double fuelFlow = getAverageFuelUsage();
@@ -655,6 +664,8 @@ public class Rocket extends VesselData
 			if (netAccelMax > 0 && velocity < 0)
 			{
 				stoppingDistance = Math.max(rocket.makeBoundingBox().getYsize(), (velocity * velocity) / (2.0 * netAccelMax))*Math.max(1, 0.5*getMaxTWR());;
+				if(getLocalGravity() < 1)
+					stoppingDistance *= getLocalGravity();
 			}
 
 			double thrustLevel = 0.0;
@@ -677,7 +688,7 @@ public class Rocket extends VesselData
 			}
 			else thrustLevel = 0.0;
 
-			acceleration = 0.025*twr*thrustLevel;
+			acceleration = g*twr*thrustLevel;
 			velocity += acceleration;
 
 			altitude += velocity;
@@ -705,7 +716,7 @@ public class Rocket extends VesselData
 		int ticks = 0;
 		Stage stage = getCurrentStage();
 
-		double gravity = getLocalGravityMS2();
+		double gravity = 0.025*getLocalGravity();
 
 		double thrust = getMaxThrustKiloNewtons();
 		double height = this.getRocketEntity().makeBoundingBox().getYsize();
@@ -730,9 +741,9 @@ public class Rocket extends VesselData
 				return 0;
 			}
 
-			velocity -= 0.025;
+			velocity -= gravity;
 			double engineThrust = 0.0D;
-			double hover = (rocketMass*gravity)/(thrust*1000);
+			double hover = getHoverThrust();
 
 			if(altitude < height)
 				engineThrust = hover*1.1;
@@ -745,8 +756,8 @@ public class Rocket extends VesselData
 			massAccounted -= (int) (fuelFlow*engineThrust) * stage.getFuelTypeAmount() * getEngineAmount();
 			rocketMass -= (int) (fuelFlow*engineThrust) * stage.getFuelTypeAmount() * getEngineAmount();
 
-			double twr = (thrust*1000)/(rocketMass*9.80665);
-			acceleration = 0.025*twr*engineThrust;
+			double twr = (thrust*1000)/(rocketMass*getLocalGravityMS2());
+			acceleration = gravity*twr*engineThrust;
 
 			velocity = Math.min(RocketEntity.MAX_SPEED_UP_BT, acceleration+velocity);
 			velocity = Math.max(velocity, 0);

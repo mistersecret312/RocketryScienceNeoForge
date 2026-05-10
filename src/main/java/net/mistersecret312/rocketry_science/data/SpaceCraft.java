@@ -209,7 +209,7 @@ public class SpaceCraft extends VesselData implements IOrbitObject<Orbit<SpaceCr
 
 		for(Stage stage : stages)
 		{
-			Stage rocketStage = new Stage(this);
+			Stage rocketStage = new Stage(rocket);
 			rocketStage.load(stage.save(), level.registryAccess());
 			rocket.addStage(rocketStage);
 		}

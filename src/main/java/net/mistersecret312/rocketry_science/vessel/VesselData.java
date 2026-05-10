@@ -31,4 +31,14 @@ public abstract class VesselData
 
 		return gravity;
 	}
+
+	public double getLocalGravity()
+	{
+		double gravity = 1;
+		CelestialBody body = OrbitUtil.getCelestialBody(level());
+		if(body != null)
+			gravity = body.getGravity();
+
+		return gravity;
+	}
 }
