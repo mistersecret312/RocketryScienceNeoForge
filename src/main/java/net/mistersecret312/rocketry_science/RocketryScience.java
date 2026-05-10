@@ -1,8 +1,5 @@
 package net.mistersecret312.rocketry_science;
 
-import net.minecraft.client.gui.screens.MenuScreens;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -22,7 +19,7 @@ import net.mistersecret312.rocketry_science.client.vessel.block_data.FuelTankDat
 import net.mistersecret312.rocketry_science.client.vessel.block_data.RocketEngineDataRenderer;
 import net.mistersecret312.rocketry_science.client.vessel.block_data.SeparatorDataRenderer;
 import net.mistersecret312.rocketry_science.data.SpaceCraftData;
-import net.mistersecret312.rocketry_science.data.orbiting_objects.SpaceCraft;
+import net.mistersecret312.rocketry_science.data.SpaceCraft;
 import net.mistersecret312.rocketry_science.data.orbits.ArtificialOrbit;
 import net.mistersecret312.rocketry_science.data.orbits.ConfiguredOrbit;
 import net.mistersecret312.rocketry_science.datapack.CelestialBody;

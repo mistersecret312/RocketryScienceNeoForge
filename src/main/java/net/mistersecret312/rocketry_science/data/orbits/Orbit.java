@@ -1,5 +1,6 @@
 package net.mistersecret312.rocketry_science.data.orbits;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
@@ -32,8 +33,8 @@ public abstract class Orbit<T extends IOrbitObject<?>>
 	public void tick(RegistryAccess registryAccess)
 	{}
 
-	public abstract CompoundTag save(RegistryAccess registryAccess);
-	public abstract Orbit<T> load(CompoundTag tag, RegistryAccess registryAccess);
+	public abstract CompoundTag save(HolderLookup.Provider registryAccess);
+	public abstract Orbit<T> load(CompoundTag tag, HolderLookup.Provider registryAccess);
 
 	public abstract double getOrbitalPeriod();
 	public abstract double getOrbitalAltitude();

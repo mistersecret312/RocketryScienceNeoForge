@@ -1,11 +1,13 @@
 package net.mistersecret312.rocketry_science.data.orbits;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.Mth;
 import net.mistersecret312.rocketry_science.datapack.CelestialBody;
+import net.mistersecret312.rocketry_science.data.SpaceCraft;
 import org.joml.Vector2d;
 
 public class TransferOrbit extends Orbit<SpaceCraft>
@@ -104,7 +106,7 @@ public class TransferOrbit extends Orbit<SpaceCraft>
 	}
 
 	@Override
-	public TransferOrbit load(CompoundTag tag, RegistryAccess registryAccess)
+	public TransferOrbit load(CompoundTag tag, HolderLookup.Provider registryAccess)
 	{
 		TravelPoint departure = TravelPoint.load(tag.getCompound("departure"));
 		TravelPoint arrival = TravelPoint.load(tag.getCompound("arrival"));
@@ -115,7 +117,7 @@ public class TransferOrbit extends Orbit<SpaceCraft>
 	}
 
 	@Override
-	public CompoundTag save(RegistryAccess registryAccess)
+	public CompoundTag save(HolderLookup.Provider registryAccess)
 	{
 		CompoundTag tag = new CompoundTag();
 

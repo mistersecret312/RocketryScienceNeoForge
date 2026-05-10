@@ -8,6 +8,7 @@ public interface OrbitConfig {
 	Codec<OrbitConfig> CODEC = OrbitTypeInit.REGISTRY.byNameCodec()
 														.dispatch(OrbitConfig::getType, OrbitType::codec);
 
+	String getName();
 	double getAltitude();
 	double getPeriod();
 }

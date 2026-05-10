@@ -1,4 +1,4 @@
-package net.mistersecret312.rocketry_science.data.orbiting_objects;
+package net.mistersecret312.rocketry_science.data;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
@@ -9,8 +9,10 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
+import net.mistersecret312.rocketry_science.data.orbiting_objects.IOrbitObject;
 import net.mistersecret312.rocketry_science.data.orbits.*;
 import net.mistersecret312.rocketry_science.datapack.CelestialBody;
+import net.mistersecret312.rocketry_science.util.OrbitUtil;
 import net.mistersecret312.rocketry_science.vessel.Stage;
 import net.mistersecret312.rocketry_science.vessel.VesselData;
 import net.mistersecret312.rocketry_science.vessel.VesselState;
@@ -26,15 +28,22 @@ public class SpaceCraft extends VesselData implements IOrbitObject<Orbit<SpaceCr
 	private final UUID uuid;
 
 	private Orbit<SpaceCraft> orbit;
+	private Level level;
 
 	public VesselState state;
 	public LinkedHashSet<Stage> stages;
-
 
 	public SpaceCraft(UUID uuid, LinkedHashSet<Stage> stages)
 	{
 		this.uuid = uuid;
 		this.stages = stages;
+		this.state = VesselState.ORBIT;
+	}
+
+	public SpaceCraft(UUID uuid)
+	{
+		this.uuid = uuid;
+		this.stages = new LinkedHashSet<>();
 		this.state = VesselState.ORBIT;
 	}
 
@@ -65,6 +74,11 @@ public class SpaceCraft extends VesselData implements IOrbitObject<Orbit<SpaceCr
 	{
 		CompoundTag tag = new CompoundTag();
 		tag.putUUID("uuid", this.uuid);
+
+		ListTag stageTag = new ListTag();
+		for(Stage stage : stages)
+			stageTag.add(stage.save());
+		tag.put("stages", stageTag);
 
 		if(this.getOrbit() != null)
 		{
@@ -102,6 +116,8 @@ public class SpaceCraft extends VesselData implements IOrbitObject<Orbit<SpaceCr
 
 	public static void encode(RegistryFriendlyByteBuf buf, SpaceCraft craft) {
 		buf.writeUUID(craft.uuid);
+		buf.writeCollection(craft.stages, (writer, stage) -> stage.toNetwork((RegistryFriendlyByteBuf) writer));
+
 
 		boolean hasOrbit = craft.getOrbit() != null;
 		buf.writeBoolean(hasOrbit);
@@ -126,6 +142,7 @@ public class SpaceCraft extends VesselData implements IOrbitObject<Orbit<SpaceCr
 	public static SpaceCraft decode(RegistryFriendlyByteBuf buf) {
 		UUID uuid = buf.readUUID();
 		SpaceCraft craft = new SpaceCraft(uuid, new LinkedHashSet<>());
+		craft.stages = buf.readCollection(LinkedHashSet::new, reader -> Stage.fromNetwork(buf, craft));
 
 		boolean hasOrbit = buf.readBoolean();
 		if (hasOrbit) {
@@ -148,36 +165,49 @@ public class SpaceCraft extends VesselData implements IOrbitObject<Orbit<SpaceCr
 	@Override
 	public Level level()
 	{
-		return null;
+		return level;
 	}
 
 	@Override
 	public boolean isInSpace()
 	{
-		return false;
+		return true;
 	}
 
 	@Override
 	public void tick(Level level)
 	{
+		if(level == null || OrbitUtil.bodyDimensionCheck(getOrbit().getParent(), level))
+			this.level = OrbitUtil.getLevel(getOrbit().getParent(), level);
 
+
+		if(getOrbit() instanceof TransferOrbit transfer)
+		{
+			TravelPoint arrival = transfer.getArrival();
+			if(level().getGameTime() >= arrival.getTick())
+			{
+				System.out.println("Successfully transferred to - " + arrival.getBody().location() + " Orbit - " + arrival.getOrbit().orbit().getName());
+				ArtificialOrbit orbit = new ArtificialOrbit(arrival.getBody(), this, arrival.getOrbit());
+				this.setOrbit(orbit);
+			}
+		}
 	}
 
 	@Override
 	public LinkedHashSet<Stage> getStages()
 	{
-		return null;
+		return stages;
 	}
 
 	@Override
 	public void addStage(Stage stage)
 	{
-
+		this.stages.add(stage);
 	}
 
 	@Override
 	public void removeStage(Stage stage)
 	{
-
+		this.stages.remove(stage);
 	}
 }

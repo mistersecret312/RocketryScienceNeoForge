@@ -1,5 +1,6 @@
 package net.mistersecret312.rocketry_science.data.orbits;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
@@ -7,7 +8,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.mistersecret312.rocketry_science.datapack.CelestialBody;
-import net.mistersecret312.rocketry_science.data.orbiting_objects.SpaceCraft;
+import net.mistersecret312.rocketry_science.data.SpaceCraft;
 
 public class ArtificialOrbit extends Orbit<SpaceCraft>
 {
@@ -31,7 +32,7 @@ public class ArtificialOrbit extends Orbit<SpaceCraft>
 	}
 
 	@Override
-	public CompoundTag save(RegistryAccess registryAccess)
+	public CompoundTag save(HolderLookup.Provider registryAccess)
 	{
 		CompoundTag tag = new CompoundTag();
 		tag.putString("parent", this.getParent().location().toString());
@@ -43,7 +44,7 @@ public class ArtificialOrbit extends Orbit<SpaceCraft>
 	}
 
 	@Override
-	public ArtificialOrbit load(CompoundTag tag, RegistryAccess registryAccess)
+	public ArtificialOrbit load(CompoundTag tag, HolderLookup.Provider registryAccess)
 	{
 		String parentString = tag.getString("parent");
 		ResourceKey<CelestialBody> parentKey = ResourceKey.create(CelestialBody.REGISTRY_KEY,

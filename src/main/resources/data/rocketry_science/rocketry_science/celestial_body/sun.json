@@ -4,5 +4,15 @@
   "gravity": 28.0,
   "radius": 696265000,
   "period": 0,
-  "altitude": 0
+  "altitude": 0,
+  "supported_orbits": [
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:low_orbit",
+        "altitude": 10000000,
+        "period": 100
+      }
+    }
+  ]
 }

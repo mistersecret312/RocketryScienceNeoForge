@@ -22,6 +22,12 @@ public record DefaultOrbitConfig(String name, double altitude, double period) im
 	}
 
 	@Override
+	public String getName()
+	{
+		return name;
+	}
+
+	@Override
 	public double getAltitude()
 	{
 		return altitude;

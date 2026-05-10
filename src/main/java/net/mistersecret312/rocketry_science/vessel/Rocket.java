@@ -4,13 +4,16 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.mistersecret312.rocketry_science.data.SpaceCraftData;
+import net.mistersecret312.rocketry_science.data.orbits.ArtificialOrbit;
+import net.mistersecret312.rocketry_science.data.orbits.ConfiguredOrbit;
+import net.mistersecret312.rocketry_science.datapack.CelestialBody;
 import net.mistersecret312.rocketry_science.entities.RocketEntity;
 import net.mistersecret312.rocketry_science.network.ClientPacketHandler;
 import net.mistersecret312.rocketry_science.network.packets.ClientBoundRocketUpdatePacket;
@@ -18,12 +21,10 @@ import net.mistersecret312.rocketry_science.util.OrbitUtil;
 import net.mistersecret312.rocketry_science.util.OrbitalMath;
 import net.mistersecret312.rocketry_science.vessel.block_data.BlockData;
 import net.mistersecret312.rocketry_science.vessel.block_data.RocketEngineData;
+import net.mistersecret312.rocketry_science.data.SpaceCraft;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Rocket extends VesselData
@@ -98,7 +99,7 @@ public class Rocket extends VesselData
 			{
 				double currentLeftDeltaV = getCurrentStage().calculateDeltaV();
 				currentLeftDeltaV -= landingDeltaV;
-				//getCurrentStage().consumeFuelByDeltaV(currentLeftDeltaV);
+				getCurrentStage().consumeFuelByDeltaV(currentLeftDeltaV);
 
 				if(this.stages.size() > 1)
 				{
@@ -123,12 +124,12 @@ public class Rocket extends VesselData
 				{
 					System.out.println("Fuel mass before " + getCurrentStage().getFuelMass());
 					System.out.println("Fuel mass to be consumed " + OrbitalMath.deltaVToFuelMass(getCurrentStage(), deltaVRequired));
-//					getCurrentStage().consumeFuelByDeltaV(deltaVRequired);
+					getCurrentStage().consumeFuelByDeltaV(deltaVRequired);
 					System.out.println("Fuel mass after " + getCurrentStage().getFuelMass());
 
 					System.out.println("Capable of being in orbit, leftover - " + (this.getCurrentStage().calculateDeltaV()));
-//					setState(VesselState.ORBIT);
-//					return;
+					setState(VesselState.ORBIT);
+					return;
 				}
 				else setState(VesselState.IDLE);
 
@@ -143,11 +144,23 @@ public class Rocket extends VesselData
 			}
 			case ORBIT ->
 			{
-				double leoHeight = 300*1000;
 				if(level.getServer() == null)
 					return;
-
 				this.toggleEngines(false);
+
+				CelestialBody body = OrbitUtil.getCelestialBody(level);
+				ConfiguredOrbit configuredOrbit = body.getSupportedOrbits().getFirst();
+
+				SpaceCraftData data = SpaceCraftData.get(level);
+				SpaceCraft craft = data.addFreshSpaceCraft(UUID.randomUUID());
+				ArtificialOrbit orbit = new ArtificialOrbit(OrbitUtil.getKey(body, level), craft, configuredOrbit);
+				craft.setOrbit(orbit);
+				craft.stages = this.stages;
+				data.setDirty(craft.getUUID());
+
+				System.out.println("ORBIT!");
+
+				this.getRocketEntity().discard();
 			}
 		}
 	}
@@ -281,6 +294,7 @@ public class Rocket extends VesselData
 			}
 
 			rocketNew.stages.add(stageNew);
+			rocketNew.canLand = true;
 
 			this.stages.remove(oldDetach);
 			rocketEntityNew.setRocket(rocketNew);
@@ -307,7 +321,7 @@ public class Rocket extends VesselData
 			}
 
 			rocketEntityNew.setPos(this.getRocketEntity().position());
-			this.getRocketEntity().setPos(this.getRocketEntity().position().add(0, height+4, 0));
+			this.getRocketEntity().setPos(this.getRocketEntity().position().add(0, height+4, 2));
 			this.getRocketEntity().getRocket().setState(VesselState.COASTING);
 			rocketEntityNew.getRocket().setState(VesselState.IDLE);
 			rocketEntityNew.setDeltaMovement(this.getRocketEntity().getDeltaMovement().add(0, -0.8, 0));
@@ -533,7 +547,7 @@ public class Rocket extends VesselData
 		for(Tag listTag : stageTag)
 		{
 			Stage stage = new Stage(this);
-			stage.load((CompoundTag) listTag, server);
+			stage.load((CompoundTag) listTag, server.registryAccess());
 			stages.add(stage);
 		}
 		this.stages = stages;

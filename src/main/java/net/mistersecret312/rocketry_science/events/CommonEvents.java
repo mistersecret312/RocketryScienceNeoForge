@@ -1,13 +1,13 @@
 package net.mistersecret312.rocketry_science.events;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.mistersecret312.rocketry_science.RocketryScience;
+import net.mistersecret312.rocketry_science.data.SpaceCraft;
 import net.mistersecret312.rocketry_science.data.SpaceCraftData;
-import net.mistersecret312.rocketry_science.data.orbiting_objects.SpaceCraft;
 import net.mistersecret312.rocketry_science.network.packets.ClientBoundSpacecraftSyncPacket;
-import net.mistersecret312.rocketry_science.util.OrbitUtil;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
@@ -35,6 +35,14 @@ public class CommonEvents
 	public static void levelTick(LevelTickEvent.Post event)
 	{
 		Level level = event.getLevel();
-
+		if(!level.isClientSide() && level.getServer() != null)
+		{
+			ServerLevel serverLevel = level.getServer().overworld();
+			for(Map.Entry<UUID, SpaceCraft> entry : SpaceCraftData.get(serverLevel).spaceCraft.entrySet())
+			{
+				SpaceCraft craft = entry.getValue();
+				craft.tick(serverLevel);
+			}
+		}
 	}
 }

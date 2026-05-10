@@ -4,7 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.chat.Component;
-import net.mistersecret312.rocketry_science.data.orbiting_objects.SpaceCraft;
+import net.mistersecret312.rocketry_science.data.SpaceCraft;
 import net.mistersecret312.rocketry_science.init.OrbitRequirementInit;
 
 public record TrueRequirementType(boolean value) implements OrbitRequirement

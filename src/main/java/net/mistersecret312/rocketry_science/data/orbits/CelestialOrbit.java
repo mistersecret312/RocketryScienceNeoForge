@@ -1,5 +1,6 @@
 package net.mistersecret312.rocketry_science.data.orbits;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
@@ -35,13 +36,13 @@ public class CelestialOrbit extends Orbit<CelestialBody>
 	}
 
 	@Override
-	public CompoundTag save(RegistryAccess registryAccess)
+	public CompoundTag save(HolderLookup.Provider registryAccess)
 	{
 		return new CompoundTag();
 	}
 
 	@Override
-	public Orbit<CelestialBody> load(CompoundTag tag, RegistryAccess registryAccess)
+	public Orbit<CelestialBody> load(CompoundTag tag, HolderLookup.Provider registryAccess)
 	{
 		return null;
 	}

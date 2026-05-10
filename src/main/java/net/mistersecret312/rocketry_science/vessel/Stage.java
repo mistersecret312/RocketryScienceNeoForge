@@ -1,6 +1,7 @@
 package net.mistersecret312.rocketry_science.vessel;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.*;
 import net.minecraft.network.FriendlyByteBuf;
@@ -279,12 +280,12 @@ public class Stage
 		return tag;
 	}
 
-	public void load(CompoundTag tag, MinecraftServer server)
+	public void load(CompoundTag tag, HolderLookup.Provider lookup)
 	{
 		ListTag paletteTag = tag.getList("palette", Tag.TAG_COMPOUND);
 		List<BlockState> palette = new ArrayList<>();
 		for(Tag listTag : paletteTag)
-			palette.add(NbtUtils.readBlockState(server.overworld().holderLookup(Registries.BLOCK), (CompoundTag) listTag));
+			palette.add(NbtUtils.readBlockState(lookup.lookupOrThrow(Registries.BLOCK), (CompoundTag) listTag));
 		this.palette = palette;
 
 		ListTag blocksTag = tag.getList("blocks", Tag.TAG_COMPOUND);

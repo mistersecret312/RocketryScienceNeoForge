@@ -11,5 +11,19 @@
 
   "block.rocketry_science.launch_controller": "Launch Controller",
   "block.rocketry_science.rocket_assembler": "Rocket Assembler",
-  "block.rocketry_science.rocket_pad": "Rocket Pad"
+  "block.rocketry_science.rocket_pad": "Rocket Pad",
+  "block.rocketry_science.launch_tower": "Launch Tower",
+
+  "block.rocketry_science.fuel_tank": "Fuel Tank",
+  "block.rocketry_science.steel_combustion_chamber": "Stainless Steel Combustion Chamber",
+  "block.rocketry_science.steel_nozzle_atmosphere": "Atmosphere-optimized Stainless Steel Nozzle",
+  "block.rocketry_science.separator": "Separator",
+
+  "fluid_type.rocketry_science.cryogenic_hydrogen": "Liquid Hydrogen",
+  "fluid_type.rocketry_science.cryogenic_oxygen": "Liquid Oxygen",
+
+  "entity.rocketry_science.rocket": "Rocket",
+
+  "desc.rocketry_science.rocket_fuel.hydrolox": "Fuel Type: Hydrolox",
+  "desc.rocketry_science.rocket_material.hydrolox": "Material: Stainless Steel"
 }

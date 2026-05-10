@@ -23,6 +23,12 @@ public record VanAllenOrbit(String name, double altitude, double period, int rad
 	}
 
 	@Override
+	public String getName()
+	{
+		return name;
+	}
+
+	@Override
 	public double getAltitude()
 	{
 		return altitude;

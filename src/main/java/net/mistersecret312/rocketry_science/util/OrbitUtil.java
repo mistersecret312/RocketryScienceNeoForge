@@ -5,9 +5,8 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.mistersecret312.rocketry_science.RocketryScience;
-import net.mistersecret312.rocketry_science.data.orbiting_objects.SpaceCraft;
+import net.mistersecret312.rocketry_science.data.SpaceCraft;
 import net.mistersecret312.rocketry_science.data.orbits.CelestialOrbit;
-import net.mistersecret312.rocketry_science.data.orbits.Orbit;
 import net.mistersecret312.rocketry_science.datapack.CelestialBody;
 
 import java.util.*;
@@ -15,6 +14,11 @@ import java.util.*;
 public class OrbitUtil
 {
 	public static HashMap<UUID, SpaceCraft> SPACECRAFT = new HashMap<>();
+
+	public static final ResourceKey<CelestialBody> THE_SUN = ResourceKey.create(CelestialBody.REGISTRY_KEY,
+			ResourceLocation.fromNamespaceAndPath(RocketryScience.MODID, "sun"));
+	public static final ResourceKey<CelestialBody> EARTH = ResourceKey.create(CelestialBody.REGISTRY_KEY,
+			ResourceLocation.fromNamespaceAndPath(RocketryScience.MODID, "earth"));
 
 	public static Registry<CelestialBody> getCelestialRegistry(Level level)
 	{
@@ -36,7 +40,41 @@ public class OrbitUtil
 				return body;
 		}
 
-		return registry.get(ResourceLocation.fromNamespaceAndPath(RocketryScience.MODID, "earth"));
+		return registry.get(EARTH);
+	}
+
+	public static ResourceKey<CelestialBody> getKey(CelestialBody body, Level level)
+	{
+		ResourceLocation rl = getCelestialRegistry(level).getKey(body);
+		if(rl == null)
+			return EARTH;
+		return ResourceKey.create(CelestialBody.REGISTRY_KEY, rl);
+	}
+
+	public static Level getLevel(ResourceKey<CelestialBody> key, Level level)
+	{
+		CelestialBody body = getCelestialRegistry(level).get(key);
+		if(body != null)
+		{
+			Optional<ResourceKey<Level>> dimension = body.getDimension();
+			if(dimension.isPresent() && level.getServer() != null)
+				return level.getServer().getLevel(dimension.get());
+		}
+
+		return level;
+	}
+
+	public static boolean bodyDimensionCheck(ResourceKey<CelestialBody> key, Level level)
+	{
+		CelestialBody body = getCelestialRegistry(level).get(key);
+		if(body != null)
+		{
+			Optional<ResourceKey<Level>> dimension = body.getDimension();
+			if(dimension.isPresent() && level.getServer() != null)
+				return dimension.get().equals(level.dimension());
+		}
+
+		return false;
 	}
 
 	public static CelestialOrbit getCelestialOrbit(ResourceKey<CelestialBody> key, Level level)

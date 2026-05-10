@@ -18,11 +18,11 @@ public class RocketRenderTypes extends RenderType
 	public static RenderType plume(ResourceLocation rl)
 	{
 		return create("plume", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256,
-				false, false,
+				false, true,
 				RenderType.CompositeState.builder()
 										 .setShaderState(RenderStateShard.RENDERTYPE_ENTITY_ALPHA_SHADER)
 										 .setTextureState(new TextureStateShard(rl, false, false))
-										 .setCullState(CULL)
+										 .setCullState(NO_CULL)
 										 .createCompositeState(true));
 	}
 }

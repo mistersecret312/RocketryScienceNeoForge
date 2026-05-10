@@ -3,6 +3,7 @@ package net.mistersecret312.rocketry_science.client.renderer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.mistersecret312.rocketry_science.RocketryScience;
@@ -35,7 +36,7 @@ public class PlumeRenderer
 		poseStack.scale(1.375f, 1, 1.375f);
 
 		model.renderToBuffer(poseStack, buffer.getBuffer(RocketRenderTypes.plume(textureStart)),
-				255, 255, 255);
+				LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
 		poseStack.popPose();
 
 		for (int segment = 0; segment < length; segment++)
@@ -48,7 +49,7 @@ public class PlumeRenderer
 
 			poseStack.scale(1.375f, 1, 1.375f);
 			this.model.renderToBuffer(poseStack, buffer.getBuffer(RocketRenderTypes.plume(textureMiddle)),
-					255, 255, 255);
+					LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
 			poseStack.popPose();
 		}
 
@@ -59,7 +60,7 @@ public class PlumeRenderer
 
 		poseStack.scale(1.375f, 1, 1.375f);
 		this.model.renderToBuffer(poseStack, buffer.getBuffer(RocketRenderTypes.plume(textureEnd)),
-				255, 255, 255);
+				LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
 		poseStack.popPose();
 	}
 

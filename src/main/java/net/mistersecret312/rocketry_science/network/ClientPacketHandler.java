@@ -3,7 +3,7 @@ package net.mistersecret312.rocketry_science.network;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.entity.Entity;
-import net.mistersecret312.rocketry_science.data.orbiting_objects.SpaceCraft;
+import net.mistersecret312.rocketry_science.data.SpaceCraft;
 import net.mistersecret312.rocketry_science.entities.RocketEntity;
 import net.mistersecret312.rocketry_science.util.OrbitUtil;
 import net.mistersecret312.rocketry_science.vessel.Rocket;
