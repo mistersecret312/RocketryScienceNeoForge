@@ -93,6 +93,15 @@ public class TransferOrbit extends Orbit<SpaceCraft>
 		return Mth.clamp(progress, 0D, 1D);
 	}
 
+	public double getProgress(long tick)
+	{
+		if(getArrival().getTick()-getDeparture().getTick() == 0)
+			return 1;
+
+		double ratio = (double) (tick - getDeparture().getTick()) / (getArrival().getTick() - getDeparture().getTick());
+		return Math.max(1, Math.min(0, ratio));
+	}
+
 	@Override
 	public ResourceKey<CelestialBody> getParent()
 	{

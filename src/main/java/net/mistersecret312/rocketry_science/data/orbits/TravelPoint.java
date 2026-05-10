@@ -14,7 +14,7 @@ public class TravelPoint
 	private final long tick;
 	private final ResourceKey<CelestialBody> body;
 
-	private TravelPoint(ConfiguredOrbit orbit, long tick, ResourceKey<CelestialBody> body)
+	public TravelPoint(ConfiguredOrbit orbit, long tick, ResourceKey<CelestialBody> body)
 	{
 		this.orbit = orbit;
 		this.tick = tick;

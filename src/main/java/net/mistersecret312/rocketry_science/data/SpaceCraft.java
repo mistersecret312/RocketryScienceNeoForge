@@ -57,6 +57,7 @@ public class SpaceCraft extends VesselData implements IOrbitObject<Orbit<SpaceCr
 	public void setOrbit(Orbit<SpaceCraft> orbit)
 	{
 		this.orbit = orbit;
+		SpaceCraftData.get(level()).setDirty(uuid);
 	}
 
 	@Override

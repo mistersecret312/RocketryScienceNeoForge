@@ -13,6 +13,8 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.mistersecret312.rocketry_science.data.SpaceCraftData;
 import net.mistersecret312.rocketry_science.data.orbits.ArtificialOrbit;
 import net.mistersecret312.rocketry_science.data.orbits.ConfiguredOrbit;
+import net.mistersecret312.rocketry_science.data.orbits.TransferOrbit;
+import net.mistersecret312.rocketry_science.data.orbits.TravelPoint;
 import net.mistersecret312.rocketry_science.datapack.CelestialBody;
 import net.mistersecret312.rocketry_science.entities.RocketEntity;
 import net.mistersecret312.rocketry_science.network.ClientPacketHandler;
@@ -153,10 +155,17 @@ public class Rocket extends VesselData
 
 				SpaceCraftData data = SpaceCraftData.get(level);
 				SpaceCraft craft = data.addFreshSpaceCraft(UUID.randomUUID());
+
+				CelestialBody sun = OrbitUtil.getCelestialBody(OrbitUtil.THE_SUN, level);
+				ConfiguredOrbit sunOrbit = sun.getSupportedOrbits().getFirst();
+
+				TravelPoint departure = new TravelPoint(configuredOrbit, level.getGameTime(), OrbitUtil.getKey(body, level));
+				TravelPoint arrival = new TravelPoint(sunOrbit, level.getGameTime()+1500, OrbitUtil.getKey(sun, level));
+
+				TransferOrbit transferOrbit = new TransferOrbit(craft, departure, arrival, departure.getTick()- arrival.getTick());
 				ArtificialOrbit orbit = new ArtificialOrbit(OrbitUtil.getKey(body, level), craft, configuredOrbit);
-				craft.setOrbit(orbit);
 				craft.stages = this.stages;
-				data.setDirty(craft.getUUID());
+				craft.setOrbit(transferOrbit);
 
 				System.out.println("ORBIT!");
 
