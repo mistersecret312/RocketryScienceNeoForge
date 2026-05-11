@@ -204,7 +204,6 @@ public class FuelTankData extends BlockData
                     level.setBlock(pos.offset(2, j, 2), BlockInit.FUEL_TANK.get().defaultBlockState(), 2);
                 }
                 super.placeInLevel(level, pos);
-
         }
     }
 }

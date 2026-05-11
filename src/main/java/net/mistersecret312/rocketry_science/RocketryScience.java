@@ -5,7 +5,9 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.material.Fluid;
+import net.mistersecret312.rocketry_science.block_entities.fuel_tank.FuelTankBlockEntity;
 import net.mistersecret312.rocketry_science.client.level.RocketryDimensionSpecialEffects;
 import net.mistersecret312.rocketry_science.client.model.PlumeModel;
 import net.mistersecret312.rocketry_science.client.renderer.block.FuelTankRenderer;
@@ -136,6 +138,17 @@ public class RocketryScience
 				BlockEntityInit.FUEL_TANK.get(),
 				(be, context) ->
 					{
+						if(!be.isController() && be.getLevel() != null)
+						{
+							BlockEntity blockEntity = be.getLevel().getBlockEntity(be.getController());
+							if(blockEntity instanceof FuelTankBlockEntity fuelTank)
+							{
+								if(fuelTank.fluidCapability == null)
+									fuelTank.refreshCapability();
+								return fuelTank.fluidCapability;
+							}
+						}
+
 						if(be.fluidCapability == null)
 							be.refreshCapability();
 						return be.fluidCapability;

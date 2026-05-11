@@ -25,7 +25,7 @@ public class CelestialBody implements IOrbitObject<CelestialOrbit>
 
 	public static final Codec<CelestialBody> CODEC = RecordCodecBuilder.create(inst -> inst.group(
 			Codec.STRING.fieldOf("name").forGetter(CelestialBody::getName),
-			ResourceLocation.CODEC.fieldOf("texture").forGetter(CelestialBody::getTexture),
+			ResourceLocation.CODEC.fieldOf("icon").forGetter(CelestialBody::getIcon),
 			ResourceKey.codec(Registries.DIMENSION).optionalFieldOf("dimension").forGetter(CelestialBody::getDimension),
 			ResourceKey.codec(REGISTRY_KEY).optionalFieldOf("parent", THE_SUN).forGetter(CelestialBody::getParentKey),
 			Codec.DOUBLE.fieldOf("altitude").forGetter(CelestialBody::getAltitude),
@@ -38,7 +38,7 @@ public class CelestialBody implements IOrbitObject<CelestialOrbit>
 	).apply(inst, CelestialBody::new));
 
 	private final String name;
-	private final ResourceLocation texture;
+	private final ResourceLocation icon;
 	private final ResourceKey<Level> dimension;
 	private final ResourceKey<CelestialBody> parentKey;
 	private final double altitude;
@@ -51,11 +51,11 @@ public class CelestialBody implements IOrbitObject<CelestialOrbit>
 
 	private CelestialOrbit orbit = null;
 
-	public CelestialBody(String name, ResourceLocation texture, Optional<ResourceKey<Level>> dimension, ResourceKey<CelestialBody> parentKey, double altitude, double period,
+	public CelestialBody(String name, ResourceLocation icon, Optional<ResourceKey<Level>> dimension, ResourceKey<CelestialBody> parentKey, double altitude, double period,
 						 boolean hasAtmosphere, int dayLength, double gravity, double radius, List<ConfiguredOrbit> supportedOrbits)
 	{
 		this.name = name;
-		this.texture = texture;
+		this.icon = icon;
 		this.dimension = dimension.orElse(null);
 		this.parentKey = parentKey;
 		this.altitude = altitude;
@@ -90,9 +90,9 @@ public class CelestialBody implements IOrbitObject<CelestialOrbit>
 		return name;
 	}
 
-	public ResourceLocation getTexture()
+	public ResourceLocation getIcon()
 	{
-		return texture;
+		return icon;
 	}
 
 	public Optional<ResourceKey<Level>> getDimension()

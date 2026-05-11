@@ -1,5 +1,6 @@
 package net.mistersecret312.rocketry_science.vessel;
 
+import com.google.common.util.concurrent.AtomicDouble;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -622,13 +623,12 @@ public class Rocket extends VesselData
 	public void landingSimulation()
 	{
 		AtomicInteger takeOffFuel = new AtomicInteger(0);
-		double takeoffDeltaV = takeoffSimulation(takeOffFuel);
+		AtomicDouble takeOffDeltaV = new AtomicDouble(0);
+		double takeoffDeltaV = takeoffSimulation(takeOffFuel, takeOffDeltaV);
 
 		int fuelUsed = 0;
 		int ticks = 0;
 		Stage stage = getCurrentStage();
-
-		double gravity = 0.025*getLocalGravity();
 
 		double thrust = getMaxThrustKiloNewtons();
 		double fuelFlow = getAverageFuelUsage();
@@ -639,7 +639,10 @@ public class Rocket extends VesselData
 		double acceleration = 0;
 		double velocity = 0;
 
-		double safeLandingSpeed = -0.1;
+		double finalTouchdownAltitude = this.rocket.makeBoundingBox().getYsize()*1.5d;
+
+		double brakingDescentSpeed = -1.0;
+		double safeLandingSpeed = -0.25;
 		double g = 0.025;
 
 		int ticksRan = 0;
@@ -657,7 +660,7 @@ public class Rocket extends VesselData
 			velocity -= g;
 			velocity = Mth.clamp(velocity, -4, 0);
 
-			double twr = (thrust*1000)/(massAccounted*gravity);
+			double twr = (thrust*1000)/(massAccounted*getLocalGravityMS2());
 			double netAccelMax = (twr - 1.0) * g;
 
 			double stoppingDistance = 0;
@@ -671,18 +674,30 @@ public class Rocket extends VesselData
 			double thrustLevel = 0.0;
 			if (altitude <= stoppingDistance + this.rocket.makeBoundingBox().getYsize())
 			{
-				double desiredVelocity = safeLandingSpeed;
-				double error = desiredVelocity - velocity;
+				double desiredVelocity;
+				double Kp;
+				double Kd;
 
-				double Kp = 0.5;
-				double Kd = 0.2;
+				if (altitude <= finalTouchdownAltitude)
+				{
+					desiredVelocity = safeLandingSpeed;
+					Kp = 0.7;
+					Kd = 0.3;
+				}
+				else
+				{
+					desiredVelocity = brakingDescentSpeed;
+					Kp = 0.4;
+					Kd = 0.15;
+				}
+				double error = desiredVelocity - velocity;
 
 				double accelCmd = Kp * error - Kd * velocity;
 				double thrustFraction = (g + accelCmd) / (twr * g);
 				thrustLevel = Mth.clamp(thrustFraction, 0.0, 1.0);
 
-				fuelUsed += (int) (fuelFlow * thrustLevel) * stage.getFuelTypeAmount() * getEngineAmount();
-				massAccounted -= (int) (fuelFlow * thrustLevel) * stage.getFuelTypeAmount() * getEngineAmount();
+				fuelUsed += Math.max(1, (int) (fuelFlow * thrustLevel) * stage.getFuelTypeAmount() * getEngineAmount());
+				massAccounted -= Math.max(1, (int) (fuelFlow * thrustLevel) * stage.getFuelTypeAmount() * getEngineAmount());
 
 				ticksRan++;
 			}
@@ -703,14 +718,14 @@ public class Rocket extends VesselData
 
 		System.out.println("Simulated landing fuel - " + fuelUsed);
 		System.out.println("Landing DeltaV to fuel - " + OrbitalMath.deltaVToFuelMass(stage, deltaV));
-		System.out.println("Takeoff DeltaV to fuel - " + OrbitalMath.deltaVToFuelMass(stage, takeoffDeltaV));
+		System.out.println("Takeoff DeltaV to fuel - " + OrbitalMath.deltaVToFuelMass(stage, takeOffFuel.get()));
 		System.out.println("Simulated deltaV - " + takeoffDeltaV + " Landing - " + deltaV);
 
 		this.landingDeltaV = deltaV;
 		this.takeoffDeltaV = takeoffDeltaV;
 	}
 
-	public double takeoffSimulation(AtomicInteger fuel)
+	public double takeoffSimulation(AtomicInteger usedFuel, AtomicDouble usedDeltaV)
 	{
 		int fuelUsed = 0;
 		int ticks = 0;
@@ -752,9 +767,9 @@ public class Rocket extends VesselData
 
 			engineThrust = Math.max(0, Math.min(engineThrust, 1));
 
-			fuelUsed += (int) (fuelFlow * engineThrust) * stage.getFuelTypeAmount() * getEngineAmount();
-			massAccounted -= (int) (fuelFlow*engineThrust) * stage.getFuelTypeAmount() * getEngineAmount();
-			rocketMass -= (int) (fuelFlow*engineThrust) * stage.getFuelTypeAmount() * getEngineAmount();
+			fuelUsed += Math.max(1, (int) (fuelFlow * engineThrust) * stage.getFuelTypeAmount() * getEngineAmount());
+			massAccounted -= Math.max(1, (int) (fuelFlow*engineThrust) * stage.getFuelTypeAmount() * getEngineAmount());
+			rocketMass -= Math.max(1, (int) (fuelFlow*engineThrust) * stage.getFuelTypeAmount() * getEngineAmount());
 
 			double twr = (thrust*1000)/(rocketMass*getLocalGravityMS2());
 			acceleration = gravity*twr*engineThrust;
@@ -771,7 +786,8 @@ public class Rocket extends VesselData
 		double massRatio = mass/(massAccounted);
 		double deltaV = 9.8*Isp*Math.log(massRatio);
 
-		fuel.set(fuelUsed);
+		usedFuel.set(fuelUsed);
+		usedDeltaV.set(deltaV);
 
 		System.out.println("Simulated time - " + ticks);
 		System.out.println("Simulated takeoff fuel - " + fuelUsed);

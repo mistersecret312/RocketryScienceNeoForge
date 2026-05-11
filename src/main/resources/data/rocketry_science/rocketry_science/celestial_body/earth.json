@@ -1,6 +1,6 @@
 {
   "name": "rocketry_science:earth",
-  "texture":"rocketry_science:textures/planet/sol/earth.png",
+  "icon":"rocketry_science:textures/planet/sol/earth.png",
   "parent": "rocketry_science:sun",
   "dimension": "minecraft:overworld",
   "gravity": 1.0,
