@@ -82,7 +82,7 @@ public class LiquidRocketEngineBlockEntity extends RocketEngineBlockEntity
                 this.rocketFuel = fuelType;
                 this.setMass(2500*material.getMassCoefficient());
                 this.setThrust(fuelType.getThrustKiloNewtons());
-                this.setEfficiency(fuelType.getEfficiency());
+                this.setEfficiency(fuelType.getVacuumISP());
                 materialEfficiencyMult += material.getEfficiencyCoefficient();
                 materialThrustMult += material.getThrustCoefficient();
             }

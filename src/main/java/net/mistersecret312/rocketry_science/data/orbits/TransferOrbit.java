@@ -136,4 +136,16 @@ public class TransferOrbit extends Orbit<SpaceCraft>
 
 		return tag;
 	}
+
+	public static class TransferData
+	{
+		public double deltaV;
+		public double transferTime;
+
+		public TransferData(double deltaV, double transferTime)
+		{
+			this.deltaV = deltaV;
+			this.transferTime = transferTime;
+		}
+	}
 }

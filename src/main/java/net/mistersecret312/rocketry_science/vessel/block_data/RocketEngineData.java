@@ -15,7 +15,10 @@ import net.minecraft.world.phys.Vec3;
 import net.mistersecret312.rocketry_science.block_entities.rocket_engine.RocketEngineBlockEntity;
 import net.mistersecret312.rocketry_science.blocks.CombustionChamberBlock;
 import net.mistersecret312.rocketry_science.blocks.NozzleBlock;
+import net.mistersecret312.rocketry_science.data.SpaceCraft;
+import net.mistersecret312.rocketry_science.environment.PressureRating;
 import net.mistersecret312.rocketry_science.items.CombustionChamberItem;
+import net.mistersecret312.rocketry_science.util.EnvironmentUtil;
 import net.mistersecret312.rocketry_science.util.RocketFuel;
 import net.mistersecret312.rocketry_science.block_entities.fuel_tank.RocketFuelTank;
 import net.mistersecret312.rocketry_science.entities.RocketEntity;
@@ -228,18 +231,24 @@ public class RocketEngineData extends BlockData
 
     public double getIsp()
     {
-        if(stage.getVessel().isInSpace())
-            return Isp*1.05f;
+        double pressure = EnvironmentUtil.getPressure(getStage().getVessel());
+        double drop = fuelType.getVacuumISP() - fuelType.getAtmosphericISP();
 
-        return Isp;
+        return fuelType.getVacuumISP() - (drop * pressure);
     }
 
     public double getThrustkN()
     {
-        if(stage.getVessel().isInSpace())
-            return thrust_kN*0.5f;
+        if(!canProduceThrust() || getIsp() <= 0)
+            return 0d;
 
-        return thrust_kN;
+        return fuelType.getThrustKiloNewtons() * (getIsp() / fuelType.getVacuumISP());
+    }
+
+    public boolean canProduceThrust()
+    {
+        double pressure = EnvironmentUtil.getPressure(getStage().getVessel());
+		return fuelType.getRating().getMax() >= pressure;
     }
 
     @Override

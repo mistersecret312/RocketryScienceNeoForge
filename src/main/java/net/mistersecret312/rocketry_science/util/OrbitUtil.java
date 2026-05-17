@@ -129,6 +129,33 @@ public class OrbitUtil
 		return null;
 	}
 
+	public static CelestialBody findCommonAncestor(Level level, CelestialBody a, CelestialBody b) {
+		CelestialBody currentA = a;
+		while (currentA != null)
+		{
+			CelestialBody currentB = b;
+			while (currentB != null)
+			{
+				if (currentA.equals(currentB))
+					return currentA;
+				currentB = getCelestialBodyByDimension(currentB.getParentKey().location(), level);
+			}
+			currentA = getCelestialBodyByDimension(currentA.getParentKey().location(), level);
+		}
+		return null;
+	}
+
+	public static double getRadiusRelativeToAncestor(Level level, CelestialBody body, CelestialBody ancestor) {
+		double r = 0;
+		CelestialBody current = body;
+		while (current != null && !current.equals(ancestor))
+		{
+			r += current.getOrbit().getOrbitalAltitude() + current.getRadius();
+			current = getCelestialBodyByDimension(current.getParentKey().location(), level);
+		}
+		return Math.max(r, 1.0);
+	}
+
 	public static double getSpaceHeight(Level level)
 	{
 		return (level.getMaxBuildHeight()-level.getMinBuildHeight())*2;

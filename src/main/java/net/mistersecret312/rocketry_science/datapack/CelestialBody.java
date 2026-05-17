@@ -11,30 +11,34 @@ import net.mistersecret312.rocketry_science.RocketryScience;
 import net.mistersecret312.rocketry_science.data.orbiting_objects.IOrbitObject;
 import net.mistersecret312.rocketry_science.data.orbits.CelestialOrbit;
 import net.mistersecret312.rocketry_science.data.orbits.ConfiguredOrbit;
+import net.mistersecret312.rocketry_science.environment.EnvironmentData;
+import net.mistersecret312.rocketry_science.environment.modifiers.ModifierConfig;
+import net.mistersecret312.rocketry_science.util.EnvironmentUtil;
+import net.mistersecret312.rocketry_science.util.OrbitUtil;
 
 import java.util.List;
 import java.util.Optional;
+
+import static net.mistersecret312.rocketry_science.util.EnvironmentUtil.EARTH;
+import static net.mistersecret312.rocketry_science.util.EnvironmentUtil.LUNA;
 
 public class CelestialBody implements IOrbitObject<CelestialOrbit>
 {
 	public static final ResourceLocation CELESTIAL_BODY_LOCATION = ResourceLocation.fromNamespaceAndPath(RocketryScience.MODID, "celestial_body");
 	public static final ResourceKey<Registry<CelestialBody>> REGISTRY_KEY = ResourceKey.createRegistryKey(CELESTIAL_BODY_LOCATION);
 
-	public static final ResourceKey<CelestialBody> THE_SUN = ResourceKey.create(REGISTRY_KEY,
-			ResourceLocation.fromNamespaceAndPath(RocketryScience.MODID, "sun"));
-
 	public static final Codec<CelestialBody> CODEC = RecordCodecBuilder.create(inst -> inst.group(
 			Codec.STRING.fieldOf("name").forGetter(CelestialBody::getName),
 			ResourceLocation.CODEC.fieldOf("icon").forGetter(CelestialBody::getIcon),
 			ResourceKey.codec(Registries.DIMENSION).optionalFieldOf("dimension").forGetter(CelestialBody::getDimension),
-			ResourceKey.codec(REGISTRY_KEY).optionalFieldOf("parent", THE_SUN).forGetter(CelestialBody::getParentKey),
+			ResourceKey.codec(REGISTRY_KEY).optionalFieldOf("parent", OrbitUtil.THE_SUN).forGetter(CelestialBody::getParentKey),
 			Codec.DOUBLE.fieldOf("altitude").forGetter(CelestialBody::getAltitude),
 			Codec.DOUBLE.fieldOf("period").forGetter(CelestialBody::getPeriod),
 			Codec.BOOL.optionalFieldOf("has_atmosphere", false).forGetter(CelestialBody::hasAtmosphere),
 			Codec.INT.optionalFieldOf("day_length", 20).forGetter(CelestialBody::getDayLength),
-			Codec.DOUBLE.fieldOf("gravity").forGetter(CelestialBody::getGravity),
 			Codec.DOUBLE.fieldOf("radius").forGetter(CelestialBody::getRadius),
-			ConfiguredOrbit.CODEC.listOf().optionalFieldOf("supported_orbits", List.of()).forGetter(CelestialBody::getSupportedOrbits)
+			ConfiguredOrbit.CODEC.listOf().optionalFieldOf("supported_orbits", List.of()).forGetter(CelestialBody::getSupportedOrbits),
+			ModifierConfig.CODEC.listOf().optionalFieldOf("modifiers", List.of()).forGetter(CelestialBody::getModifiers)
 	).apply(inst, CelestialBody::new));
 
 	private final String name;
@@ -45,14 +49,16 @@ public class CelestialBody implements IOrbitObject<CelestialOrbit>
 	private final double period;
 	private final boolean hasAtmosphere;
 	private final int dayLength;
-	private final double gravity;
 	private final double radius;
 	private final List<ConfiguredOrbit> supportedOrbits;
+	private final List<ModifierConfig> modifiers;
 
 	private CelestialOrbit orbit = null;
+	private EnvironmentData environment = null;
 
 	public CelestialBody(String name, ResourceLocation icon, Optional<ResourceKey<Level>> dimension, ResourceKey<CelestialBody> parentKey, double altitude, double period,
-						 boolean hasAtmosphere, int dayLength, double gravity, double radius, List<ConfiguredOrbit> supportedOrbits)
+						 boolean hasAtmosphere, int dayLength, double radius, List<ConfiguredOrbit> supportedOrbits,
+						 List<ModifierConfig> modifiers)
 	{
 		this.name = name;
 		this.icon = icon;
@@ -61,10 +67,10 @@ public class CelestialBody implements IOrbitObject<CelestialOrbit>
 		this.altitude = altitude;
 		this.period = period;
 		this.supportedOrbits = supportedOrbits;
+		this.modifiers = modifiers;
 
 		this.hasAtmosphere = hasAtmosphere;
 		this.dayLength = dayLength;
-		this.gravity = gravity;
 		this.radius = radius;
 
 		if(altitude == 0 || period == 0)
@@ -82,6 +88,18 @@ public class CelestialBody implements IOrbitObject<CelestialOrbit>
 	public void setOrbit(CelestialOrbit orbit)
 	{
 
+	}
+
+	public EnvironmentData getEnvironment()
+	{
+		if(environment == null)
+			return hasAtmosphere() ? EARTH : LUNA;
+		return environment;
+	}
+
+	public void setEnvironment(EnvironmentData environment)
+	{
+		this.environment = environment;
 	}
 
 	@Override
@@ -110,6 +128,16 @@ public class CelestialBody implements IOrbitObject<CelestialOrbit>
 		return period;
 	}
 
+	public double getOrbitAngle(long time)
+	{
+		if(getOrbit() == null)
+			return 0;
+
+		double orbitTime = time % getPeriod();
+		double orbitPercentage = orbitTime / getPeriod();
+		return orbitPercentage * 2d * Math.PI;
+	}
+
 	public boolean hasAtmosphere()
 	{
 		return hasAtmosphere;
@@ -120,19 +148,9 @@ public class CelestialBody implements IOrbitObject<CelestialOrbit>
 		return dayLength;
 	}
 
-	public double getGravity()
+	public List<ModifierConfig> getModifiers()
 	{
-		return gravity;
-	}
-
-	public double getGravityMS2()
-	{
-		return gravity*9.8;
-	}
-
-	public double getGravitationalParameter()
-	{
-		return getGravityMS2()*getRadius()*getRadius();
+		return modifiers;
 	}
 
 	public double getRadius()

@@ -7,18 +7,19 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.ServerLinks;
 import net.minecraft.util.ByIdMap;
 import net.minecraft.util.StringRepresentable;
+import net.mistersecret312.rocketry_science.environment.PressureRating;
 
 import java.util.function.IntFunction;
 
 public enum RocketMaterial implements StringRepresentable
 {
     STAINLESS_STEEL(0, "stainless_steel", 1.0, 1.0, 1.0);
-    String name;
-    double massCoefficient;
-    double thrustCoefficient;
-    double efficiencyCoefficient;
+    final String name;
+    final double massCoefficient;
+    final double thrustCoefficient;
+    final double efficiencyCoefficient;
 
-    int id;
+    final int id;
 
     public static final Codec<RocketMaterial> CODEC = StringRepresentable.fromEnum(RocketMaterial::values);
     private static final IntFunction<RocketMaterial> BY_ID = ByIdMap.continuous(

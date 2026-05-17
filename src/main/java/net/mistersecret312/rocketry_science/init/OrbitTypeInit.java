@@ -23,8 +23,6 @@ public class OrbitTypeInit
 
 	public static final DeferredHolder<OrbitType<?>, OrbitType<?>> DEFAULT = TYPES.register("default",
 			() -> new OrbitType<>(DefaultOrbitConfig.CODEC));
-	public static final DeferredHolder<OrbitType<?>, OrbitType<?>> VAN_ALLEN = TYPES.register("van_allen",
-			() -> new OrbitType<>(VanAllenOrbit.CODEC));
 
 	public static void register(IEventBus bus)
 	{

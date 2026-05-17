@@ -3,6 +3,7 @@
   "icon":"rocketry_science:textures/gui/moon.png",
   "parent": "rocketry_science:earth",
   "dimension": "rocketry_science:luna",
+  "has_atmosphere": false,
   "day_length": 160,
   "gravity": 0.165,
   "radius": 1737400,

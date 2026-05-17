@@ -2,12 +2,17 @@ package net.mistersecret312.rocketry_science.events;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LightLayer;
 import net.mistersecret312.rocketry_science.RocketryScience;
 import net.mistersecret312.rocketry_science.data.SpaceCraft;
 import net.mistersecret312.rocketry_science.data.SpaceCraftData;
+import net.mistersecret312.rocketry_science.datapack.CelestialBody;
+import net.mistersecret312.rocketry_science.environment.modifiers.ModifierConfig;
 import net.mistersecret312.rocketry_science.network.packets.ClientBoundSpacecraftSyncPacket;
+import net.mistersecret312.rocketry_science.util.EnvironmentUtil;
 import net.mistersecret312.rocketry_science.util.OrbitUtil;
 import net.mistersecret312.rocketry_science.util.OrbitalMath;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -37,6 +42,7 @@ public class CommonEvents
 	@SubscribeEvent
 	public static void entityTick(EntityTickEvent.Pre event)
 	{
+		EnvironmentUtil.modifiersAffect(event.getEntity());
 		OrbitalMath.gravityAffect(event.getEntity());
 	}
 
@@ -47,6 +53,13 @@ public class CommonEvents
 		if(!level.isClientSide() && level.getServer() != null)
 		{
 			ServerLevel serverLevel = level.getServer().overworld();
+			CelestialBody body = OrbitUtil.getCelestialBody(level);
+			if(body != null)
+			{
+				for(ModifierConfig modifier : body.getModifiers())
+					modifier.tick(level);
+			}
+
 			for(Map.Entry<UUID, SpaceCraft> entry : SpaceCraftData.get(serverLevel).getSpaceCraft().entrySet())
 			{
 				SpaceCraft craft = entry.getValue();

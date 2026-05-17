@@ -3,6 +3,7 @@
   "icon":"rocketry_science:textures/planet/sol/earth.png",
   "parent": "rocketry_science:sun",
   "dimension": "minecraft:overworld",
+  "has_atmosphere": true,
   "gravity": 1.0,
   "radius": 6378000,
   "period": 1,
