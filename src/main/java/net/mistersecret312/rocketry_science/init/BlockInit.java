@@ -45,6 +45,10 @@ public class BlockInit
 	public static final DeferredBlock<NozzleBlock> STEEL_NOZZLE_ATMOPSHERE = registerBlock("steel_nozzle_atmosphere",
 			() -> new NozzleBlock(BlockBehaviour.Properties.of().noOcclusion().explosionResistance(10).explosionResistance(10).sound(SoundType.COPPER),
 					false, true));
+	public static final DeferredBlock<NozzleBlock> STEEL_NOZZLE_VACUUM = registerBlock("steel_nozzle_vacuum",
+			() -> new NozzleBlock(BlockBehaviour.Properties.of().noOcclusion().explosionResistance(10).explosionResistance(10).sound(SoundType.COPPER),
+					true, true));
+
 	public static final DeferredBlock<Block> STEEL_ROCKET_ENGINE_STUB = registerBlock("steel_rocket_engine_stub",
 			() -> new Block(BlockBehaviour.Properties.of().noOcclusion()));
 

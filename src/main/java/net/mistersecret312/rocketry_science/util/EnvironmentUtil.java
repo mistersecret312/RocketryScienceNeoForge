@@ -41,7 +41,7 @@ public class EnvironmentUtil
 
 	public static double getTemperatureKelvin(Level level)
 	{
-		return getEnvironment(level).getTemperatureGradient().getTemperature(15-level.getSkyDarken());
+		return getEnvironment(level).getTemperatureGradient().getTemperature(11-level.getSkyDarken());
 	}
 
 	public static double getTemperatureCelsius(Level level)
@@ -63,10 +63,10 @@ public class EnvironmentUtil
 	{
 		Level level = vessel.level();
 		double height = level.getSeaLevel();
-		if(vessel instanceof SpaceCraft craft)
-			height = craft.getOrbit().getOrbitalAltitude();
+		if(vessel instanceof SpaceCraft)
+			height = OrbitUtil.getSpaceHeight(level)*2;
 		else if(vessel instanceof Rocket rocket)
-			height = rocket.getAltitude(level);
+			height = rocket.getRocketEntity().position().y;
 
 		return getPressure(level, height);
 	}
@@ -77,13 +77,17 @@ public class EnvironmentUtil
 		double seaLevelY = level.getSeaLevel();
 		double seaLevelPressure = getSeaLevelPressure(level);
 
-		if(yLevel >= spaceY)
+		if(yLevel >= spaceY || seaLevelPressure == 0)
 			return 0d;
 
 		double vacuumThreshold = 0.001;
 		double scaleHeight = (seaLevelY - spaceY) / Math.log(vacuumThreshold / seaLevelPressure);
 
-		return seaLevelPressure * Math.exp(-(yLevel - seaLevelY) / scaleHeight);
+		double pressure =  seaLevelPressure * Math.exp(-(yLevel - seaLevelY) / scaleHeight);
+		if(level.dimension().equals(Level.OVERWORLD) && pressure >= 1.0d)
+			return 1.0d;
+
+		return pressure;
 	}
 
 	public static double getGravity(CelestialBody body)

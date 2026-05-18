@@ -66,7 +66,7 @@ public class SeparatorData extends BlockData
     @Override
     public double getMass()
     {
-        return super.getMass()*2;
+        return super.getMass()*0.25;
     }
 
     @Override

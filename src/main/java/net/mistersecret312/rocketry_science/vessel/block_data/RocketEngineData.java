@@ -158,6 +158,9 @@ public class RocketEngineData extends BlockData
             double twr = (getThrustkN()*1000)/(mass*stage.getVessel().getLocalGravityMS2());
             double accel = 0.025*twr*thrustPercentage;
 
+            if(thrustPercentage != 0)
+                System.out.println("ISP: " + getIsp() + ", Thrust: " + getThrustkN() + ", DeltaV: " + getStage().calculateDeltaV());
+
             rocket.getRocketEntity().addDeltaMovement(new Vec3(0, accel, 0));
         }
     }
@@ -232,9 +235,16 @@ public class RocketEngineData extends BlockData
     public double getIsp()
     {
         double pressure = EnvironmentUtil.getPressure(getStage().getVessel());
-        double drop = fuelType.getVacuumISP() - fuelType.getAtmosphericISP();
+        boolean isVacuumOptimized = false;
+        if(nozzleState.getBlock() instanceof NozzleBlock nozzle)
+            isVacuumOptimized = nozzle.isVacuum();
 
-        return fuelType.getVacuumISP() - (drop * pressure);
+        double effectiveVacIsp = fuelType.getVacuumISP() * (isVacuumOptimized ? 1 : 0.915);
+        double effectiveAtmIsp = fuelType.getAtmosphericISP() * (isVacuumOptimized ? 0.5 : 1);
+
+        double drop = effectiveVacIsp - effectiveAtmIsp;
+
+		return effectiveVacIsp - (drop * pressure);
     }
 
     public double getThrustkN()

@@ -10,6 +10,7 @@ import net.mistersecret312.rocketry_science.RocketryScience;
 import net.mistersecret312.rocketry_science.data.SpaceCraft;
 import net.mistersecret312.rocketry_science.data.SpaceCraftData;
 import net.mistersecret312.rocketry_science.datapack.CelestialBody;
+import net.mistersecret312.rocketry_science.environment.EnvironmentData;
 import net.mistersecret312.rocketry_science.environment.modifiers.ModifierConfig;
 import net.mistersecret312.rocketry_science.network.packets.ClientBoundSpacecraftSyncPacket;
 import net.mistersecret312.rocketry_science.util.EnvironmentUtil;
@@ -44,6 +45,25 @@ public class CommonEvents
 	{
 		EnvironmentUtil.modifiersAffect(event.getEntity());
 		OrbitalMath.gravityAffect(event.getEntity());
+
+		if(event.getEntity() instanceof Player player)
+		{
+			Level level = player.level();
+			if(level.isClientSide() || level.getGameTime() % 20 != 0)
+				return;
+
+			EnvironmentData environment = EnvironmentUtil.getEnvironment(level);
+
+			double pressure = EnvironmentUtil.getPressure(level, player.position().y);
+			double temperature = EnvironmentUtil.getTemperatureCelsius(level);
+			double gravity = environment.getGravity();
+			double radiation = environment.getRadiation();
+//
+//			System.out.println("Environment - Atmospheric Pressure: "+pressure);
+//			System.out.println("Environment - Temperature: "+temperature);
+//			System.out.println("Environment - Gravity: "+gravity);
+//			System.out.println("Environment - Radiation: "+radiation);
+		}
 	}
 
 	@SubscribeEvent

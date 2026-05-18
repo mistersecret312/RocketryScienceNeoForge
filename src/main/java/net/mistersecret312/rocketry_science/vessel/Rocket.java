@@ -114,15 +114,20 @@ public class Rocket extends VesselData
 
 				double height = configuredOrbit.orbit().getAltitude();
 				double deltaVRequired = OrbitalMath.getOrbitDeltaV(body, height) - accumulatedOrbitalVelocity;
-				double currentLeftDeltaV = getCurrentStage().calculateDeltaV() - landingDeltaV;
+				double totalDeltaV = getCurrentStage().calculateDeltaV();
+				double currentLeftDeltaV = totalDeltaV - landingDeltaV;
 
+				double dryMass = getCurrentStage().getTotalDryMass();
+				double wetMass = getCurrentStage().getTotalMass();
 				if(currentLeftDeltaV >= deltaVRequired)
 				{
+					System.out.println("Consumed fuel from stage to get into orbit : " + deltaVRequired);
 					getCurrentStage().consumeFuelByDeltaV(deltaVRequired);
 					setState(VesselState.ORBIT);
 				}
 				else
 				{
+					System.out.println("Consumed fuel from stage to try get in space : " + currentLeftDeltaV);
 					getCurrentStage().consumeFuelByDeltaV(currentLeftDeltaV);
 					this.accumulatedOrbitalVelocity += currentLeftDeltaV;
 					stage(level);
@@ -173,6 +178,7 @@ public class Rocket extends VesselData
 				else
 					System.out.println("Put spacecraft in orbit - " + orbit.getParent().location() + ", Type - " + orbit.getOrbitData().orbit().getName());
 
+				System.out.println("Left DeltaV in orbit: " + craft.getStages().getFirst().calculateDeltaV());
 				this.getRocketEntity().discard();
 			}
 		}
