@@ -158,9 +158,6 @@ public class RocketEngineData extends BlockData
             double twr = (getThrustkN()*1000)/(mass*stage.getVessel().getLocalGravityMS2());
             double accel = 0.025*twr*thrustPercentage;
 
-            if(thrustPercentage != 0)
-                System.out.println("ISP: " + getIsp() + ", Thrust: " + getThrustkN() + ", DeltaV: " + getStage().calculateDeltaV());
-
             rocket.getRocketEntity().addDeltaMovement(new Vec3(0, accel, 0));
         }
     }

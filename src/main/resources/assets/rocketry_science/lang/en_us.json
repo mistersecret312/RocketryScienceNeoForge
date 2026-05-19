@@ -16,7 +16,8 @@
 
   "block.rocketry_science.fuel_tank": "Fuel Tank",
   "block.rocketry_science.steel_combustion_chamber": "Stainless Steel Combustion Chamber",
-  "block.rocketry_science.steel_nozzle_atmosphere": "Atmosphere-optimized Stainless Steel Nozzle",
+  "block.rocketry_science.steel_nozzle_atmosphere": "Atmosphere-Optimized Stainless Steel Nozzle",
+  "block.rocketry_science.steel_nozzle_vacuum": "Vacuum-Optimized Stainless Steel Nozzle",
   "block.rocketry_science.separator": "Separator",
 
   "fluid_type.rocketry_science.cryogenic_hydrogen": "Liquid Hydrogen",

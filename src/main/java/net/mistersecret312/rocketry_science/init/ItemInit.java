@@ -12,6 +12,8 @@ public class ItemInit
 {
 	public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(RocketryScience.MODID);
 
+	public static final DeferredItem<Item> NOZZLE_ICON = ITEMS.registerSimpleItem("nozzle_icon");
+
 	public static final DeferredItem<Item> CHROMIUM_INGOT = ITEMS.registerSimpleItem("chromium_ingot");
 	public static final DeferredItem<Item> STAINLESS_STEEL_INGOT = ITEMS.registerSimpleItem("stainless_steel_ingot");
 

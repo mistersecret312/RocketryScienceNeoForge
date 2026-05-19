@@ -20,7 +20,7 @@ public class ItemTabInit
 
 	public static final DeferredHolder<CreativeModeTab, CreativeModeTab> ROCKETRY_SCIENCE = TABS.register(
 			"rocketry_science",
-			() -> CreativeModeTab.builder().icon(() -> new ItemStack(ItemInit.STAINLESS_STEEL_COMBUSTION_CHAMBER.get()))
+			() -> CreativeModeTab.builder().icon(() -> new ItemStack(ItemInit.NOZZLE_ICON.get()))
 								 .title(Component.translatable("tabs.rocketry_science"))
 								 .displayItems((parameters, output) ->
 									 {
