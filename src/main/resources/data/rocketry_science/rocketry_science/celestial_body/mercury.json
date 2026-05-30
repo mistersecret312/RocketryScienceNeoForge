@@ -1,17 +1,16 @@
 {
-  "name": "rocketry_science:luna",
-  "icon":"rocketry_science:textures/gui/moon.png",
-  "parent": "rocketry_science:earth",
-  "dimension": "rocketry_science:luna",
+  "name": "rocketry_science:mercury",
+  "icon":"stellarview:textures/environment/planet/sol/mercury.png",
+  "parent": "rocketry_science:sun",
   "has_atmosphere": false,
-  "day_length": 160,
-  "radius": 1737400,
-  "altitude": 15,
-  "period": 0.1,
+  "day_length": 939,
+  "radius": 2442774,
+  "period": 0.24,
+  "altitude": 46,
   "modifiers":[
     {
       "type": "rocketry_science:gravity",
-      "gravity": 0.165
+      "gravity": 0.38
     },
     {
       "type": "rocketry_science:pressure",
@@ -19,12 +18,12 @@
     },
     {
       "type": "rocketry_science:temperature",
-      "night_temperature": 140,
-      "day_temperature": 400
+      "night_temperature": 100,
+      "day_temperature": 700
     },
     {
       "type": "rocketry_science:radiation",
-      "radiation": 0.06
+      "radiation": 0.1
     }
   ],
   "supported_orbits": [

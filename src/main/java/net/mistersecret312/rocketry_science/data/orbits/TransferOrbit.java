@@ -63,7 +63,7 @@ public class TransferOrbit extends Orbit<SpaceCraft>
 	}
 
 	@Override
-	Vector2d getPosition(long tick, RegistryAccess registryAccess)
+	public Vector2d getPosition(long tick, RegistryAccess registryAccess)
 	{
 		Registry<CelestialBody> registry = registryAccess.registryOrThrow(CelestialBody.REGISTRY_KEY);
 		CelestialBody departureBody = registry.get(this.getDeparture().getBody());
@@ -84,7 +84,7 @@ public class TransferOrbit extends Orbit<SpaceCraft>
 	}
 
 	@Override
-	double getAngle(long tick)
+	public double getAngle(long tick)
 	{
 		if(getTravelDuration() <= 0)
 			return 1;

@@ -1,10 +1,28 @@
 {
   "name": "rocketry_science:sun",
-  "icon": "rocketry_science:textures/gui/sun.png",
-  "gravity": 28.0,
+  "icon": "rocketry_science:textures/celestial_bodies/sol.png",
   "radius": 696265000,
   "period": 0,
   "altitude": 0,
+  "modifiers":[
+    {
+      "type": "rocketry_science:gravity",
+      "gravity": 28.0
+    },
+    {
+      "type": "rocketry_science:pressure",
+      "pressure": 0.088
+    },
+    {
+      "type": "rocketry_science:temperature",
+      "night_temperature": 5800,
+      "day_temperature": 5800
+    },
+    {
+      "type": "rocketry_science:radiation",
+      "radiation": 1000.0
+    }
+  ],
   "supported_orbits": [
     {
       "orbit": {

@@ -1,0 +1,8 @@
+{
+  "name": "rocketry_science:sol",
+  "icon": "rocketry_science:textures/gui/sun.png",
+  "star": "rocketry_science:sun",
+  "star_surface_temperature": 5800,
+  "escape_velocity": 618000,
+  "position": [0, 0]
+}

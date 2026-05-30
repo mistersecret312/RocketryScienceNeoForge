@@ -31,7 +31,7 @@ public class CelestialBody implements IOrbitObject<CelestialOrbit>
 			Codec.STRING.fieldOf("name").forGetter(CelestialBody::getName),
 			ResourceLocation.CODEC.fieldOf("icon").forGetter(CelestialBody::getIcon),
 			ResourceKey.codec(Registries.DIMENSION).optionalFieldOf("dimension").forGetter(CelestialBody::getDimension),
-			ResourceKey.codec(REGISTRY_KEY).optionalFieldOf("parent", OrbitUtil.THE_SUN).forGetter(CelestialBody::getParentKey),
+			ResourceKey.codec(REGISTRY_KEY).optionalFieldOf("parent").forGetter(CelestialBody::getParent),
 			Codec.DOUBLE.fieldOf("altitude").forGetter(CelestialBody::getAltitude),
 			Codec.DOUBLE.fieldOf("period").forGetter(CelestialBody::getPeriod),
 			Codec.BOOL.optionalFieldOf("has_atmosphere", false).forGetter(CelestialBody::hasAtmosphere),
@@ -56,14 +56,14 @@ public class CelestialBody implements IOrbitObject<CelestialOrbit>
 	private CelestialOrbit orbit = null;
 	private EnvironmentData environment = null;
 
-	public CelestialBody(String name, ResourceLocation icon, Optional<ResourceKey<Level>> dimension, ResourceKey<CelestialBody> parentKey, double altitude, double period,
+	public CelestialBody(String name, ResourceLocation icon, Optional<ResourceKey<Level>> dimension, Optional<ResourceKey<CelestialBody>> parentKey, double altitude, double period,
 						 boolean hasAtmosphere, int dayLength, double radius, List<ConfiguredOrbit> supportedOrbits,
 						 List<ModifierConfig> modifiers)
 	{
 		this.name = name;
 		this.icon = icon;
 		this.dimension = dimension.orElse(null);
-		this.parentKey = parentKey;
+		this.parentKey = parentKey.orElse(null);
 		this.altitude = altitude;
 		this.period = period;
 		this.supportedOrbits = supportedOrbits;
@@ -73,9 +73,9 @@ public class CelestialBody implements IOrbitObject<CelestialOrbit>
 		this.dayLength = dayLength;
 		this.radius = radius;
 
-		if(altitude == 0 || period == 0)
+		if(altitude == 0 || period == 0 || this.parentKey == null)
 			return;
-		this.orbit = new CelestialOrbit(parentKey, altitude, period, this);
+		this.orbit = new CelestialOrbit(this.parentKey, altitude, period, this);
 	}
 
 	@Override
@@ -158,9 +158,14 @@ public class CelestialBody implements IOrbitObject<CelestialOrbit>
 		return radius;
 	}
 
+	public Optional<ResourceKey<CelestialBody>> getParent()
+	{
+		return Optional.ofNullable(this.parentKey);
+	}
+
 	public ResourceKey<CelestialBody> getParentKey()
 	{
-		return parentKey;
+		return this.parentKey;
 	}
 
 	public List<ConfiguredOrbit> getSupportedOrbits()

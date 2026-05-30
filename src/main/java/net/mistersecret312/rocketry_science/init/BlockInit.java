@@ -27,9 +27,10 @@ public class BlockInit
 
 	public static final DeferredBlock<LaunchControllerBlock> LAUNCH_CONTROLLER = BLOCKS.register("launch_controller",
 			() -> new LaunchControllerBlock(BlockBehaviour.Properties.of().noOcclusion()));
-
 	public static final DeferredBlock<RocketAssemblerBlock> ROCKET_ASSEMBLER = BLOCKS.register("rocket_assembler",
 			() -> new RocketAssemblerBlock(BlockBehaviour.Properties.of().noOcclusion()));
+	public static final DeferredBlock<SpaceMapBlock> SPACE_MAP_BLOCK = registerBlock("space_map",
+			() -> new SpaceMapBlock(BlockBehaviour.Properties.of().noOcclusion()));
 
 	public static final DeferredBlock<RocketPadBlock> ROCKET_PAD = registerBlock("rocket_pad",
 			() -> new RocketPadBlock(BlockBehaviour.Properties.of()));

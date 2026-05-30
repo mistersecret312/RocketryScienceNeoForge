@@ -6,12 +6,16 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.mistersecret312.rocketry_science.data.orbiting_objects.IOrbitObject;
 import net.mistersecret312.rocketry_science.datapack.CelestialBody;
+import net.mistersecret312.rocketry_science.util.OrbitUtil;
 import org.joml.Vector2d;
 
 public abstract class Orbit<T extends IOrbitObject<?>>
 {
-	Vector2d getPosition(long tick, RegistryAccess registryAccess)
+	public Vector2d getPosition(long tick, RegistryAccess registryAccess)
 	{
+		if(getOrbitalAltitude() == 0)
+			return new Vector2d();
+
 		double angle = getAngle(tick);
 		double radians = Math.toRadians(angle);
 
@@ -21,8 +25,10 @@ public abstract class Orbit<T extends IOrbitObject<?>>
 		return new Vector2d(x, y);
 	}
 
-	double getAngle(long tick)
+	public double getAngle(long tick)
 	{
+		if(getOrbitalPeriod() == 0)
+			return 0;
 		double period = getOrbitalPeriod() * 20 * 20 * 60;
 		double velocity = (360D / period);
 

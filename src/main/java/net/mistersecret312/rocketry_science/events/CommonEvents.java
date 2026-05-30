@@ -1,5 +1,7 @@
 package net.mistersecret312.rocketry_science.events;
 
+import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -33,6 +35,9 @@ public class CommonEvents
 	public static void playerJoin(PlayerEvent.PlayerLoggedInEvent event)
 	{
 		Player player = event.getEntity();
+		if(player instanceof LocalPlayer localPlayer)
+			OrbitUtil.init(localPlayer.clientLevel);
+
 		if(player instanceof ServerPlayer serverPlayer)
 		{
 			SpaceCraftData data = SpaceCraftData.get(serverPlayer.level());

@@ -252,4 +252,10 @@ public class SpaceCraft extends VesselData implements IOrbitObject<Orbit<SpaceCr
 	{
 		this.stages.remove(stage);
 	}
+
+	@Override
+	public void setState(VesselState vesselState)
+	{
+		this.state = vesselState;
+	}
 }

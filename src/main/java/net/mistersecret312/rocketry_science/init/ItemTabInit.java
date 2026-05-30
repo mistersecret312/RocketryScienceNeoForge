@@ -30,6 +30,7 @@ public class ItemTabInit
 
 										 output.accept(ItemInit.LAUNCH_CONTROLLER);
 										 output.accept(ItemInit.ROCKET_ASSEMBLER);
+										 output.accept(BlockInit.SPACE_MAP_BLOCK);
 
 										 output.accept(BlockInit.ROCKET_PAD);
 										 output.accept(BlockInit.LAUNCH_TOWER);

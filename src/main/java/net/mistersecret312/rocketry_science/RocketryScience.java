@@ -26,8 +26,10 @@ import net.mistersecret312.rocketry_science.data.SpaceCraft;
 import net.mistersecret312.rocketry_science.data.orbits.ArtificialOrbit;
 import net.mistersecret312.rocketry_science.data.orbits.ConfiguredOrbit;
 import net.mistersecret312.rocketry_science.datapack.CelestialBody;
+import net.mistersecret312.rocketry_science.datapack.SolarSystem;
 import net.mistersecret312.rocketry_science.environment.modifiers.ModifierConfig;
 import net.mistersecret312.rocketry_science.init.*;
+import net.mistersecret312.rocketry_science.util.OrbitUtil;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -88,6 +90,7 @@ public class RocketryScience
 		modEventBus.addListener((DataPackRegistryEvent.NewRegistry event) ->
 			{
 				event.dataPackRegistry(CelestialBody.REGISTRY_KEY, CelestialBody.CODEC, CelestialBody.CODEC);
+				event.dataPackRegistry(SolarSystem.REGISTRY_KEY, SolarSystem.CODEC, SolarSystem.CODEC);
 			});
 	}
 
@@ -107,6 +110,7 @@ public class RocketryScience
 	@SubscribeEvent
 	public void onServerStarting(ServerStartingEvent event)
 	{
+		OrbitUtil.init(event.getServer().overworld());
 		Registry<CelestialBody> registry = event.getServer().registryAccess().registryOrThrow(CelestialBody.REGISTRY_KEY);
 		for(Map.Entry<ResourceKey<CelestialBody>, CelestialBody> entry : registry.entrySet())
 		{
