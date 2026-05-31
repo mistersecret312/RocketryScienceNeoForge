@@ -24,7 +24,7 @@ public class CelestialOrbit extends Orbit<CelestialBody>
 	}
 
 	@Override
-	public ResourceKey<CelestialBody> getParent()
+	public ResourceKey<CelestialBody> getParent(RegistryAccess registryAccess)
 	{
 		return parent;
 	}
@@ -36,13 +36,13 @@ public class CelestialOrbit extends Orbit<CelestialBody>
 	}
 
 	@Override
-	public CompoundTag save(HolderLookup.Provider registryAccess)
+	public CompoundTag save(RegistryAccess registryAccess)
 	{
 		return new CompoundTag();
 	}
 
 	@Override
-	public Orbit<CelestialBody> load(CompoundTag tag, HolderLookup.Provider registryAccess)
+	public Orbit<CelestialBody> load(CompoundTag tag, RegistryAccess registryAccess)
 	{
 		return null;
 	}

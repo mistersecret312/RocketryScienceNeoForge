@@ -152,10 +152,12 @@ public class Rocket extends VesselData
 				if(body.getParentKey().equals(OrbitUtil.THE_SUN))
 					target = OrbitUtil.getChildren(body, level).getFirst();
 				else target = OrbitUtil.getCelestialBody(OrbitUtil.EARTH, level);
-				ConfiguredOrbit targetOrbit = target.getSupportedOrbits().getFirst();
+
+				target = OrbitUtil.getChildren(OrbitUtil.getCelestialBody(OrbitUtil.THE_SUN, level), level).getFirst();
+				ConfiguredOrbit targetOrbit = target.getSupportedOrbits().getLast();
 
 				TravelPoint departure = new TravelPoint(configuredOrbit, level.getGameTime(), OrbitUtil.getKey(body, level));
-				TravelPoint arrival = new TravelPoint(targetOrbit, level.getGameTime()+200, OrbitUtil.getKey(target, level));
+				TravelPoint arrival = new TravelPoint(targetOrbit, level.getGameTime()+2000, OrbitUtil.getKey(target, level));
 
 				TransferOrbit transferOrbit = new TransferOrbit(craft, departure, arrival, departure.getTick()- arrival.getTick());
 				ArtificialOrbit orbit = new ArtificialOrbit(OrbitUtil.getKey(body, level), craft, configuredOrbit);
@@ -176,7 +178,7 @@ public class Rocket extends VesselData
 					System.out.println("To - " + transfer.getArrival().getBody().location() + ", " + transfer.getArrival().getOrbit().orbit().getName());
 				}
 				else
-					System.out.println("Put spacecraft in orbit - " + orbit.getParent().location() + ", Type - " + orbit.getOrbitData().orbit().getName());
+					System.out.println("Put spacecraft in orbit - " + orbit.getParent(level.registryAccess()).location() + ", Type - " + orbit.getOrbitData().orbit().getName());
 
 				System.out.println("Left DeltaV in orbit: " + craft.getStages().getFirst().calculateDeltaV());
 				this.getRocketEntity().discard();

@@ -1,5 +1,7 @@
 package net.mistersecret312.rocketry_science;
 
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -43,11 +45,13 @@ import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterDimensionSpecialEffectsEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+import net.neoforged.neoforge.client.event.RegisterShadersEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.registries.DataPackRegistryEvent;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.UUID;
 
@@ -157,6 +161,17 @@ public class RocketryScience
 	public static class ClientModEvents
 	{
 		public static PlumeModel plumeModel;
+		public static ShaderInstance orbit;
+
+		@SubscribeEvent
+		public static void registerShaders(RegisterShadersEvent event) throws IOException
+		{
+
+			event.registerShader(new ShaderInstance(event.getResourceProvider(),
+							ResourceLocation.fromNamespaceAndPath(MODID, "orbit"),
+							DefaultVertexFormat.POSITION_TEX_COLOR),
+					shaderInstance -> orbit = shaderInstance);
+		}
 
 		@SubscribeEvent
 		public static void onDimensionEffectRegister(RegisterDimensionSpecialEffectsEvent event)

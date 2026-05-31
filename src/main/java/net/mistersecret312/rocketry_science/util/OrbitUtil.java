@@ -55,9 +55,9 @@ public class OrbitUtil
 		return null;
 	}
 
-	public static CelestialBody getCelestialBodyByDimension(ResourceLocation location, Level level)
+	public static CelestialBody getCelestialBodyByDimension(ResourceLocation location, RegistryAccess registryAccess)
 	{
-		Registry<CelestialBody> registry = getCelestialRegistry(level.registryAccess());
+		Registry<CelestialBody> registry = getCelestialRegistry(registryAccess);
 		for(Map.Entry<ResourceKey<CelestialBody>, CelestialBody> entry : registry.entrySet())
 		{
 			CelestialBody body = entry.getValue();
@@ -157,7 +157,7 @@ public class OrbitUtil
 		return current;
 	}
 
-	public static Vector2d getHighestOrderPosition(long tick, Orbit<?> orbit, RegistryAccess registryAccess)
+	public static Vector2d getOrderPosition(long tick, Orbit<?> orbit, RegistryAccess registryAccess, CelestialBody finish)
 	{
 		Registry<CelestialBody> registry = getCelestialRegistry(registryAccess);
 		Vector2d position = orbit.getPosition(tick, registryAccess);
@@ -165,13 +165,20 @@ public class OrbitUtil
 		CelestialBody current;
 		if(orbit.getOrbitingObject() instanceof CelestialBody celestialBody)
 			current = celestialBody;
-		else current = getCelestialRegistry(registryAccess).get(orbit.getParent());
+		else
+		{
+			current = getCelestialRegistry(registryAccess).get(orbit.getParent(registryAccess));
+			if(current != null && current.getOrbit() != null && !current.equals(finish))
+				position.add(current.getOrbit().getPosition(tick, registryAccess));
+		}
 
 		if(current == null || current.getParentKey() == null)
 			return position;
+		if(current.equals(finish) && orbit instanceof CelestialOrbit)
+			return new Vector2d();
 
 		CelestialBody parent = registry.get(current.getParentKey());
-		while(parent != null)
+		while(parent != null && !parent.equals(finish))
 		{
 			if(parent.getOrbit() != null)
 			{
@@ -212,19 +219,36 @@ public class OrbitUtil
 		return null;
 	}
 
-	public static CelestialBody findCommonAncestor(Level level, CelestialBody a, CelestialBody b) {
+	public static CelestialBody findCommonAncestor(RegistryAccess registryAccess, CelestialBody a, CelestialBody b)
+	{
+		if (a == null || b == null)
+			return null;
+		if (a.equals(b))
+			return a;
+
+		Set<CelestialBody> ancestorsOfA = new HashSet<>();
 		CelestialBody currentA = a;
 		while (currentA != null)
 		{
-			CelestialBody currentB = b;
-			while (currentB != null)
-			{
-				if (currentA.equals(currentB))
-					return currentA;
-				currentB = getCelestialBodyByDimension(currentB.getParentKey().location(), level);
-			}
-			currentA = getCelestialBodyByDimension(currentA.getParentKey().location(), level);
+			ancestorsOfA.add(currentA);
+
+			if (currentA.getParent().isPresent())
+				currentA = OrbitUtil.getCelestialRegistry(registryAccess).get(currentA.getParentKey());
+			else currentA = null;
 		}
+
+		CelestialBody currentB = b;
+		while (currentB != null)
+		{
+			if (ancestorsOfA.contains(currentB))
+				return currentB;
+
+			if (currentB.getParent().isPresent())
+				currentB = OrbitUtil.getCelestialRegistry(registryAccess).get(currentB.getParentKey());
+			else currentB = null;
+
+		}
+
 		return null;
 	}
 
@@ -234,7 +258,7 @@ public class OrbitUtil
 		while (current != null && !current.equals(ancestor))
 		{
 			r += current.getOrbit().getOrbitalAltitude() + current.getRadius();
-			current = getCelestialBodyByDimension(current.getParentKey().location(), level);
+			current = getCelestialBodyByDimension(current.getParentKey().location(), level.registryAccess());
 		}
 		return Math.max(r, 1.0);
 	}

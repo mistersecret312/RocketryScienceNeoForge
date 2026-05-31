@@ -17,6 +17,14 @@ public class EnvironmentData
 		this.temperature = temperature;
 	}
 
+	public EnvironmentData(EnvironmentData data)
+	{
+		this.pressure = data.pressure;
+		this.gravity = data.gravity;
+		this.radiation = data.radiation;
+		this.temperature = data.temperature;
+	}
+
 	public TemperatureGradient getTemperatureGradient()
 	{
 		return temperature;

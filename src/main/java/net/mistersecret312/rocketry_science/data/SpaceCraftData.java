@@ -63,7 +63,7 @@ public class SpaceCraftData extends SavedData
 		for(String key : tag.getAllKeys())
 		{
 			this.spaceCraft.put(UUID.fromString(key),
-					SpaceCraft.load(tag.getCompound(key), server.registryAccess()));
+					SpaceCraft.load(tag.getCompound(key), server));
 		}
 	}
 

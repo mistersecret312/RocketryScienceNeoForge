@@ -5,9 +5,12 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.mistersecret312.rocketry_science.datapack.CelestialBody;
 import net.mistersecret312.rocketry_science.data.SpaceCraft;
+import net.mistersecret312.rocketry_science.util.OrbitUtil;
+import net.mistersecret312.rocketry_science.util.OrbitalMath;
 import org.joml.Vector2d;
 
 public class TransferOrbit extends Orbit<SpaceCraft>
@@ -74,9 +77,10 @@ public class TransferOrbit extends Orbit<SpaceCraft>
 			Vector2d departurePoint = departureBody.getOrbit().getPosition(getDeparture().getTick(), registryAccess);
 			Vector2d arrivalPoint = arrivalBody.getOrbit().getPosition(getArrival().getTick(), registryAccess);
 
+			double progress = getProgress(tick);
 			return new Vector2d(
-					Mth.lerp(getAngle(tick), departurePoint.x, arrivalPoint.x),
-					Mth.lerp(getAngle(tick), departurePoint.y, arrivalPoint.y)
+					Mth.lerp(progress, departurePoint.x, arrivalPoint.x),
+					Mth.lerp(progress, departurePoint.y, arrivalPoint.y)
 			);
 		}
 
@@ -99,13 +103,24 @@ public class TransferOrbit extends Orbit<SpaceCraft>
 			return 1;
 
 		double ratio = (double) (tick - getDeparture().getTick()) / (getArrival().getTick() - getDeparture().getTick());
-		return Math.max(1, Math.min(0, ratio));
+		return Math.min(1, Math.max(0, ratio));
 	}
 
 	@Override
-	public ResourceKey<CelestialBody> getParent()
+	public ResourceKey<CelestialBody> getParent(RegistryAccess registryAccess)
 	{
-		return getDeparture().getBody();
+		CelestialBody departure = OrbitUtil.getCelestialRegistry(registryAccess).get(getDeparture().getBody());
+		CelestialBody arrival = OrbitUtil.getCelestialRegistry(registryAccess).get(getArrival().getBody());
+
+		CelestialBody ancestor = OrbitUtil.findCommonAncestor(registryAccess, departure, arrival);
+		if(ancestor == null)
+			return OrbitUtil.THE_SUN;
+
+		ResourceLocation ancestorKey = OrbitUtil.getCelestialRegistry(registryAccess).getKey(ancestor);
+		if(ancestorKey == null)
+			return OrbitUtil.THE_SUN;
+
+		return ResourceKey.create(CelestialBody.REGISTRY_KEY, ancestorKey);
 	}
 
 	@Override
@@ -115,7 +130,7 @@ public class TransferOrbit extends Orbit<SpaceCraft>
 	}
 
 	@Override
-	public TransferOrbit load(CompoundTag tag, HolderLookup.Provider registryAccess)
+	public TransferOrbit load(CompoundTag tag, RegistryAccess registryAccess)
 	{
 		TravelPoint departure = TravelPoint.load(tag.getCompound("departure"));
 		TravelPoint arrival = TravelPoint.load(tag.getCompound("arrival"));
@@ -126,7 +141,7 @@ public class TransferOrbit extends Orbit<SpaceCraft>
 	}
 
 	@Override
-	public CompoundTag save(HolderLookup.Provider registryAccess)
+	public CompoundTag save(RegistryAccess registryAccess)
 	{
 		CompoundTag tag = new CompoundTag();
 

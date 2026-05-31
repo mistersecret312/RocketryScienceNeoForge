@@ -32,11 +32,11 @@ public class EnvironmentUtil
 	public static EnvironmentData getEnvironment(CelestialBody body)
 	{
 		if(body == null)
-			return EARTH;
+			return new EnvironmentData(EARTH);
 		if(body.getEnvironment() != null)
 			return body.getEnvironment();
 
-		return body.hasAtmosphere() ? EARTH : LUNA;
+		return new EnvironmentData(body.hasAtmosphere() ? EARTH : LUNA);
 	}
 
 	public static double getTemperatureKelvin(Level level)

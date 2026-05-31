@@ -32,10 +32,10 @@ public class ArtificialOrbit extends Orbit<SpaceCraft>
 	}
 
 	@Override
-	public CompoundTag save(HolderLookup.Provider registryAccess)
+	public CompoundTag save(RegistryAccess registryAccess)
 	{
 		CompoundTag tag = new CompoundTag();
-		tag.putString("parent", this.getParent().location().toString());
+		tag.putString("parent", this.getParent(registryAccess).location().toString());
 
 		Tag orbitTag = ConfiguredOrbit.CODEC.encodeStart(NbtOps.INSTANCE, this.orbit).getOrThrow();
 		tag.put("orbit_data", orbitTag);
@@ -44,13 +44,13 @@ public class ArtificialOrbit extends Orbit<SpaceCraft>
 	}
 
 	@Override
-	public ArtificialOrbit load(CompoundTag tag, HolderLookup.Provider registryAccess)
+	public ArtificialOrbit load(CompoundTag tag, RegistryAccess registryAccess)
 	{
 		String parentString = tag.getString("parent");
 		ResourceKey<CelestialBody> parentKey = ResourceKey.create(CelestialBody.REGISTRY_KEY,
 				ResourceLocation.parse(parentString));
 
-		ConfiguredOrbit configuredOrbit = ConfiguredOrbit.CODEC.decode(NbtOps.INSTANCE, tag.get("orbit")).getOrThrow().getFirst();
+		ConfiguredOrbit configuredOrbit = ConfiguredOrbit.CODEC.decode(NbtOps.INSTANCE, tag.get("orbit_data")).getOrThrow().getFirst();
 		return new ArtificialOrbit(parentKey, this.getOrbitingObject(), configuredOrbit);
 	}
 
@@ -72,7 +72,7 @@ public class ArtificialOrbit extends Orbit<SpaceCraft>
 	}
 
 	@Override
-	public ResourceKey<CelestialBody> getParent()
+	public ResourceKey<CelestialBody> getParent(RegistryAccess registryAccess)
 	{
 		return parent;
 	}

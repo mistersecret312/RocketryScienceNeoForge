@@ -26,7 +26,7 @@
 			"uv": { "flip_uv": false }
 		},
 		{
-			"texture": "rocketry_science:textures/planet/sol/mars.png",
+			"texture": "rocketry_science:textures/celestial_bodies/sol/mars.png",
 			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
 			"blend": false,
 			"size": 3389500,

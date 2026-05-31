@@ -39,12 +39,12 @@ public abstract class Orbit<T extends IOrbitObject<?>>
 	public void tick(RegistryAccess registryAccess)
 	{}
 
-	public abstract CompoundTag save(HolderLookup.Provider registryAccess);
-	public abstract Orbit<T> load(CompoundTag tag, HolderLookup.Provider registryAccess);
+	public abstract CompoundTag save(RegistryAccess registryAccess);
+	public abstract Orbit<T> load(CompoundTag tag, RegistryAccess registryAccess);
 
 	public abstract double getOrbitalPeriod();
 	public abstract double getOrbitalAltitude();
 
-	public abstract ResourceKey<CelestialBody> getParent();
+	public abstract ResourceKey<CelestialBody> getParent(RegistryAccess registryAccess);
 	public abstract T getOrbitingObject();
 }

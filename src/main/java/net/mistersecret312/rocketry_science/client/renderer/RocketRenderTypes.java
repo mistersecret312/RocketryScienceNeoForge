@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
+import net.mistersecret312.rocketry_science.RocketryScience;
 
 public class RocketRenderTypes extends RenderType
 {
@@ -24,5 +25,18 @@ public class RocketRenderTypes extends RenderType
 										 .setTextureState(new TextureStateShard(rl, false, false))
 										 .setCullState(NO_CULL)
 										 .createCompositeState(true));
+	}
+
+	public static RenderType orbit(ResourceLocation texture)
+	{
+		return RenderType.create("orbit",
+				DefaultVertexFormat.POSITION_TEX_COLOR,
+				VertexFormat.Mode.QUADS,
+				1536, false, false,
+				RenderType.CompositeState.builder()
+										 .setShaderState(new ShaderStateShard(() -> RocketryScience.ClientModEvents.orbit))
+										 .setTextureState(new TextureStateShard(texture, false, false))
+										 .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
+										 .createCompositeState(false));
 	}
 }

@@ -8,6 +8,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.Level;
 import net.mistersecret312.rocketry_science.data.orbiting_objects.IOrbitObject;
 import net.mistersecret312.rocketry_science.data.orbits.*;
@@ -93,17 +94,18 @@ public class SpaceCraft extends VesselData implements IOrbitObject<Orbit<SpaceCr
 		return tag;
 	}
 
-	public static SpaceCraft load(CompoundTag tag, HolderLookup.Provider lookup)
+	public static SpaceCraft load(CompoundTag tag, MinecraftServer server)
 	{
 		UUID uuid = tag.getUUID("uuid");
 		SpaceCraft craft = new SpaceCraft(uuid, new LinkedHashSet<>());
+		craft.setLevel(server.overworld());
 
 		ListTag stageTag = tag.getList("stages", Tag.TAG_COMPOUND);
 		LinkedHashSet<Stage> stages = new LinkedHashSet<>();
 		for(Tag listTag : stageTag)
 		{
 			Stage stage = new Stage(craft);
-			stage.load((CompoundTag) listTag, lookup);
+			stage.load((CompoundTag) listTag, server.registryAccess());
 			stages.add(stage);
 		}
 		craft.stages = stages;
@@ -111,17 +113,16 @@ public class SpaceCraft extends VesselData implements IOrbitObject<Orbit<SpaceCr
 		Orbit<SpaceCraft> orbit;
 		CompoundTag orbitTag = tag.getCompound("craft_orbit");
 		if(tag.contains("transfer"))
-			orbit = new TransferOrbit(craft).load(orbitTag, lookup);
-		else orbit = new ArtificialOrbit(craft).load(orbitTag, lookup);
+			orbit = new TransferOrbit(craft).load(orbitTag, server.registryAccess());
+		else orbit = new ArtificialOrbit(craft).load(orbitTag, server.registryAccess());
 
-		craft.setOrbit(orbit);
+		craft.orbit = orbit;
 		return craft;
 	}
 
 	public static void encode(RegistryFriendlyByteBuf buf, SpaceCraft craft) {
 		buf.writeUUID(craft.uuid);
 		buf.writeCollection(craft.stages, (writer, stage) -> stage.toNetwork((RegistryFriendlyByteBuf) writer));
-
 
 		boolean hasOrbit = craft.getOrbit() != null;
 		buf.writeBoolean(hasOrbit);
@@ -137,7 +138,7 @@ public class SpaceCraft extends VesselData implements IOrbitObject<Orbit<SpaceCr
 				buf.writeLong(transfer.getTravelDuration());
 			} else {
 				ArtificialOrbit artificial = (ArtificialOrbit) craft.getOrbit();
-				buf.writeResourceKey(artificial.getParent());
+				buf.writeResourceKey(artificial.getParent(craft.level.registryAccess()));
 				ConfiguredOrbit.STREAM_CODEC.encode(buf, artificial.getOrbitData());
 			}
 		}
@@ -181,8 +182,8 @@ public class SpaceCraft extends VesselData implements IOrbitObject<Orbit<SpaceCr
 	@Override
 	public void tick(Level level)
 	{
-		if(level == null || !OrbitUtil.bodyDimensionCheck(getOrbit().getParent(), level))
-			this.level = OrbitUtil.getLevel(getOrbit().getParent(), level);
+		if(level == null || !OrbitUtil.bodyDimensionCheck(getOrbit().getParent(level.registryAccess()), level))
+			this.level = OrbitUtil.getLevel(getOrbit().getParent(level.registryAccess()), level);
 
 		if(getOrbit() instanceof TransferOrbit transfer)
 		{
@@ -196,9 +197,9 @@ public class SpaceCraft extends VesselData implements IOrbitObject<Orbit<SpaceCr
 			}
 		}
 
-		if(true && getOrbit() instanceof ArtificialOrbit orbit)
+		if(false && getOrbit() instanceof ArtificialOrbit orbit)
 		{
-			land(OrbitUtil.getLevel(orbit.getParent(), level()));
+			land(OrbitUtil.getLevel(orbit.getParent(level.registryAccess()), level()));
 		}
 	}
 

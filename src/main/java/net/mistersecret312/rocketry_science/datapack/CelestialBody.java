@@ -37,6 +37,7 @@ public class CelestialBody implements IOrbitObject<CelestialOrbit>
 			Codec.BOOL.optionalFieldOf("has_atmosphere", false).forGetter(CelestialBody::hasAtmosphere),
 			Codec.INT.optionalFieldOf("day_length", 20).forGetter(CelestialBody::getDayLength),
 			Codec.DOUBLE.fieldOf("radius").forGetter(CelestialBody::getRadius),
+			Codec.DOUBLE.optionalFieldOf("local_orbit_scale", 1d).forGetter(CelestialBody::getOrbitScale),
 			ConfiguredOrbit.CODEC.listOf().optionalFieldOf("supported_orbits", List.of()).forGetter(CelestialBody::getSupportedOrbits),
 			ModifierConfig.CODEC.listOf().optionalFieldOf("modifiers", List.of()).forGetter(CelestialBody::getModifiers)
 	).apply(inst, CelestialBody::new));
@@ -50,6 +51,7 @@ public class CelestialBody implements IOrbitObject<CelestialOrbit>
 	private final boolean hasAtmosphere;
 	private final int dayLength;
 	private final double radius;
+	private final double orbitScale;
 	private final List<ConfiguredOrbit> supportedOrbits;
 	private final List<ModifierConfig> modifiers;
 
@@ -57,7 +59,7 @@ public class CelestialBody implements IOrbitObject<CelestialOrbit>
 	private EnvironmentData environment = null;
 
 	public CelestialBody(String name, ResourceLocation icon, Optional<ResourceKey<Level>> dimension, Optional<ResourceKey<CelestialBody>> parentKey, double altitude, double period,
-						 boolean hasAtmosphere, int dayLength, double radius, List<ConfiguredOrbit> supportedOrbits,
+						 boolean hasAtmosphere, int dayLength, double radius, double orbitScale, List<ConfiguredOrbit> supportedOrbits,
 						 List<ModifierConfig> modifiers)
 	{
 		this.name = name;
@@ -72,6 +74,7 @@ public class CelestialBody implements IOrbitObject<CelestialOrbit>
 		this.hasAtmosphere = hasAtmosphere;
 		this.dayLength = dayLength;
 		this.radius = radius;
+		this.orbitScale = orbitScale;
 
 		if(altitude == 0 || period == 0 || this.parentKey == null)
 			return;
@@ -93,7 +96,7 @@ public class CelestialBody implements IOrbitObject<CelestialOrbit>
 	public EnvironmentData getEnvironment()
 	{
 		if(environment == null)
-			return hasAtmosphere() ? EARTH : LUNA;
+			return new EnvironmentData(hasAtmosphere() ? EARTH : LUNA);
 		return environment;
 	}
 
@@ -156,6 +159,11 @@ public class CelestialBody implements IOrbitObject<CelestialOrbit>
 	public double getRadius()
 	{
 		return radius;
+	}
+
+	public double getOrbitScale()
+	{
+		return orbitScale;
 	}
 
 	public Optional<ResourceKey<CelestialBody>> getParent()

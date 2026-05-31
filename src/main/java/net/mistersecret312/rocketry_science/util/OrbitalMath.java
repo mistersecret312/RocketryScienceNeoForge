@@ -42,13 +42,13 @@ public class OrbitalMath
 	}
 
 	public static TransferOrbit.TransferData calculateTransfer(Level level, ArtificialOrbit origin, ArtificialOrbit destination, double currentTime) {
-		CelestialBody parentA = OrbitUtil.getCelestialBody(origin.getParent(), level);
-		CelestialBody parentB = OrbitUtil.getCelestialBody(destination.getParent(), level);
+		CelestialBody parentA = OrbitUtil.getCelestialBody(origin.getParent(level.registryAccess()), level);
+		CelestialBody parentB = OrbitUtil.getCelestialBody(destination.getParent(level.registryAccess()), level);
 
 		if (parentA.equals(parentB))
 			return getHohmann(origin.getOrbitalAltitude()+parentA.getRadius(), destination.getOrbitalAltitude()+parentB.getRadius(), parentA, 0); // No window penalty for same parent
 
-		CelestialBody commonAncestor = OrbitUtil.findCommonAncestor(level, parentA, parentB);
+		CelestialBody commonAncestor = OrbitUtil.findCommonAncestor(level.registryAccess(), parentA, parentB);
 		if (commonAncestor == null) {
 			return new TransferOrbit.TransferData(100000,20*60*60*2);
 		}
@@ -124,6 +124,9 @@ public class OrbitalMath
 				   && !entity.isInWater() && !entity.isInLava()
 				   && !entity.isSwimming() && !entity.isDescending())
 		{
+			if(entity.level().dimension().equals(Level.OVERWORLD))
+				return;
+
 			if(entity instanceof Player player)
 			{
 				if(player.getAbilities().flying)
