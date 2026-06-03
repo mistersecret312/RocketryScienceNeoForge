@@ -4,12 +4,16 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.mistersecret312.rocketry_science.data.rocket_pad.RocketPadData;
 import net.mistersecret312.rocketry_science.init.BlockEntityInit;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2i;
 
 import java.util.Comparator;
@@ -24,6 +28,18 @@ public class RocketPadBlockEntity extends AbstractMultiBlockEntity
     public RocketPadBlockEntity(BlockPos pos, BlockState state)
     {
         super(BlockEntityInit.ROCKET_PAD.get(), pos, state);
+    }
+
+    @Override
+    public @Nullable Packet<ClientGamePacketListener> getUpdatePacket()
+    {
+        return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries)
+    {
+        return this.saveWithoutMetadata(registries);
     }
 
     @Override

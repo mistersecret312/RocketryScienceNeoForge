@@ -146,6 +146,8 @@ public class SeparatorData extends BlockData
                     CompoundTag extraData = blockEntity.saveWithId(level.registryAccess());
                     if(!stage.palette.contains(state))
                         stage.palette.add(state);
+                    if(level.isClientSide())
+                        return new SeparatorData(stage, stage.palette.indexOf(state), pos, extraData);
                     for (int x = pos.getX(); x < pos.getX()+separator.getWidth(); x++)
                         for (int z = pos.getZ(); z < pos.getZ() + separator.getWidth() ; z++)
                         {

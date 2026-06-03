@@ -12,6 +12,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.mistersecret312.rocketry_science.block_entities.fuel_tank.IConnectiveBlockEntity;
+import net.mistersecret312.rocketry_science.blocks.CombustionChamberBlock;
+import net.mistersecret312.rocketry_science.blocks.NozzleBlock;
 import net.mistersecret312.rocketry_science.blocks.SeparatorBlock;
 import net.mistersecret312.rocketry_science.init.BlockEntityInit;
 import net.mistersecret312.rocketry_science.util.ConnectivityHandler;
@@ -48,6 +50,9 @@ public class SeparatorBlockEntity extends BlockEntity implements IConnectiveBloc
 
     public static void tick(Level level, BlockPos pos, BlockState state, SeparatorBlockEntity separator)
     {
+        if(level.getBlockState(pos.above(2)).getBlock() instanceof CombustionChamberBlock)
+            level.setBlock(pos, state.setValue(SeparatorBlock.EXTENDED, true), 3);
+
         if (separator.lastKnownPos == null)
             separator.lastKnownPos = separator.getBlockPos();
         else if (!separator.lastKnownPos.equals(separator.worldPosition) && separator.worldPosition != null) {

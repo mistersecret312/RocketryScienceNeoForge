@@ -18,6 +18,7 @@ import net.mistersecret312.rocketry_science.client.renderer.block.RocketAssemble
 import net.mistersecret312.rocketry_science.client.renderer.block.SeparatorRenderer;
 import net.mistersecret312.rocketry_science.client.renderer.entity.RocketRenderer;
 import net.mistersecret312.rocketry_science.client.screen.CombustionChamberScreen;
+import net.mistersecret312.rocketry_science.client.screen.RocketAssemblyScreen;
 import net.mistersecret312.rocketry_science.client.vessel.BlockDataRendererRegistry;
 import net.mistersecret312.rocketry_science.client.vessel.block_data.BlockDataRenderer;
 import net.mistersecret312.rocketry_science.client.vessel.block_data.FuelTankDataRenderer;
@@ -197,6 +198,7 @@ public class RocketryScience
 		@SubscribeEvent
 		public static void registerScreens(RegisterMenuScreensEvent event) {
 			event.register(MenuInit.COMBUSTION_CHAMBER.get(), CombustionChamberScreen::new);
+			event.register(MenuInit.ROCKET_ASSEMBLY.get(), RocketAssemblyScreen::new);
 		}
 
 		@SubscribeEvent

@@ -48,15 +48,15 @@ public class RocketAssemblerBlockEntity extends BlockEntity implements GeoBlockE
 		super(BlockEntityInit.ROCKET_ASSEMBLER.get(), pos, blockState);
 	}
 
-	public void assembleRocket(RocketPadBlockEntity pad, Player player)
+	public RocketEntity assembleRocket(RocketPadBlockEntity pad)
 	{
-		if(pad.getLevel() == null || pad.getLevel().isClientSide())
-			return;
+		if(pad.getLevel() == null)
+			return null;
 
 		if(!pad.isComplete())
 		{
-			player.displayClientMessage(Component.literal("ERROR: Rocket Pad is not fully constructed"), true);
-			return;
+//			player.displayClientMessage(Component.literal("ERROR: Rocket Pad is not fully constructed"), true);
+			return null;
 		}
 
 		AABB box = pad.getOnPadBox();
@@ -107,8 +107,8 @@ public class RocketAssemblerBlockEntity extends BlockEntity implements GeoBlockE
 
 		if(firstFound == null)
 		{
-			player.displayClientMessage(Component.literal("ERROR: Rocket Pad is empty"), true);
-			return;
+//			player.displayClientMessage(Component.literal("ERROR: Rocket Pad is empty"), true);
+			return null;
 		}
 
 		rocket.stages.add(currentStage);
@@ -116,8 +116,8 @@ public class RocketAssemblerBlockEntity extends BlockEntity implements GeoBlockE
 		rocketEntity.setPos(firstFound.getCenter().add(0, -0.5, 0));
 		if(!rocket.stages.isEmpty())
 		{
-			pad.getLevel().addFreshEntity(rocketEntity);
-			player.displayClientMessage(Component.literal("SUCCESS! Rocket assembled!"), true);
+			//pad.getLevel().addFreshEntity(rocketEntity);
+//			player.displayClientMessage(Component.literal("SUCCESS! Rocket assembled!"), true);
 			int stageI = 0;
 			double deltaV = 0;
 			for(Stage stage : rocket.stages)
@@ -140,8 +140,10 @@ public class RocketAssemblerBlockEntity extends BlockEntity implements GeoBlockE
 			CelestialBody body = OrbitUtil.getCelestialBody(pad.getLevel());
 			CelestialOrbit orbit = body.getOrbit();
 			double radius = body.getRadius();
-		} else player.displayClientMessage(Component.literal("ERROR: Rocket Pad is empty! Report to developer!"), true);
-
+			return rocketEntity;
+		}
+//		else player.displayClientMessage(Component.literal("ERROR: Rocket Pad is empty! Report to developer!"), true);
+		return null;
 	}
 
 	@Override

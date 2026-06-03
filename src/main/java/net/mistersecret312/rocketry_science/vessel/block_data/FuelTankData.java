@@ -154,6 +154,8 @@ public class FuelTankData extends BlockData
                     CompoundTag extraData = blockEntity.saveWithId(stage.getVessel().level().registryAccess());
                     if(!stage.palette.contains(state))
                         stage.palette.add(state);
+                    if(level.isClientSide())
+                        return new FuelTankData(stage, stage.palette.indexOf(state), pos, extraData);
                     for (int x = pos.getX(); x < pos.getX()+fuelTank.getWidth(); x++)
                         for (int z = pos.getZ(); z < pos.getZ() + fuelTank.getWidth() ; z++)
                             for (int y = pos.getY(); y < pos.getY() + fuelTank.getHeight(); y++)

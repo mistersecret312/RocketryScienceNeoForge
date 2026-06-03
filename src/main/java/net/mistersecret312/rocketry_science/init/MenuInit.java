@@ -4,6 +4,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.mistersecret312.rocketry_science.RocketryScience;
+import net.mistersecret312.rocketry_science.menu.RocketAssemblyMenu;
 import net.mistersecret312.rocketry_science.menus.CombustionChamberMenu;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
@@ -17,6 +18,8 @@ public class MenuInit
 
 	public static final DeferredHolder<MenuType<?>, MenuType<CombustionChamberMenu>> COMBUSTION_CHAMBER = registerMenuType(
 			CombustionChamberMenu::new, "combustion_chamber");
+	public static final DeferredHolder<MenuType<?>, MenuType<RocketAssemblyMenu>> ROCKET_ASSEMBLY = registerMenuType(
+			RocketAssemblyMenu::new, "rocket_assembly");
 
 	private static <T extends AbstractContainerMenu> DeferredHolder<MenuType<?>, MenuType<T>> registerMenuType(
 			IContainerFactory<T> factory, String name)

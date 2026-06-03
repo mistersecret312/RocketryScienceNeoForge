@@ -105,8 +105,11 @@ public class BlockData
             if(!stage.palette.contains(state))
                 stage.palette.add(state);
 
-            level.removeBlockEntity(pos);
-            level.removeBlock(pos, false);
+            if(!level.isClientSide())
+            {
+                level.removeBlockEntity(pos);
+                level.removeBlock(pos, false);
+            }
 
             return new BlockData(stage, stage.palette.indexOf(state), pos, extraData);
         };

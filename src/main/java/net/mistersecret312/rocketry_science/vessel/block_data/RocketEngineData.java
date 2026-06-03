@@ -307,10 +307,12 @@ public class RocketEngineData extends BlockData
                     extraData = blockEntity.saveWithId(stage.getVessel().level().registryAccess());
                     if(!stage.palette.contains(state))
                         stage.palette.add(state);
-
-                    level.removeBlockEntity(pos);
-                    level.removeBlock(pos, false);
-                    level.removeBlock(pos.relative(state.getValue(CombustionChamberBlock.FACING).getOpposite()), false);
+                    if(!level.isClientSide())
+                    {
+                        level.removeBlockEntity(pos);
+                        level.removeBlock(pos, false);
+                        level.removeBlock(pos.relative(state.getValue(CombustionChamberBlock.FACING).getOpposite()), false);
+                    }
                     return new RocketEngineData(stage, stage.palette.indexOf(state), nozzleState, pos, extraData);
                 }
             }
