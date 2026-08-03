@@ -1,9 +1,6 @@
 package net.mistersecret312.rocketry_science.init;
 
-import net.mistersecret312.rocketry_science.network.packets.ClientBoundRocketUpdatePacket;
-import net.mistersecret312.rocketry_science.network.packets.ClientBoundSpacecraftClearPacket;
-import net.mistersecret312.rocketry_science.network.packets.ClientBoundSpacecraftRemovePacket;
-import net.mistersecret312.rocketry_science.network.packets.ClientBoundSpacecraftSyncPacket;
+import net.mistersecret312.rocketry_science.network.packets.*;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
@@ -14,6 +11,18 @@ public class NetworkInit
 	public static void registerPackets(final RegisterPayloadHandlersEvent event)
 	{
 		final PayloadRegistrar registrar = event.registrar("1");
+
+		registrar.playToServer(
+				ServerBoundRequestRocketEntityPacket.TYPE,
+				ServerBoundRequestRocketEntityPacket.STREAM_CODEC,
+				ServerBoundRequestRocketEntityPacket::handle
+		);
+
+		registrar.playToServer(
+				ServerBoundStartRocketAssemblyPacket.TYPE,
+				ServerBoundStartRocketAssemblyPacket.STREAM_CODEC,
+				ServerBoundStartRocketAssemblyPacket::handle
+		);
 
 		registrar.playToClient(
 				ClientBoundSpacecraftClearPacket.TYPE,
@@ -37,6 +46,12 @@ public class NetworkInit
 				ClientBoundSpacecraftRemovePacket.TYPE,
 				ClientBoundSpacecraftRemovePacket.STREAM_CODEC,
 				ClientBoundSpacecraftRemovePacket::handle
+		);
+
+		registrar.playToClient(
+				ClientBoundRecieveRocketEntityPacket.TYPE,
+				ClientBoundRecieveRocketEntityPacket.STREAM_CODEC,
+				ClientBoundRecieveRocketEntityPacket::handle
 		);
 	}
 }

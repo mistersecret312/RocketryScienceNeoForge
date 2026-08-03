@@ -14,6 +14,7 @@ import net.mistersecret312.rocketry_science.entities.RocketEntity;
 import net.mistersecret312.rocketry_science.init.BlockDataInit;
 import net.mistersecret312.rocketry_science.init.BlockInit;
 import net.mistersecret312.rocketry_science.vessel.Stage;
+import org.apache.commons.lang3.function.TriFunction;
 
 import java.util.Iterator;
 import java.util.function.BiFunction;
@@ -132,9 +133,9 @@ public class SeparatorData extends BlockData
         return new AABB(minX, minY, minZ, maxX, maxY, maxZ);
     }
 
-    public BiFunction<Stage, BlockPos, BlockData> create()
+    public TriFunction<Stage, BlockPos, Boolean, BlockData> create()
     {
-        return (stage, pos) ->
+        return (stage, pos, simulate) ->
         {
             Level level = stage.getVessel().level();
             BlockState state = level.getBlockState(pos);
@@ -152,7 +153,8 @@ public class SeparatorData extends BlockData
                         for (int z = pos.getZ(); z < pos.getZ() + separator.getWidth() ; z++)
                         {
                             BlockPos blockPos = new BlockPos(x, pos.getY(), z);
-                            level.removeBlock(blockPos, false);
+                            if(!simulate)
+                                level.removeBlock(blockPos, false);
                         }
                     return new SeparatorData(stage, stage.palette.indexOf(state), pos, extraData);
                 }

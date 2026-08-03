@@ -25,6 +25,7 @@ import net.mistersecret312.rocketry_science.block_entities.multiblock.RocketPadB
 import net.mistersecret312.rocketry_science.block_entities.rocket_engine.LiquidRocketEngineBlockEntity;
 import net.mistersecret312.rocketry_science.data.rocket_pad.RocketPad;
 import net.mistersecret312.rocketry_science.data.rocket_pad.RocketPadData;
+import net.mistersecret312.rocketry_science.entities.RocketEntity;
 import net.mistersecret312.rocketry_science.init.BlockEntityInit;
 import net.mistersecret312.rocketry_science.menu.RocketAssemblyMenu;
 import net.mistersecret312.rocketry_science.menus.CombustionChamberMenu;
@@ -65,8 +66,12 @@ public class RocketAssemblerBlock extends BaseEntityBlock
 				return ItemInteractionResult.FAIL;
 
 			RocketPadBlockEntity pad = (RocketPadBlockEntity) padLevel.getBlockEntity(padPos);
-//			if(pad != null)
-//				constructor.assembleRocket(pad, player);
+			if(pad != null)
+			{
+				RocketEntity rocketEntity = new RocketEntity(padLevel);
+				constructor.assembleRocket(pad, rocketEntity, false);
+				padLevel.addFreshEntity(rocketEntity);
+			}
 		}
 
 		return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
@@ -116,13 +121,6 @@ public class RocketAssemblerBlock extends BaseEntityBlock
 			{
 				throw new IllegalStateException("Our named container provider is missing!");
 			}
-		}
-
-		if(level.getBlockEntity(pos) instanceof RocketAssemblerBlockEntity assembler)
-		{
-			if(player.isShiftKeyDown())
-				assembler.stopTriggeredAnim("spin", "spin");
-			else assembler.triggerAnim("spin", "spin");
 		}
 
 		return super.useWithoutItem(state, level, pos, player, hitResult);

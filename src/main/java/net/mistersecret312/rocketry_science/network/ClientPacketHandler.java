@@ -1,8 +1,11 @@
 package net.mistersecret312.rocketry_science.network;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
+import net.mistersecret312.rocketry_science.client.screen.RocketAssemblyScreen;
 import net.mistersecret312.rocketry_science.data.SpaceCraft;
 import net.mistersecret312.rocketry_science.entities.RocketEntity;
 import net.mistersecret312.rocketry_science.util.OrbitUtil;
@@ -32,6 +35,16 @@ public class ClientPacketHandler
 		Entity entity = getEntity(id);
 		if(entity instanceof RocketEntity rocketEntity)
 			rocketEntity.setRocket(rocket);
+	}
+
+	public static void recieveRocketEntity(Rocket rocket, String msg)
+	{
+		Screen screen = Minecraft.getInstance().screen;
+		if(screen instanceof RocketAssemblyScreen assemblyScreen)
+		{
+			assemblyScreen.rocketEntity.setRocket(rocket);
+			assemblyScreen.constructionMessage = msg;
+		}
 	}
 
 	public static <T extends Entity> T getEntity(int id)

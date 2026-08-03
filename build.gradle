@@ -9,7 +9,6 @@ version = mod_version
 group = mod_group_id
 
 repositories {
-    mavenLocal()
     maven {
         // location of the maven that hosts JEI files since January 2023
         name = "Jared's maven"
@@ -25,6 +24,7 @@ repositories {
             includeGroup("software.bernie.geckolib")
         }
     }
+    mavenLocal()
 }
 
 base {

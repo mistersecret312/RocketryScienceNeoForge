@@ -15,6 +15,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.RegistryBuilder;
+import org.apache.commons.lang3.function.TriFunction;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,7 +34,7 @@ public class BlockDataInit
 
 	public static final DeferredRegister<BlockDataType<?>> TYPES = DeferredRegister.create(REGISTRY, RocketryScience.MODID);
 
-	public static final List<BiFunction<Stage, BlockPos, BlockData>> DATA_FACTORY = new ArrayList<>();
+	public static final List<TriFunction<Stage, BlockPos, Boolean, BlockData>> DATA_FACTORY = new ArrayList<>();
 	public static final HashMap<BlockDataType<?>, ResourceLocation> CLASSES = new HashMap<>();
 
 	public static final DeferredHolder<BlockDataType<?>, BlockDataType<RocketEngineData>> ROCKET_ENGINE

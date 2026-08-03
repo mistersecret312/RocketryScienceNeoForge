@@ -153,7 +153,7 @@ public class Rocket extends VesselData
 					target = OrbitUtil.getChildren(body, level).getFirst();
 				else target = OrbitUtil.getCelestialBody(OrbitUtil.EARTH, level);
 
-				target = OrbitUtil.getChildren(OrbitUtil.getCelestialBody(OrbitUtil.THE_SUN, level), level).getFirst();
+//				target = OrbitUtil.getChildren(OrbitUtil.getCelestialBody(OrbitUtil.EARTH, level), level).getFirst();
 				ConfiguredOrbit targetOrbit = target.getSupportedOrbits().getLast();
 
 				TravelPoint departure = new TravelPoint(configuredOrbit, level.getGameTime(), OrbitUtil.getKey(body, level));

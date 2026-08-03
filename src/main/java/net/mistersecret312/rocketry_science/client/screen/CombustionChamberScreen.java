@@ -14,7 +14,8 @@ import net.mistersecret312.rocketry_science.menus.CombustionChamberMenu;
 
 public class CombustionChamberScreen extends AbstractContainerScreen<CombustionChamberMenu>
 {
-    public static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(RocketryScience.MODID, "textures/gui/steel_combustion_engine_gui.png");
+    public static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(RocketryScience.MODID,
+            "textures/gui/steel_combustion_engine_gui.png");
 
     public CombustionChamberScreen(CombustionChamberMenu pMenu, Inventory pPlayerInventory, Component pTitle)
     {

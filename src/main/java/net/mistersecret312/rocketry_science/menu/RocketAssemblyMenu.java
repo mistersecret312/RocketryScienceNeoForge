@@ -1,6 +1,5 @@
 package net.mistersecret312.rocketry_science.menu;
 
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
@@ -14,7 +13,6 @@ import net.mistersecret312.rocketry_science.block_entities.RocketAssemblerBlockE
 import net.mistersecret312.rocketry_science.data.rocket_pad.RocketPad;
 import net.mistersecret312.rocketry_science.init.BlockInit;
 import net.mistersecret312.rocketry_science.init.MenuInit;
-import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 public class RocketAssemblyMenu extends AbstractContainerMenu
 {

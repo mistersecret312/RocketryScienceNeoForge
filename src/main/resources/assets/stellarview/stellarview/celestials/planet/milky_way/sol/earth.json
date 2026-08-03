@@ -25,7 +25,7 @@
 			"uv": { "flip_uv": false }
 		},
 		{
-			"texture": "rocketry_science:textures/planet/sol/earth.png",
+			"texture": "rocketry_science:textures/celestial_bodies/sol/earth.png",
 			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
 			"blend": false,
 			"size": 15395694,

@@ -197,7 +197,7 @@ public class SpaceCraft extends VesselData implements IOrbitObject<Orbit<SpaceCr
 			}
 		}
 
-		if(false && getOrbit() instanceof ArtificialOrbit orbit)
+		if(true && getOrbit() instanceof ArtificialOrbit orbit)
 		{
 			land(OrbitUtil.getLevel(orbit.getParent(level.registryAccess()), level()));
 		}

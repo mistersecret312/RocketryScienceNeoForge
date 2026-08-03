@@ -12,6 +12,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.mistersecret312.rocketry_science.RocketryScience;
+import net.mistersecret312.rocketry_science.blocks.SeparatorBlock;
 import net.mistersecret312.rocketry_science.client.renderer.PlumeRenderer;
 import net.mistersecret312.rocketry_science.client.renderer.block.SeparatorRenderer;
 import net.mistersecret312.rocketry_science.client.vessel.AbstractBlockDataRenderer;
@@ -26,22 +27,24 @@ public class SeparatorDataRenderer extends AbstractBlockDataRenderer<SeparatorDa
 					   int packedLight)
 	{
 		mutablePos.move(data.pos);
+		boolean extend;
+		extend = data.getBlockState().getValue(SeparatorBlock.EXTENDED);
 		switch (data.width)
 		{
 			case 1:
 			{
-				SeparatorRenderer.renderSingularWidth(level, mutablePos, poseStack, buffer, OverlayTexture.NO_OVERLAY, LevelRenderer.getLightColor(level, mutablePos), data.extended);
-				return;
+				SeparatorRenderer.renderSingularWidth(level, mutablePos, poseStack, buffer, OverlayTexture.NO_OVERLAY, LevelRenderer.getLightColor(level, mutablePos), extend);
+				break;
 			}
 			case 2:
 			{
-				SeparatorRenderer.renderDoubleWidth(level, mutablePos, poseStack, buffer, OverlayTexture.NO_OVERLAY, LevelRenderer.getLightColor(level, mutablePos), data.extended);
-				return;
+				SeparatorRenderer.renderDoubleWidth(level, mutablePos, poseStack, buffer, OverlayTexture.NO_OVERLAY, LevelRenderer.getLightColor(level, mutablePos), extend);
+				break;
 			}
 			case 3:
 			{
-				SeparatorRenderer.renderTripleWidth(level, mutablePos, poseStack, buffer, OverlayTexture.NO_OVERLAY, LevelRenderer.getLightColor(level, mutablePos), data.extended);
-				return;
+				SeparatorRenderer.renderTripleWidth(level, mutablePos, poseStack, buffer, OverlayTexture.NO_OVERLAY, LevelRenderer.getLightColor(level, mutablePos), extend);
+				break;
 			}
 		}
 		mutablePos.move(-data.pos.getX(), -data.pos.getY(), -data.pos.getZ());

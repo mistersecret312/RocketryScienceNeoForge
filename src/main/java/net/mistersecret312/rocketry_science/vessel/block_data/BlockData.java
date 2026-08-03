@@ -14,6 +14,7 @@ import net.minecraft.world.phys.AABB;
 import net.mistersecret312.rocketry_science.entities.RocketEntity;
 import net.mistersecret312.rocketry_science.init.BlockDataInit;
 import net.mistersecret312.rocketry_science.vessel.Stage;
+import org.apache.commons.lang3.function.TriFunction;
 
 import java.util.function.BiFunction;
 
@@ -91,9 +92,9 @@ public class BlockData
         return new AABB(minX, minY, minZ, maxX, maxY, maxZ);
     }
 
-    public BiFunction<Stage, BlockPos, BlockData> create()
+    public TriFunction<Stage, BlockPos, Boolean, BlockData> create()
     {
-        return (stage, pos) ->
+        return (stage, pos, simulate) ->
         {
             Level level = stage.vessel.level();
             BlockState state = level.getBlockState(pos);
@@ -105,7 +106,7 @@ public class BlockData
             if(!stage.palette.contains(state))
                 stage.palette.add(state);
 
-            if(!level.isClientSide())
+            if(!level.isClientSide() && !simulate)
             {
                 level.removeBlockEntity(pos);
                 level.removeBlock(pos, false);

@@ -14,6 +14,7 @@ import net.mistersecret312.rocketry_science.block_entities.fuel_tank.RocketFuelT
 import net.mistersecret312.rocketry_science.entities.RocketEntity;
 import net.mistersecret312.rocketry_science.init.BlockDataInit;
 import net.mistersecret312.rocketry_science.vessel.Stage;
+import org.apache.commons.lang3.function.TriFunction;
 
 import java.util.function.BiFunction;
 
@@ -140,9 +141,9 @@ public class FuelTankData extends BlockData
         return new AABB(minX, minY, minZ, maxX, maxY, maxZ);
     }
 
-    public BiFunction<Stage, BlockPos, BlockData> create()
+    public TriFunction<Stage, BlockPos, Boolean, BlockData> create()
     {
-        return (stage, pos) ->
+        return (stage, pos, simulate) ->
         {
             Level level = stage.getVessel().level();
             BlockState state = level.getBlockState(pos);
@@ -160,7 +161,8 @@ public class FuelTankData extends BlockData
                         for (int z = pos.getZ(); z < pos.getZ() + fuelTank.getWidth() ; z++)
                             for (int y = pos.getY(); y < pos.getY() + fuelTank.getHeight(); y++)
                             {
-                                level.removeBlock(new BlockPos(x, y, z), false);
+                                if(!simulate)
+                                    level.removeBlock(new BlockPos(x, y, z), false);
                             }
                     return new FuelTankData(stage, stage.palette.indexOf(state), pos, extraData);
                 }

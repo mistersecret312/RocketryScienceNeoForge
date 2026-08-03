@@ -31,6 +31,7 @@ import net.mistersecret312.rocketry_science.vessel.VesselData;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.ItemStackHandler;
+import org.apache.commons.lang3.function.TriFunction;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -291,9 +292,9 @@ public class RocketEngineData extends BlockData
         this.tank.getTanks();
     }
 
-    public BiFunction<Stage, BlockPos, BlockData> create()
+    public TriFunction<Stage, BlockPos, Boolean, BlockData> create()
     {
-        return (stage, pos) ->
+        return (stage, pos, simulate) ->
         {
             Level level = stage.getVessel().level();
             BlockState state = level.getBlockState(pos);
@@ -307,7 +308,7 @@ public class RocketEngineData extends BlockData
                     extraData = blockEntity.saveWithId(stage.getVessel().level().registryAccess());
                     if(!stage.palette.contains(state))
                         stage.palette.add(state);
-                    if(!level.isClientSide())
+                    if(!level.isClientSide() && !simulate)
                     {
                         level.removeBlockEntity(pos);
                         level.removeBlock(pos, false);

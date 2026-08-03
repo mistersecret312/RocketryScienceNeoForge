@@ -9,15 +9,25 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.mistersecret312.rocketry_science.RocketryScience;
+import net.mistersecret312.rocketry_science.client.screen.RocketAssemblyScreen;
+import net.mistersecret312.rocketry_science.network.packets.ServerBoundRequestRocketEntityPacket;
+import net.mistersecret312.rocketry_science.network.packets.ServerBoundStartRocketAssemblyPacket;
+import net.neoforged.neoforge.network.PacketDistributor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class WidgetAssembleRocket extends AbstractWidget implements Renderable
 {
 	public static final ResourceLocation ASSEMBLE_BUTTON = ResourceLocation.fromNamespaceAndPath(RocketryScience.MODID, "textures/gui/rocket_assembler/assemble_button.png");
 	public boolean isClicked = false;
 
-	public WidgetAssembleRocket(int x, int y, int width, int height)
+	public RocketAssemblyScreen screen;
+
+	public WidgetAssembleRocket(int x, int y, int width, int height, RocketAssemblyScreen screen)
 	{
 		super(x, y, width, height, Component.empty());
+		this.screen = screen;
 	}
 
 	@Override
@@ -41,7 +51,12 @@ public class WidgetAssembleRocket extends AbstractWidget implements Renderable
 
 		if(mouseX >= x-bounds && mouseX <= x+bounds)
 			if(mouseY >= y-bounds && mouseX <= y+bounds)
+			{
 				this.isClicked = true;
+				PacketDistributor.sendToServer(new ServerBoundRequestRocketEntityPacket());
+				if(screen.constructionMessage.isEmpty())
+					PacketDistributor.sendToServer(new ServerBoundStartRocketAssemblyPacket());
+			}
 
 		return super.mouseClicked(mouseX, mouseY, button);
 	}
