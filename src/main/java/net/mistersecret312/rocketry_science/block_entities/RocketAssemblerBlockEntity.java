@@ -11,6 +11,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -30,11 +31,13 @@ import net.mistersecret312.rocketry_science.entities.RocketAssemblerGantryEntity
 import net.mistersecret312.rocketry_science.entities.RocketEntity;
 import net.mistersecret312.rocketry_science.init.BlockDataInit;
 import net.mistersecret312.rocketry_science.init.BlockEntityInit;
+import net.mistersecret312.rocketry_science.network.packets.ClientBoundAssemblerUpdatePacket;
 import net.mistersecret312.rocketry_science.util.OrbitUtil;
 import net.mistersecret312.rocketry_science.util.OrbitalMath;
 import net.mistersecret312.rocketry_science.vessel.Rocket;
 import net.mistersecret312.rocketry_science.vessel.Stage;
 import net.mistersecret312.rocketry_science.vessel.block_data.BlockData;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.apache.commons.lang3.function.TriFunction;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
@@ -137,6 +140,10 @@ public class RocketAssemblerBlockEntity extends BlockEntity implements GeoBlockE
 		this.triggerAnim("spin", "spin");
 		this.started = true;
 
+		if(level instanceof ServerLevel serverLevel)
+			PacketDistributor.sendToPlayersTrackingChunk(serverLevel, new ChunkPos(this.getBlockPos()),
+					new ClientBoundAssemblerUpdatePacket(this.getBlockPos(), progress, maxProgress, started));
+
 		RocketPadData data = RocketPadData.get(level.getServer());
 		RocketPad rocketPad = data.rocketPads.get(this.getPadUUID());
 		Level padLevel = level.getServer().getLevel(rocketPad.getDimension());
@@ -165,7 +172,6 @@ public class RocketAssemblerBlockEntity extends BlockEntity implements GeoBlockE
 		setChanged();
 		if(this.level != null)
 			this.level.sendBlockUpdated(this.getBlockPos(), this.getBlockState(), this.getBlockState(), 2);
-
 	}
 
 	public void tickAssembly()
@@ -173,6 +179,10 @@ public class RocketAssemblerBlockEntity extends BlockEntity implements GeoBlockE
 		this.progress++;
 		if(level == null || level.isClientSide() || level.getServer() == null)
 			return;
+
+		if(level instanceof ServerLevel serverLevel)
+			PacketDistributor.sendToPlayersTrackingChunk(serverLevel, new ChunkPos(this.getBlockPos()),
+					new ClientBoundAssemblerUpdatePacket(this.getBlockPos(), progress, maxProgress, started));
 
 		RocketPadData data = RocketPadData.get(level.getServer());
 		RocketPad rocketPad = data.rocketPads.get(this.getPadUUID());
@@ -187,10 +197,6 @@ public class RocketAssemblerBlockEntity extends BlockEntity implements GeoBlockE
 			if(entity instanceof RocketAssemblerGantryEntity gantry)
 				gantry.setProgress((float) (progress/maxProgress));
 		}
-
-		setChanged();
-		if(this.level != null)
-			this.level.sendBlockUpdated(this.getBlockPos(), this.getBlockState(), this.getBlockState(), 2);
 
 		if(progress >= maxProgress)
 			endAssembly();

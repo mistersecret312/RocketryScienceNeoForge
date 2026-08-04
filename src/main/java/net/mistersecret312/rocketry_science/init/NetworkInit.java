@@ -53,5 +53,11 @@ public class NetworkInit
 				ClientBoundRecieveRocketEntityPacket.STREAM_CODEC,
 				ClientBoundRecieveRocketEntityPacket::handle
 		);
+
+		registrar.playToClient(
+				ClientBoundAssemblerUpdatePacket.TYPE,
+				ClientBoundAssemblerUpdatePacket.STREAM_CODEC,
+				ClientBoundAssemblerUpdatePacket::handle
+		);
 	}
 }

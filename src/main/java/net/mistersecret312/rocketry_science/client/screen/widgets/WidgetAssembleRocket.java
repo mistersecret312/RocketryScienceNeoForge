@@ -57,6 +57,8 @@ public class WidgetAssembleRocket extends AbstractWidget implements Renderable
 				PacketDistributor.sendToServer(new ServerBoundRequestRocketEntityPacket());
 				if(screen.constructionMessage.isEmpty())
 					PacketDistributor.sendToServer(new ServerBoundStartRocketAssemblyPacket());
+
+				screen.init();
 			}
 
 		return super.mouseClicked(mouseX, mouseY, button);

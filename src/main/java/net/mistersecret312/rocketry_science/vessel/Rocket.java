@@ -156,7 +156,7 @@ public class Rocket extends VesselData
 				else target = OrbitUtil.getCelestialBody(OrbitUtil.EARTH, level);
 
 //				target = OrbitUtil.getChildren(OrbitUtil.getCelestialBody(OrbitUtil.EARTH, level), level).getFirst();
-				ConfiguredOrbit targetOrbit = target.getSupportedOrbits().getLast();
+				ConfiguredOrbit targetOrbit = target.getSupportedOrbits().getFirst();
 
 				TravelPoint departure = new TravelPoint(configuredOrbit, level.getGameTime(), OrbitUtil.getKey(body, level));
 				TravelPoint arrival = new TravelPoint(targetOrbit, level.getGameTime()+2000, OrbitUtil.getKey(target, level));
@@ -172,7 +172,7 @@ public class Rocket extends VesselData
 				}
 				craft.stages = spaceCraftStages;
 				craft.setLevel(level);
-				craft.setOrbit(transferOrbit);
+				craft.setOrbit(orbit);
 
 				if(craft.getOrbit() instanceof TransferOrbit transfer)
 				{

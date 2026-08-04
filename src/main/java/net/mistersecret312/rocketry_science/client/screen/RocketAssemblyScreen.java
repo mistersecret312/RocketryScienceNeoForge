@@ -31,9 +31,16 @@ import net.mistersecret312.rocketry_science.menu.RocketAssemblyMenu;
 import net.mistersecret312.rocketry_science.network.packets.ServerBoundRequestRocketEntityPacket;
 import net.mistersecret312.rocketry_science.util.OrbitUtil;
 import net.mistersecret312.rocketry_science.util.OrbitalMath;
+import net.mistersecret312.rocketry_science.util.RocketFuel;
+import net.mistersecret312.rocketry_science.util.Units;
 import net.mistersecret312.rocketry_science.vessel.Rocket;
 import net.mistersecret312.rocketry_science.vessel.Stage;
 import net.mistersecret312.rocketry_science.vessel.block_data.BlockData;
+import net.mistersecret312.rocketry_science.vessel.block_data.FuelTankData;
+import net.mistersecret312.rocketry_science.vessel.block_data.RocketEngineData;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidType;
+import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.math.RoundingMode;
@@ -63,7 +70,7 @@ public class RocketAssemblyScreen extends AbstractContainerScreen<RocketAssembly
 	}
 
 	@Override
-	protected void init()
+	public void init()
 	{
 		super.init();
 		this.clearWidgets();
@@ -104,25 +111,27 @@ public class RocketAssemblyScreen extends AbstractContainerScreen<RocketAssembly
 
 		if (renderRocket != null)
 		{
-			if(renderRocket.getRocket().getStages().isEmpty())
+			Rocket rocket = renderRocket.getRocket();
+			if(rocket.getStages().isEmpty())
 				return;
 
+			
 			Font font = Minecraft.getInstance().font;
 			graphics.drawCenteredString(font, stage == -1 ? "Entire Rocket" : "Stage " + (stage + 1), imgX + 145,
 					imgY + 21, -1);
 
 			double deltaV = 0;
-			double twr = renderRocket.getRocket().getMaxTWR();
-			boolean canLand = renderRocket.getRocket().canLand();
-			double takeoffDeltaV = renderRocket.getRocket().takeoffDeltaV;
-			double landingDeltaV = renderRocket.getRocket().landingDeltaV;
+			double twr = rocket.getMaxTWR();
+			boolean canLand = rocket.canLand();
+			double takeoffDeltaV = rocket.takeoffDeltaV;
+			double landingDeltaV = rocket.landingDeltaV;
 
-			for(Stage rocketStage : renderRocket.getRocket().stages)
+			for(Stage rocketStage : rocket.stages)
 				deltaV += rocketStage.calculateDeltaV();
 
 			NumberFormat format = NumberFormat.getNumberInstance();
 			format.setMaximumFractionDigits(1);
-			format.setRoundingMode(RoundingMode.CEILING);
+			format.setRoundingMode(RoundingMode.HALF_UP);
 
 			poseStack.pushPose();
 			poseStack.translate(imgX+102, imgY+35, 0);
@@ -131,6 +140,7 @@ public class RocketAssemblyScreen extends AbstractContainerScreen<RocketAssembly
 			poseStack.translate(0, 9, 0);
 			graphics.drawString(font, "TWR: " + format.format(twr), 0, 0, -1);
 
+			
 			if(stage == -1)
 			{
 				String takeoffDV = format.format(takeoffDeltaV);
@@ -183,6 +193,39 @@ public class RocketAssemblyScreen extends AbstractContainerScreen<RocketAssembly
 					graphics.drawString(font, "Landing Fuel: " + OrbitalMath.deltaVToFuelMass(rocketEntity.getRocket().getCurrentStage(), landingDeltaV) + " mB", 0, 0, -1);
 				}
 
+				poseStack.translate(0, 18, 0);
+				graphics.drawString(font, "Mass: " + rocket.getMassKilogram() + " kg", 0, 0, -1);
+				poseStack.translate(0, 9, 0);
+				graphics.drawString(font, "Thrust: " + format.format(rocket.getMaxThrustKiloNewtons()) + " kN", 0, 0, -1);
+			}
+			else
+			{
+				poseStack.translate(0, 18, 0);
+				graphics.drawString(font, "Wet Mass: " + rocket.getMassKilogram() + " kg", 0, 0, -1);
+				poseStack.translate(0, 9, 0);
+				graphics.drawString(font, "Dry Mass: " + rocket.getMassDryKilogram() + " kg", 0, 0, -1);
+
+				double atmosphericIsp = 0;
+				double vacuumIsp = 0;
+
+				RocketFuel fuelType = RocketFuel.HYDROLOX;
+				for(Map.Entry<BlockPos, BlockData> entry : rocket.getCurrentStage().blocks.entrySet())
+				{
+					if(entry.getValue() instanceof RocketEngineData engineData)
+					{
+						atmosphericIsp = engineData.fuelType.getAtmosphericISP();
+						vacuumIsp = engineData.fuelType.getVacuumISP();
+						fuelType = engineData.fuelType;
+					}
+				}
+
+				poseStack.translate(0, 18, 0);
+				graphics.drawString(font, "Atm. Isp: " + atmosphericIsp + " s", 0, 0, -1);
+				poseStack.translate(0, 9, 0);
+				graphics.drawString(font, "Vac. Isp: " + vacuumIsp + " s", 0, 0, -1);
+
+				poseStack.translate(0, 18, 0);
+				graphics.drawString(font, Component.translatable("desc.rocketry_science.rocket_fuel."+fuelType.getSerializedName()), 0, 0, -1);
 			}
 			poseStack.popPose();
 		}

@@ -74,7 +74,7 @@ public record ServerBoundRequestRocketEntityPacket() implements CustomPacketPayl
 
 						AABB box = rocketEntity.makeBoundingBox();
 						double volume = box.getXsize()*box.getYsize()*box.getZsize();
-						blockEntity.maxProgress = volume*200;
+						blockEntity.maxProgress = volume*20;
 						blockEntity.setChanged();
 						level.sendBlockUpdated(blockEntity.getBlockPos(), blockEntity.getBlockState(), blockEntity.getBlockState(), 2);
 

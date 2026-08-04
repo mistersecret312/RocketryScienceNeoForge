@@ -7,6 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.mistersecret312.rocketry_science.block_entities.RocketAssemblerBlockEntity;
 import net.mistersecret312.rocketry_science.blocks.SeparatorBlock;
 import net.mistersecret312.rocketry_science.client.screen.RocketAssemblyScreen;
 import net.mistersecret312.rocketry_science.data.SpaceCraft;
@@ -112,6 +113,19 @@ public class ClientPacketHandler
 			}
 			else renderRocket = assemblyScreen.rocketEntity;
 			assemblyScreen.renderRocket = renderRocket;
+		}
+	}
+
+	public static void updateAssembler(BlockPos pos, double progress, double maxProgress, boolean started)
+	{
+		ClientLevel level = Minecraft.getInstance().level;
+		if(level == null)
+			return;
+		if(level.getBlockEntity(pos) instanceof RocketAssemblerBlockEntity assemblerBlockEntity)
+		{
+			assemblerBlockEntity.progress = progress;
+			assemblerBlockEntity.maxProgress = maxProgress;
+			assemblerBlockEntity.started = started;
 		}
 	}
 
