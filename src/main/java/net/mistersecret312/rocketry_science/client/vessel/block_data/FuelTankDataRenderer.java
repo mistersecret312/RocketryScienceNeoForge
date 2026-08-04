@@ -1,6 +1,7 @@
 package net.mistersecret312.rocketry_science.client.vessel.block_data;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -19,32 +20,30 @@ public class FuelTankDataRenderer extends AbstractBlockDataRenderer<FuelTankData
 	public void render(FuelTankData data, Level level, BlockPos.MutableBlockPos mutablePos, float partialTick, PoseStack poseStack,
 					   MultiBufferSource buffer, int packedLight)
 	{
-		mutablePos.move(data.pos);
-
-		int blockLight = level.getBrightness(LightLayer.BLOCK, mutablePos);
-		int skyLight = level.getBrightness(LightLayer.SKY, mutablePos);
-
-		packedLight = LightTexture.pack(blockLight, skyLight);
-
+		packedLight = LevelRenderer.getLightColor(level, mutablePos);
+		boolean isInUI = data.stage.getVessel().isInUI();
+		if(isInUI)
+			packedLight = LightTexture.FULL_BRIGHT;
 		switch (data.width)
 		{
 			case 1:
 			{
-				FuelTankRenderer.renderSingularWidth(data.height, level, mutablePos, 0f, poseStack, buffer, OverlayTexture.NO_OVERLAY,
-						packedLight);
+				FuelTankRenderer.renderSingularWidth(data.height, level, mutablePos, 0f,
+						poseStack, buffer, OverlayTexture.NO_OVERLAY, packedLight, isInUI);
 				break;
 			}
 			case 2:
 			{
-				FuelTankRenderer.renderDoubleWidth(data.height, level, mutablePos, 0f, poseStack, buffer, OverlayTexture.NO_OVERLAY, LevelRenderer.getLightColor(level, mutablePos));
+				FuelTankRenderer.renderDoubleWidth(data.height, level, mutablePos, 0f,
+						poseStack, buffer, OverlayTexture.NO_OVERLAY, packedLight, isInUI);
 				break;
 			}
 			case 3:
 			{
-				FuelTankRenderer.renderTripleWidth(data.height, level, mutablePos, 0f, poseStack, buffer, OverlayTexture.NO_OVERLAY, LevelRenderer.getLightColor(level, mutablePos));
+				FuelTankRenderer.renderTripleWidth(data.height, level, mutablePos, 0f,
+						poseStack, buffer, OverlayTexture.NO_OVERLAY, packedLight, isInUI);
 				break;
 			}
 		}
-		mutablePos.move(-data.pos.getX(), -data.pos.getY(), -data.pos.getZ());
 	}
 }

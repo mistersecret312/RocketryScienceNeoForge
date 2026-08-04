@@ -38,8 +38,9 @@ public class WidgetAssembleRocket extends AbstractWidget implements Renderable
 		float y = height/2f + this.getY();
 
 		int bound = 8;
+		boolean isActive = screen.blockEntity.started;
 
-		graphics.blit(ASSEMBLE_BUTTON, (int) (x-bound), (int) (y-bound), isClicked ? 16 : 0, 0, 16, 16, 32, 16);
+		graphics.blit(RocketAssemblyScreen.TEXTURE, (int) (x-bound), (int) (y-bound), isActive ? 240 : 223, 240, 16, 16, 256, 256);
 	}
 
 	@Override
@@ -50,7 +51,7 @@ public class WidgetAssembleRocket extends AbstractWidget implements Renderable
 		float y = height/2f + this.getY();
 
 		if(mouseX >= x-bounds && mouseX <= x+bounds)
-			if(mouseY >= y-bounds && mouseX <= y+bounds)
+			if(mouseY >= y-bounds && mouseY <= y+bounds)
 			{
 				this.isClicked = true;
 				PacketDistributor.sendToServer(new ServerBoundRequestRocketEntityPacket());

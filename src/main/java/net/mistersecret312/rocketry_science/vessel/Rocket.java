@@ -51,6 +51,8 @@ public class Rocket extends VesselData
 	public LinkedHashSet<Stage> stages;
 	public RocketEntity rocket;
 
+	public boolean isInUI = false;
+
 	public boolean canLand = false;
 	public double landingDeltaV = 0;
 	public double takeoffDeltaV = 0;
@@ -322,7 +324,6 @@ public class Rocket extends VesselData
 
 			double height = rocketEntityNew.makeBoundingBox().getYsize();
 
-			BlockPos origin = null;
 			Iterator<Stage> stages = this.stages.iterator();
 			while(stages.hasNext())
 			{
@@ -330,9 +331,6 @@ public class Rocket extends VesselData
 				HashMap<BlockPos, BlockData> blocks = new HashMap<>();
 				for(Map.Entry<BlockPos, BlockData> entry : stage.blocks.entrySet())
 				{
-					if(origin == null)
-						origin = entry.getKey();
-
 					BlockPos pos = entry.getKey().offset(0, (int) -height, 0);
 					BlockData data = entry.getValue();
 					data.pos = pos;
@@ -427,6 +425,12 @@ public class Rocket extends VesselData
 		this.accumulatedOrbitalVelocity = tag.getDouble("accumulated_orbital_velocity");
 	}
 
+	@Override
+	public boolean isInUI()
+	{
+		return isInUI;
+	}
+
 	public VesselState getState()
 	{
 		return state;
@@ -478,7 +482,6 @@ public class Rocket extends VesselData
 		AtomicDouble takeOffDeltaV = new AtomicDouble(0);
 		double takeoffDeltaV = takeoffSimulation(takeOffFuel, takeOffDeltaV);
 
-		int fuelUsed = 0;
 		int ticks = 0;
 		Stage stage = getCurrentStage();
 
@@ -497,15 +500,11 @@ public class Rocket extends VesselData
 		double safeLandingSpeed = -0.25;
 		double g = 0.025;
 
-		int ticksRan = 0;
-
 		while(altitude > 0.25)
 		{
 			if(ticks >= 1000)
-			{
-				System.out.println("Simulation took too long!");
 				return;
-			}
+
 			if(altitude < rocket.makeBoundingBox().getYsize() && velocity > safeLandingSpeed)
 				break;
 
@@ -548,10 +547,7 @@ public class Rocket extends VesselData
 				double thrustFraction = (g + accelCmd) / (twr * g);
 				thrustLevel = Mth.clamp(thrustFraction, 0.0, 1.0);
 
-				fuelUsed += Math.max(1, (int) (fuelFlow * thrustLevel) * stage.getFuelTypeAmount() * getEngineAmount());
 				massAccounted -= Math.max(1, (int) (fuelFlow * thrustLevel) * stage.getFuelTypeAmount() * getEngineAmount());
-
-				ticksRan++;
 			}
 			else thrustLevel = 0.0;
 
@@ -566,14 +562,8 @@ public class Rocket extends VesselData
 
 		double Isp = getAverageIsp();
 		double massRatio = mass/(massAccounted);
-		double deltaV = 9.8*Isp*Math.log(massRatio);
 
-		System.out.println("Simulated landing fuel - " + fuelUsed);
-		System.out.println("Landing DeltaV to fuel - " + OrbitalMath.deltaVToFuelMass(stage, deltaV));
-		System.out.println("Takeoff DeltaV to fuel - " + OrbitalMath.deltaVToFuelMass(stage, takeOffFuel.get()));
-		System.out.println("Simulated deltaV - " + takeoffDeltaV + " Landing - " + deltaV);
-
-		this.landingDeltaV = deltaV;
+		this.landingDeltaV = 9.8*Isp*Math.log(massRatio);
 		this.takeoffDeltaV = takeoffDeltaV;
 	}
 
@@ -603,13 +593,10 @@ public class Rocket extends VesselData
 		while(altitude < spaceY)
 		{
 			if(ticks >= 1000)
-			{
-				System.out.println("Takeoff simulation took too long!");
 				return 0;
-			}
 
 			velocity -= gravity;
-			double engineThrust = 0.0D;
+			double engineThrust;
 			double hover = getHoverThrust();
 
 			if(altitude < height)
@@ -641,8 +628,6 @@ public class Rocket extends VesselData
 		usedFuel.set(fuelUsed);
 		usedDeltaV.set(deltaV);
 
-		System.out.println("Simulated time - " + ticks);
-		System.out.println("Simulated takeoff fuel - " + fuelUsed);
 		return deltaV;
 	}
 }

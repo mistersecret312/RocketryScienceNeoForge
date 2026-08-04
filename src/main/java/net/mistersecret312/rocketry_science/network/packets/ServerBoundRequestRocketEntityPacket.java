@@ -10,6 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import net.mistersecret312.rocketry_science.RocketryScience;
 import net.mistersecret312.rocketry_science.block_entities.RocketAssemblerBlockEntity;
 import net.mistersecret312.rocketry_science.block_entities.multiblock.RocketPadBlockEntity;
@@ -59,6 +60,8 @@ public record ServerBoundRequestRocketEntityPacket() implements CustomPacketPayl
 
 					RocketPadData data = RocketPadData.get(level.getServer());
 					RocketPad rocketPad = data.rocketPads.get(blockEntity.getPadUUID());
+					if(rocketPad == null)
+						return;
 					Level padLevel = level.getServer().getLevel(rocketPad.getDimension());
 					if(padLevel == null)
 						return;
@@ -68,6 +71,12 @@ public record ServerBoundRequestRocketEntityPacket() implements CustomPacketPayl
 					{
 						RocketEntity rocketEntity = new RocketEntity(padLevel);
 						String msg = blockEntity.assembleRocket(padBE, rocketEntity, true);
+
+						AABB box = rocketEntity.makeBoundingBox();
+						double volume = box.getXsize()*box.getYsize()*box.getZsize();
+						blockEntity.maxProgress = volume*200;
+						blockEntity.setChanged();
+						level.sendBlockUpdated(blockEntity.getBlockPos(), blockEntity.getBlockState(), blockEntity.getBlockState(), 2);
 
 						PacketDistributor.sendToPlayer(
 								(ServerPlayer) player, new ClientBoundRecieveRocketEntityPacket(rocketEntity.getRocket(), msg));

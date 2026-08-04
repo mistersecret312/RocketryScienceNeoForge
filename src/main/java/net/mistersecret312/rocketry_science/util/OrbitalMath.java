@@ -118,6 +118,12 @@ public class OrbitalMath
 		return (int) (stageMass-massWithoutDeltaV);
 	}
 
+	public static int deltaVToFuelMass(double totalMass, double Isp, double deltaV)
+	{
+		double massWithoutDeltaV = totalMass*Math.pow(2.718, -(deltaV/(Isp*9.81)));
+		return (int) (totalMass-massWithoutDeltaV);
+	}
+
 	public static void gravityAffect(Entity entity)
 	{
 		if(!entity.isNoGravity() && !(entity instanceof LivingEntity living && living.isFallFlying())

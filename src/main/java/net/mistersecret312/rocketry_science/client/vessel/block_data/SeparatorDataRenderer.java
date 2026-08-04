@@ -3,6 +3,7 @@ package net.mistersecret312.rocketry_science.client.vessel.block_data;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
@@ -26,27 +27,32 @@ public class SeparatorDataRenderer extends AbstractBlockDataRenderer<SeparatorDa
 	public void render(SeparatorData data, Level level, BlockPos.MutableBlockPos mutablePos, float partialTick, PoseStack poseStack, MultiBufferSource buffer,
 					   int packedLight)
 	{
-		mutablePos.move(data.pos);
 		boolean extend;
 		extend = data.getBlockState().getValue(SeparatorBlock.EXTENDED);
+		boolean isInUI = data.stage.getVessel().isInUI();
+		if(isInUI)
+			packedLight = LightTexture.FULL_BRIGHT;
+
 		switch (data.width)
 		{
 			case 1:
 			{
-				SeparatorRenderer.renderSingularWidth(level, mutablePos, poseStack, buffer, OverlayTexture.NO_OVERLAY, LevelRenderer.getLightColor(level, mutablePos), extend);
+				SeparatorRenderer.renderSingularWidth(level, mutablePos, poseStack, buffer,
+						OverlayTexture.NO_OVERLAY, packedLight, extend, isInUI);
 				break;
 			}
 			case 2:
 			{
-				SeparatorRenderer.renderDoubleWidth(level, mutablePos, poseStack, buffer, OverlayTexture.NO_OVERLAY, LevelRenderer.getLightColor(level, mutablePos), extend);
+				SeparatorRenderer.renderDoubleWidth(level, mutablePos, poseStack, buffer,
+						OverlayTexture.NO_OVERLAY, packedLight, extend, isInUI);
 				break;
 			}
 			case 3:
 			{
-				SeparatorRenderer.renderTripleWidth(level, mutablePos, poseStack, buffer, OverlayTexture.NO_OVERLAY, LevelRenderer.getLightColor(level, mutablePos), extend);
+				SeparatorRenderer.renderTripleWidth(level, mutablePos, poseStack, buffer,
+						OverlayTexture.NO_OVERLAY, packedLight, extend, isInUI);
 				break;
 			}
 		}
-		mutablePos.move(-data.pos.getX(), -data.pos.getY(), -data.pos.getZ());
 	}
 }

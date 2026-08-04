@@ -35,6 +35,7 @@ public class SpaceCraft extends VesselData implements IOrbitObject<Orbit<SpaceCr
 
 	public VesselState state;
 	public LinkedHashSet<Stage> stages;
+	public boolean isInUI = false;
 
 	public SpaceCraft(UUID uuid, LinkedHashSet<Stage> stages)
 	{
@@ -177,6 +178,12 @@ public class SpaceCraft extends VesselData implements IOrbitObject<Orbit<SpaceCr
 	public boolean isInSpace()
 	{
 		return true;
+	}
+
+	@Override
+	public boolean isInUI()
+	{
+		return isInUI;
 	}
 
 	@Override

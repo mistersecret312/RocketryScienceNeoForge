@@ -14,6 +14,7 @@ import java.util.Map;
 public abstract class VesselData
 {
 	public abstract Level level();
+	public abstract boolean isInUI();
 	public abstract boolean isInSpace();
 
 	public abstract void tick(Level level);

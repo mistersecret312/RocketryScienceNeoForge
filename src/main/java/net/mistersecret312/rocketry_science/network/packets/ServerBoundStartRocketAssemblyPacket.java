@@ -45,7 +45,9 @@ public record ServerBoundStartRocketAssemblyPacket() implements CustomPacketPayl
 			{
 				Player player = ctx.player();
 				if(player.containerMenu instanceof RocketAssemblyMenu assemblyMenu)
+				{
 					assemblyMenu.blockEntity.startAssembly();
+				}
 			});
 	}
 }

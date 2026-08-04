@@ -10,6 +10,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.mistersecret312.rocketry_science.block_entities.SeparatorBlockEntity;
+import net.mistersecret312.rocketry_science.blocks.SeparatorBlock;
 import net.mistersecret312.rocketry_science.entities.RocketEntity;
 import net.mistersecret312.rocketry_science.init.BlockDataInit;
 import net.mistersecret312.rocketry_science.init.BlockInit;
@@ -105,6 +106,8 @@ public class SeparatorData extends BlockData
         double minY = Integer.MAX_VALUE, maxY = Integer.MIN_VALUE;
         double minZ = Integer.MAX_VALUE, maxZ = Integer.MIN_VALUE;
 
+        boolean extend = this.getBlockState().getValue(SeparatorBlock.EXTENDED);
+
         switch(width)
         {
             case 1:
@@ -128,7 +131,7 @@ public class SeparatorData extends BlockData
         }
 
         minY = Math.min(aabb.minY, rocket.position().y+pos.getY());
-        maxY = Math.max(aabb.maxY, rocket.position().y+pos.getY()+1);
+        maxY = Math.max(aabb.maxY, rocket.position().y+pos.getY()+1+(extend ? 2 : 0));
 
         return new AABB(minX, minY, minZ, maxX, maxY, maxZ);
     }

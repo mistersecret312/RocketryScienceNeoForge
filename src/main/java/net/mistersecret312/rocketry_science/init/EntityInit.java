@@ -5,6 +5,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.mistersecret312.rocketry_science.RocketryScience;
+import net.mistersecret312.rocketry_science.entities.RocketAssemblerGantryEntity;
 import net.mistersecret312.rocketry_science.entities.RocketEntity;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -21,6 +22,13 @@ public class EntityInit
 											.sized(0.75f, 0.75f)
 											.build(ResourceLocation.fromNamespaceAndPath(RocketryScience.MODID,
 													"rocket").toString()));
+	public static final DeferredHolder<EntityType<?>, EntityType<RocketAssemblerGantryEntity>> ASSEMBLER_GANTRY =
+			ENTITY_TYPES.register("assembler_gantry",
+					() -> EntityType.Builder.<RocketAssemblerGantryEntity>of(RocketAssemblerGantryEntity::new, MobCategory.MISC)
+											.sized(0.75f, 0.75f)
+											.build(ResourceLocation.fromNamespaceAndPath(RocketryScience.MODID,
+													"assembler_gantry").toString()));
+
 
 	public static void register(IEventBus bus)
 	{

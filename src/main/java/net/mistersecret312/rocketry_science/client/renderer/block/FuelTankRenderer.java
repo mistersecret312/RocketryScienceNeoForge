@@ -7,12 +7,15 @@ import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -69,21 +72,24 @@ public class FuelTankRenderer implements BlockEntityRenderer<FuelTankBlockEntity
 		{
 			if(fuelTank.getControllerBE().getWidth() == 3)
 			{
-				renderTripleWidth(fuelTank.getHeight(), fuelTank.getLevel(), fuelTank.getBlockPos(), fuelTank.ratio, pose, buffer, overlay, light);
+				renderTripleWidth(fuelTank.getHeight(), fuelTank.getLevel(), fuelTank.getBlockPos(),
+						fuelTank.ratio, pose, buffer, overlay, light, false);
 			}
 			if (fuelTank.getControllerBE().getWidth() == 2)
 			{
-				renderDoubleWidth(fuelTank.getHeight(), fuelTank.getLevel(), fuelTank.getBlockPos(), fuelTank.ratio, pose, buffer, overlay, light);
+				renderDoubleWidth(fuelTank.getHeight(), fuelTank.getLevel(), fuelTank.getBlockPos(),
+						fuelTank.ratio, pose, buffer, overlay, light, false);
 
 			}
 			if (fuelTank.getControllerBE().getWidth() == 1)
 			{
-				renderSingularWidth(fuelTank.getHeight(), fuelTank.getLevel(), fuelTank.getBlockPos(), fuelTank.ratio, pose, buffer, overlay, light);
+				renderSingularWidth(fuelTank.getHeight(), fuelTank.getLevel(), fuelTank.getBlockPos(),
+						fuelTank.ratio, pose, buffer, overlay, light, false);
 			}
 		}
 	}
 
-	public static void renderSingularWidth(int height, Level level, BlockPos pos, float ratio, PoseStack pose, MultiBufferSource buffer, int overlay, int light)
+	public static void renderSingularWidth(int height, Level level, BlockPos pos, float ratio, PoseStack pose, MultiBufferSource buffer, int overlay, int packedLight, boolean overrideLight)
 	{
 		List<BlockState> states = new ArrayList<>();
 		if(height != 1)
@@ -107,9 +113,21 @@ public class FuelTankRenderer implements BlockEntityRenderer<FuelTankBlockEntity
 			BlockState state = states.get(i);
 			pose.translate(0f, i == 0 ? 0f : 1f, 0f);
 			BakedModel model = blockRenderer.getBlockModel(state);
-			light = LevelRenderer.getLightColor(level, pos.offset(0, i, 0));
+			BlockPos blockPos = pos.offset(0, i, 0);
+			int light = LevelRenderer.getLightColor(level, blockPos);
+			if(overrideLight)
+				light = packedLight;
 			for (net.minecraft.client.renderer.RenderType rt : model.getRenderTypes(state, RandomSource.create(42), ModelData.EMPTY))
-				modelRenderer.renderModel(pose.last(), buffer.getBuffer(rt), null, model, 1f, 1f, 1f, light, overlay);
+			{
+				if(overrideLight)
+					modelRenderer.renderModel(pose.last(), buffer.getBuffer(rt), state, model, 1f, 1f, 1f, light, overlay);
+				else
+				{
+					modelRenderer.tesselateBlock(level, model, state, blockPos, pose, buffer.getBuffer(rt), false,
+							RandomSource.create(42), state.getSeed(blockPos), OverlayTexture.NO_OVERLAY,
+							model.getModelData(level, blockPos, state, ModelData.EMPTY), rt);
+				}
+			}
 		}
 		pose.popPose();
 //		if(ConfigInit.enable_frost_layer.get())
@@ -155,7 +173,7 @@ public class FuelTankRenderer implements BlockEntityRenderer<FuelTankBlockEntity
 //		}
 	}
 
-	public static void renderDoubleWidth(int height, Level level, BlockPos pos, float ratio, PoseStack pose, MultiBufferSource buffer, int overlay, int light)
+	public static void renderDoubleWidth(int height, Level level, BlockPos pos, float ratio, PoseStack pose, MultiBufferSource buffer, int overlay, int packedLight, boolean overrideLight)
 	{
 		List<BlockState> states = new ArrayList<>();
 		if(height != 1)
@@ -192,9 +210,21 @@ public class FuelTankRenderer implements BlockEntityRenderer<FuelTankBlockEntity
 				BlockState state = states.get(i);
 				pose.translate(0f, i == 0 ? 0f : 1f, 0f);
 				BakedModel model = blockRenderer.getBlockModel(state);
-				light = LevelRenderer.getLightColor(level, pos.offset(0, i, 0));
+				BlockPos blockPos = pos.offset(0, i, 0);
+				int light = LevelRenderer.getLightColor(level, blockPos);
+				if(overrideLight)
+					light = packedLight;
 				for (net.minecraft.client.renderer.RenderType rt : model.getRenderTypes(state, RandomSource.create(42), ModelData.EMPTY))
-					modelRenderer.renderModel(pose.last(), buffer.getBuffer(rt), null, model, 1f, 1f, 1f, light, overlay);
+				{
+					if(overrideLight)
+						modelRenderer.renderModel(pose.last(), buffer.getBuffer(rt), state, model, 1f, 1f, 1f, light, overlay);
+					else
+					{
+						modelRenderer.tesselateBlock(level, model, state, blockPos, pose, buffer.getBuffer(rt), false,
+								RandomSource.create(42), state.getSeed(blockPos), OverlayTexture.NO_OVERLAY,
+								model.getModelData(level, blockPos, state, ModelData.EMPTY), rt);
+					}
+				}
 			}
 			pose.popPose();
 		}
@@ -243,7 +273,7 @@ public class FuelTankRenderer implements BlockEntityRenderer<FuelTankBlockEntity
 //		}
 	}
 
-	public static void renderTripleWidth(int height, Level level, BlockPos pos, float ratio, PoseStack pose, MultiBufferSource buffer, int overlay, int light)
+	public static void renderTripleWidth(int height, Level level, BlockPos pos, float ratio, PoseStack pose, MultiBufferSource buffer, int overlay, int packedLight, boolean overrideLight)
 	{
 		List<Pair<BlockPos, Pair<Integer, BlockState>>> states = new ArrayList<>();
 		BlockRenderDispatcher blockRenderer = Minecraft.getInstance().getBlockRenderer();
@@ -474,9 +504,21 @@ public class FuelTankRenderer implements BlockEntityRenderer<FuelTankBlockEntity
 			pose.rotateAround(Axis.YP.rotationDegrees(states.get(i).getSecond().getFirst()), x+0.5f, 0, z+0.5f);
 			pose.translate(x, y, z);
 			BakedModel model = blockRenderer.getBlockModel(state);
-			light = LevelRenderer.getLightColor(level, pos.offset(x,y,z));
+			BlockPos blockPos = pos.offset(x, y, z);
+			int light = LevelRenderer.getLightColor(level, blockPos);
+			if(overrideLight)
+				light = packedLight;
 			for (net.minecraft.client.renderer.RenderType rt : model.getRenderTypes(state, RandomSource.create(42), ModelData.EMPTY))
-				modelRenderer.renderModel(pose.last(), buffer.getBuffer(rt), null, model, 1f, 1f, 1f, light, overlay);
+			{
+				if(overrideLight)
+					modelRenderer.renderModel(pose.last(), buffer.getBuffer(rt), state, model, 1f, 1f, 1f, light, overlay);
+				else
+				{
+					modelRenderer.tesselateBlock(level, model, state, blockPos, pose, buffer.getBuffer(rt), false,
+							RandomSource.create(42), state.getSeed(blockPos), OverlayTexture.NO_OVERLAY,
+							model.getModelData(level, blockPos, state, ModelData.EMPTY), rt);
+				}
+			}
 			pose.popPose();
 		}
 

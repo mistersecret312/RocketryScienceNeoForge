@@ -7,6 +7,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
@@ -17,6 +18,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.mistersecret312.rocketry_science.block_entities.multiblock.RocketPadBlockEntity;
 import net.mistersecret312.rocketry_science.blocks.SeparatorBlock;
 import net.mistersecret312.rocketry_science.data.orbits.CelestialOrbit;
@@ -24,6 +26,7 @@ import net.mistersecret312.rocketry_science.data.orbits.Orbit;
 import net.mistersecret312.rocketry_science.data.rocket_pad.RocketPad;
 import net.mistersecret312.rocketry_science.data.rocket_pad.RocketPadData;
 import net.mistersecret312.rocketry_science.datapack.CelestialBody;
+import net.mistersecret312.rocketry_science.entities.RocketAssemblerGantryEntity;
 import net.mistersecret312.rocketry_science.entities.RocketEntity;
 import net.mistersecret312.rocketry_science.init.BlockDataInit;
 import net.mistersecret312.rocketry_science.init.BlockEntityInit;
@@ -50,9 +53,11 @@ public class RocketAssemblerBlockEntity extends BlockEntity implements GeoBlockE
 	protected static final RawAnimation SPIN = RawAnimation.begin().thenPlay("spin");
 
 	private UUID uuid = UUID.randomUUID();
+	private UUID trackedGantry = null;
 
 	public boolean started = false;
 	public double progress = 0d;
+	public double maxProgress = 200d;
 
 	public RocketAssemblerBlockEntity(BlockPos pos, BlockState blockState)
 	{
@@ -121,28 +126,7 @@ public class RocketAssemblerBlockEntity extends BlockEntity implements GeoBlockE
 		rocketEntity.setPos(firstFound.getCenter().add(0, -0.5, 0));
 		if(!rocket.stages.isEmpty())
 		{
-			int stageI = 0;
-			double deltaV = 0;
-			for(Stage stage : rocket.stages)
-			{
-				double stageDelta = stage.calculateDeltaV();
-				System.out.println("Stage[" + stageI + "] = " + stageDelta);
-				deltaV += stageDelta;
-				stageI++;
-			}
-
-			System.out.println("Rocket Total DeltaV - " + deltaV);
-
-			System.out.println("Rocket TWR - " + rocket.getMaxTWR());
 			rocket.landingSimulation();
-
-			double leoHeight = 300*1000;
-			double deltaVToOrbit = OrbitalMath.getLaunchDeltaV(OrbitUtil.getCelestialBody(pad.getLevel()), leoHeight);
-			System.out.println("Target Orbit DeltaV Requirement - " + deltaVToOrbit);
-
-			CelestialBody body = OrbitUtil.getCelestialBody(pad.getLevel());
-			CelestialOrbit orbit = body.getOrbit();
-			double radius = body.getRadius();
 			return "";
 		}
 		return "ERROR: Rocket Pad is empty! Report to developer!";
@@ -152,23 +136,6 @@ public class RocketAssemblerBlockEntity extends BlockEntity implements GeoBlockE
 	{
 		this.triggerAnim("spin", "spin");
 		this.started = true;
-	}
-
-	public void tickAssembly()
-	{
-		this.progress++;
-		if(progress >= 200)
-			endAssembly();
-	}
-
-	public void endAssembly()
-	{
-		started = false;
-		progress = 0d;
-
-		this.stopTriggeredAnim("spin", "spin");
-		if(level == null || level.isClientSide() || level.getServer() == null)
-			return;
 
 		RocketPadData data = RocketPadData.get(level.getServer());
 		RocketPad rocketPad = data.rocketPads.get(this.getPadUUID());
@@ -176,6 +143,86 @@ public class RocketAssemblerBlockEntity extends BlockEntity implements GeoBlockE
 		if(padLevel == null)
 			return;
 
+		RocketPadBlockEntity padBE = (RocketPadBlockEntity) padLevel.getBlockEntity(rocketPad.getPos());
+		if(padBE != null)
+		{
+			AABB box = padBE.getOnPadBox().expandTowards(1, 1, 1);
+
+			Vec3 position = box.getBottomCenter();
+			RocketAssemblerGantryEntity gantry = new RocketAssemblerGantryEntity(padLevel);
+
+			gantry.setHeight((float) box.getYsize());
+			gantry.setXWidth((float) box.getXsize());
+			gantry.setZWidth((float) box.getZsize());
+			gantry.setProgress(0f);
+
+			gantry.setPos(position);
+			padLevel.addFreshEntity(gantry);
+
+			this.trackedGantry = gantry.getUUID();
+		}
+
+		setChanged();
+		if(this.level != null)
+			this.level.sendBlockUpdated(this.getBlockPos(), this.getBlockState(), this.getBlockState(), 2);
+
+	}
+
+	public void tickAssembly()
+	{
+		this.progress++;
+		if(level == null || level.isClientSide() || level.getServer() == null)
+			return;
+
+		RocketPadData data = RocketPadData.get(level.getServer());
+		RocketPad rocketPad = data.rocketPads.get(this.getPadUUID());
+		if(rocketPad == null)
+			return;
+		Level padLevel = level.getServer().getLevel(rocketPad.getDimension());
+		if(padLevel == null)
+			return;
+		if(padLevel instanceof ServerLevel serverLevel)
+		{
+			Entity entity = serverLevel.getEntity(trackedGantry);
+			if(entity instanceof RocketAssemblerGantryEntity gantry)
+				gantry.setProgress((float) (progress/maxProgress));
+		}
+
+		setChanged();
+		if(this.level != null)
+			this.level.sendBlockUpdated(this.getBlockPos(), this.getBlockState(), this.getBlockState(), 2);
+
+		if(progress >= maxProgress)
+			endAssembly();
+	}
+
+	public void endAssembly()
+	{
+		started = false;
+		progress = 0d;
+		setChanged();
+		if(this.level != null)
+			this.level.sendBlockUpdated(this.getBlockPos(), this.getBlockState(), this.getBlockState(), 2);
+
+
+		this.stopTriggeredAnim("spin", "spin");
+		if(level == null || level.isClientSide() || level.getServer() == null)
+			return;
+
+		RocketPadData data = RocketPadData.get(level.getServer());
+		RocketPad rocketPad = data.rocketPads.get(this.getPadUUID());
+		if(rocketPad == null)
+			return;
+		Level padLevel = level.getServer().getLevel(rocketPad.getDimension());
+		if(padLevel == null)
+			return;
+		if(padLevel instanceof ServerLevel serverLevel)
+		{
+			Entity entity = serverLevel.getEntity(trackedGantry);
+			if(entity != null)
+				entity.discard();
+		}
+		this.trackedGantry = null;
 		RocketPadBlockEntity padBE = (RocketPadBlockEntity) padLevel.getBlockEntity(rocketPad.getPos());
 		if(padBE != null)
 		{
@@ -193,6 +240,12 @@ public class RocketAssemblerBlockEntity extends BlockEntity implements GeoBlockE
 				}
 			}
 		}
+	}
+
+	public static void tick(Level level, BlockPos pos, BlockState blockState, RocketAssemblerBlockEntity blockEntity)
+	{
+		if(blockEntity.started)
+			blockEntity.tickAssembly();
 	}
 
 	@Override
@@ -213,6 +266,9 @@ public class RocketAssemblerBlockEntity extends BlockEntity implements GeoBlockE
 		tag.putUUID("pad_id", this.getPadUUID());
 		tag.putBoolean("started", started);
 		tag.putDouble("progress", progress);
+		tag.putDouble("max_progress", maxProgress);
+		if(trackedGantry != null)
+			tag.putUUID("tracked_gantry", trackedGantry);
 
 		super.saveAdditional(tag, registries);
 	}
@@ -225,6 +281,9 @@ public class RocketAssemblerBlockEntity extends BlockEntity implements GeoBlockE
 		this.setPadUUID(tag.getUUID("pad_id"));
 		this.started = tag.getBoolean("progress");
 		this.progress = tag.getDouble("progress");
+		this.maxProgress = tag.getDouble("max_progress");
+		if(tag.contains("tracked_gantry"))
+			this.trackedGantry = tag.getUUID("tracked_gantry");
 	}
 
 	@Override

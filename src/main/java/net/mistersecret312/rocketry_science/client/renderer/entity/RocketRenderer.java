@@ -33,7 +33,6 @@ public class RocketRenderer extends EntityRenderer<RocketEntity>
     public void render(RocketEntity rocket, float yaw, float partial, PoseStack pose,
                        MultiBufferSource buffer, int light)
     {
-
         pose.pushPose();
         pose.mulPose(Axis.YP.rotationDegrees(yaw));
         pose.mulPose(Axis.ZP.rotationDegrees(rocket.getViewXRot(partial)));
@@ -42,15 +41,18 @@ public class RocketRenderer extends EntityRenderer<RocketEntity>
         while(stageIterator.hasNext())
         {
             Stage stage = stageIterator.next();
-            BlockPos.MutableBlockPos mutablePos = rocket.blockPosition().mutable().move(0, 0, 0);
+            BlockPos.MutableBlockPos mutablePos = rocket.blockPosition().mutable();
             for(Map.Entry<BlockPos, BlockData> data : stage.blocks.entrySet())
             {
                 BlockData blockData = data.getValue();
                 BlockPos pos = data.getKey();
+                pose.pushPose();
                 pose.translate(pos.getX(), pos.getY(), pos.getZ());
+                mutablePos.move(pos);
                 IBlockDataRenderer<BlockData> renderer = (IBlockDataRenderer<BlockData>) BlockDataRendererRegistry.getRenderer(data.getValue().getType());
                 renderer.render(blockData, rocket.level(), mutablePos, partial, pose, buffer, light);
-                pose.translate(-pos.getX(), -pos.getY(), -pos.getZ());
+                mutablePos.move(pos.multiply(-1));
+                pose.popPose();
             }
         }
         pose.popPose();

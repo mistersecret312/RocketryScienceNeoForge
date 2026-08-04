@@ -12,10 +12,15 @@ import net.minecraft.world.level.material.Fluid;
 import net.mistersecret312.rocketry_science.block_entities.fuel_tank.FuelTankBlockEntity;
 import net.mistersecret312.rocketry_science.client.level.RocketryDimensionSpecialEffects;
 import net.mistersecret312.rocketry_science.client.model.PlumeModel;
+import net.mistersecret312.rocketry_science.client.model.assembler_gantry.AssemblerGantryBaseModel;
+import net.mistersecret312.rocketry_science.client.model.assembler_gantry.AssemblerGantryPillarModel;
+import net.mistersecret312.rocketry_science.client.model.assembler_gantry.AssemblerGantryRingCornerModel;
+import net.mistersecret312.rocketry_science.client.model.assembler_gantry.AssemblerGantryRingSideModel;
 import net.mistersecret312.rocketry_science.client.renderer.block.FuelTankRenderer;
 import net.mistersecret312.rocketry_science.client.renderer.block.LaunchControllerRenderer;
 import net.mistersecret312.rocketry_science.client.renderer.block.RocketAssemblerRenderer;
 import net.mistersecret312.rocketry_science.client.renderer.block.SeparatorRenderer;
+import net.mistersecret312.rocketry_science.client.renderer.entity.AssemblerGantryRenderer;
 import net.mistersecret312.rocketry_science.client.renderer.entity.RocketRenderer;
 import net.mistersecret312.rocketry_science.client.screen.CombustionChamberScreen;
 import net.mistersecret312.rocketry_science.client.screen.RocketAssemblyScreen;
@@ -162,6 +167,12 @@ public class RocketryScience
 	public static class ClientModEvents
 	{
 		public static PlumeModel plumeModel;
+
+		public static AssemblerGantryBaseModel gantryBase;
+		public static AssemblerGantryPillarModel gantryPillar;
+		public static AssemblerGantryRingSideModel gantryRingSide;
+		public static AssemblerGantryRingCornerModel gantryRingCorner;
+
 		public static ShaderInstance orbit;
 
 		@SubscribeEvent
@@ -184,6 +195,10 @@ public class RocketryScience
 		public static void bakeModels(EntityRenderersEvent.RegisterLayerDefinitions event)
 		{
 			event.registerLayerDefinition(PlumeModel.LAYER_LOCATION, PlumeModel::createBodyLayer);
+			event.registerLayerDefinition(AssemblerGantryBaseModel.LAYER_LOCATION, AssemblerGantryBaseModel::createBodyLayer);
+			event.registerLayerDefinition(AssemblerGantryRingCornerModel.LAYER_LOCATION, AssemblerGantryRingCornerModel::createBodyLayer);
+			event.registerLayerDefinition(AssemblerGantryRingSideModel.LAYER_LOCATION, AssemblerGantryRingSideModel::createBodyLayer);
+			event.registerLayerDefinition(AssemblerGantryPillarModel.LAYER_LOCATION, AssemblerGantryPillarModel::createBodyLayer);
 		}
 
 		@SubscribeEvent
@@ -208,6 +223,15 @@ public class RocketryScience
 				{
 					plumeModel = new PlumeModel(context.bakeLayer(PlumeModel.LAYER_LOCATION));
 					return new RocketRenderer(context);
+				});
+
+			event.registerEntityRenderer(EntityInit.ASSEMBLER_GANTRY.get(), context ->
+				{
+					gantryBase = new AssemblerGantryBaseModel(context.bakeLayer(AssemblerGantryBaseModel.LAYER_LOCATION));
+					gantryPillar = new AssemblerGantryPillarModel(context.bakeLayer(AssemblerGantryPillarModel.LAYER_LOCATION));
+					gantryRingCorner = new AssemblerGantryRingCornerModel(context.bakeLayer(AssemblerGantryRingCornerModel.LAYER_LOCATION));
+					gantryRingSide = new AssemblerGantryRingSideModel(context.bakeLayer(AssemblerGantryRingSideModel.LAYER_LOCATION));
+					return new AssemblerGantryRenderer(context);
 				});
 
 			event.registerBlockEntityRenderer(BlockEntityInit.FUEL_TANK.get(), FuelTankRenderer::new);

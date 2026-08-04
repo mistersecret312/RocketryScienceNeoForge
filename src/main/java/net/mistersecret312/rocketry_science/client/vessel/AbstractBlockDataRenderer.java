@@ -2,17 +2,19 @@ package net.mistersecret312.rocketry_science.client.vessel;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.mistersecret312.rocketry_science.vessel.block_data.BlockData;
 import net.neoforged.neoforge.client.model.data.ModelData;
 
@@ -22,6 +24,11 @@ public abstract class AbstractBlockDataRenderer<T extends BlockData> implements 
 	public void render(T data, Level level, BlockPos.MutableBlockPos mutablePos, float partialTick, PoseStack poseStack,
 					   MultiBufferSource buffer, int packedLight)
 	{
+		boolean isInUI = data.stage.getVessel().isInUI();
+		packedLight = LevelRenderer.getLightColor(level, mutablePos);
+		if(isInUI)
+			packedLight = LightTexture.FULL_BRIGHT;
+
 		BlockEntityRenderDispatcher blockDispatcher = Minecraft.getInstance().getBlockEntityRenderDispatcher();
 		BlockRenderDispatcher dispatcher = Minecraft.getInstance().getBlockRenderer();
 
@@ -34,29 +41,32 @@ public abstract class AbstractBlockDataRenderer<T extends BlockData> implements 
 			{
 				if (!data.extraData.isEmpty() && data.extraData != null)
 				{
-					BlockEntity blockEntity = BlockEntity.loadStatic(mutablePos.move(data.pos), data.getBlockState(), data.extraData, Minecraft.getInstance().level.registryAccess());
-					mutablePos.move(-data.pos.getX(), -data.pos.getY(), -data.pos.getZ());
+					BlockEntity blockEntity = BlockEntity.loadStatic(mutablePos, data.getBlockState(), data.extraData, Minecraft.getInstance().level.registryAccess());
 					if (blockEntity != null)
 					{
 						blockEntity.setLevel(level);
-						if(blockEntity.getBlockState().getBlock() instanceof BaseEntityBlock baseEntity)
-						{
-							BlockEntityTicker<BlockEntity> ticker = (BlockEntityTicker<BlockEntity>) baseEntity.getTicker(level, data.getBlockState(), blockEntity.getType());
-							if(ticker != null)
-							{
-								ticker.tick(level, blockEntity.getBlockPos(), blockEntity.getBlockState(), blockEntity);
-							}
-						}
 						poseStack.pushPose();
-						blockDispatcher.render(blockEntity, partialTick, poseStack, buffer);
+						BlockEntityRenderer<BlockEntity> renderer = blockDispatcher.getRenderer(blockEntity);
+						if(renderer != null)
+							renderer.render(blockEntity, partialTick, poseStack, buffer, packedLight, OverlayTexture.NO_OVERLAY);
 						poseStack.popPose();
 					}
 				}
 			}
 			if(data.getBlockState().getRenderShape() == RenderShape.MODEL)
 			{
-				dispatcher.renderBatched(data.getBlockState(), mutablePos.move(data.pos), level, poseStack, buffer.getBuffer(rt), true, RandomSource.create(42), model.getModelData(level, data.pos, data.getBlockState(), ModelData.EMPTY), null);
-				mutablePos.move(-data.pos.getX(), -data.pos.getY(), -data.pos.getZ());
+				if(isInUI)
+					dispatcher.renderSingleBlock(data.getBlockState(), poseStack, buffer,
+							packedLight, OverlayTexture.NO_OVERLAY, model.getModelData(level, mutablePos,
+									data.getBlockState(), ModelData.EMPTY), rt);
+				else
+				{
+					dispatcher.getModelRenderer()
+							  .tesselateBlock(level, model, data.getBlockState(), mutablePos, poseStack,
+									  buffer.getBuffer(rt), false, RandomSource.create(42),
+									  data.getBlockState().getSeed(mutablePos), OverlayTexture.NO_OVERLAY,
+									  model.getModelData(level, mutablePos, data.getBlockState(), ModelData.EMPTY), rt);
+				}
 			}
 		}
 	}

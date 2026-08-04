@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
@@ -73,21 +74,24 @@ public class SeparatorRenderer implements BlockEntityRenderer<SeparatorBlockEnti
             else extend = separator.getLevel().getBlockState(separator.getController().offset(0, 2, 0)).is(BlockInit.STEEL_COMBUSTION_CHAMBER.get()) || separator.getLevel().getBlockState(separator.getController().offset(0, 2, 0)).is(BlockInit.STEEL_ROCKET_ENGINE_STUB.get());
             if(separator.getControllerBE().getWidth() == 3)
             {
-                renderTripleWidth(separator.getLevel(), separator.getBlockPos(), pose, buffer, overlay, light, extend);
+                renderTripleWidth(separator.getLevel(), separator.getBlockPos(), pose, buffer,
+                        overlay, light, extend, false);
             }
             if (separator.getControllerBE().getWidth() == 2)
             {
-                renderDoubleWidth(separator.getLevel(), separator.getBlockPos(), pose, buffer, overlay, light, extend);
+                renderDoubleWidth(separator.getLevel(), separator.getBlockPos(), pose, buffer,
+                        overlay, light, extend, false);
 
             }
             if (separator.getControllerBE().getWidth() == 1)
             {
-                renderSingularWidth(separator.getLevel(), separator.getBlockPos(), pose, buffer, overlay, light, extend);
+                renderSingularWidth(separator.getLevel(), separator.getBlockPos(), pose, buffer,
+                        overlay, light, extend, false);
             }
         }
     }
 
-    public static void renderSingularWidth(Level level, BlockPos pos, PoseStack pose, MultiBufferSource buffer, int overlay, int light, boolean extend)
+    public static void renderSingularWidth(Level level, BlockPos pos, PoseStack pose, MultiBufferSource buffer, int overlay, int packedLight, boolean extend, boolean overrideLight)
     {
         List<BlockState> states = new ArrayList<>();
         if(extend)
@@ -103,14 +107,26 @@ public class SeparatorRenderer implements BlockEntityRenderer<SeparatorBlockEnti
             if(extend)
                 pose.translate(0f, 0.75f, 0f);
             BakedModel model = blockRenderer.getBlockModel(state);
-            light = LevelRenderer.getLightColor(level, pos.offset(0, i, 0));
+            BlockPos blockPos = pos.offset(0, i, 0);
+            int light = LevelRenderer.getLightColor(level, blockPos);
+            if(overrideLight)
+                light = packedLight;
             for (RenderType rt : model.getRenderTypes(state, RandomSource.create(42), ModelData.EMPTY))
-                modelRenderer.renderModel(pose.last(), buffer.getBuffer(rt), null, model, 1f, 1f, 1f, light, overlay);
+            {
+                if(overrideLight)
+                    modelRenderer.renderModel(pose.last(), buffer.getBuffer(rt), state, model, 1f, 1f, 1f, light, overlay);
+                else
+                {
+                    modelRenderer.tesselateBlock(level, model, state, blockPos, pose, buffer.getBuffer(rt), false,
+                            RandomSource.create(42), state.getSeed(blockPos), OverlayTexture.NO_OVERLAY,
+                            model.getModelData(level, blockPos, state, ModelData.EMPTY), rt);
+                }
+            }
         }
         pose.popPose();
     }
 
-    public static void renderDoubleWidth(Level level, BlockPos pos, PoseStack pose, MultiBufferSource buffer, int overlay, int light, boolean extend)
+    public static void renderDoubleWidth(Level level, BlockPos pos, PoseStack pose, MultiBufferSource buffer, int overlay, int packedLight, boolean extend, boolean overrideLight)
     {
         List<BlockState> states = new ArrayList<>();
         if(extend)
@@ -139,16 +155,28 @@ public class SeparatorRenderer implements BlockEntityRenderer<SeparatorBlockEnti
                 if(extend)
                     pose.translate(0f, 0.75f, 0f);
                 BakedModel model = blockRenderer.getBlockModel(state);
-                light = LevelRenderer.getLightColor(level, pos.offset(0, i, 0));
+                BlockPos blockPos = pos.offset(0, i, 0);
+                int light = LevelRenderer.getLightColor(level, blockPos);
+                if(overrideLight)
+                    light = packedLight;
                 for (RenderType rt : model.getRenderTypes(state, RandomSource.create(42), ModelData.EMPTY))
-                    modelRenderer.renderModel(pose.last(), buffer.getBuffer(rt), null, model, 1f, 1f, 1f, light, overlay);
+                {
+                    if(overrideLight)
+                        modelRenderer.renderModel(pose.last(), buffer.getBuffer(rt), state, model, 1f, 1f, 1f, light, overlay);
+                    else
+                    {
+                        modelRenderer.tesselateBlock(level, model, state, blockPos, pose, buffer.getBuffer(rt), false,
+                                RandomSource.create(42), state.getSeed(blockPos), OverlayTexture.NO_OVERLAY,
+                                model.getModelData(level, blockPos, state, ModelData.EMPTY), rt);
+                    }
+                }
             }
             pose.popPose();
         }
         pose.popPose();
     }
 
-    public static void renderTripleWidth(Level level, BlockPos pos, PoseStack pose, MultiBufferSource buffer, int overlay, int light, boolean extend)
+    public static void renderTripleWidth(Level level, BlockPos pos, PoseStack pose, MultiBufferSource buffer, int overlay, int packedLight, boolean extend, boolean overrideLight)
     {
         List<Pair<BlockPos, Pair<Integer, BlockState>>> states = new ArrayList<>();
         BlockRenderDispatcher blockRenderer = Minecraft.getInstance().getBlockRenderer();
@@ -269,9 +297,21 @@ public class SeparatorRenderer implements BlockEntityRenderer<SeparatorBlockEnti
             if(extend && state != TRIPLE_CENTER_EXTENDED)
                 pose.translate(0f, 0.75f, 0f);
             BakedModel model = blockRenderer.getBlockModel(state);
-            light = LevelRenderer.getLightColor(level, pos.offset(x,y,z));
+            BlockPos blockPos = pos.offset(x, y, z);
+            int light = LevelRenderer.getLightColor(level, blockPos);
+            if(overrideLight)
+                light = packedLight;
             for (RenderType rt : model.getRenderTypes(state, RandomSource.create(42), ModelData.EMPTY))
-                modelRenderer.renderModel(pose.last(), buffer.getBuffer(rt), null, model, 1f, 1f, 1f, light, overlay);
+            {
+                if(overrideLight)
+                    modelRenderer.renderModel(pose.last(), buffer.getBuffer(rt), state, model, 1f, 1f, 1f, light, overlay);
+                else
+                {
+                    modelRenderer.tesselateBlock(level, model, state, blockPos, pose, buffer.getBuffer(rt), false,
+                            RandomSource.create(42), state.getSeed(blockPos), OverlayTexture.NO_OVERLAY,
+                            model.getModelData(level, blockPos, state, ModelData.EMPTY), rt);
+                }
+            }
             pose.popPose();
         }
     }
