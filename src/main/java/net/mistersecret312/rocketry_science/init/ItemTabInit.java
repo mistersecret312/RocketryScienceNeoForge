@@ -35,9 +35,10 @@ public class ItemTabInit
 										 output.accept(BlockInit.ROCKET_PAD);
 										 output.accept(BlockInit.LAUNCH_TOWER);
 
-										 output.accept(BlockInit.FUEL_TANK);
+										 output.accept(ItemInit.FUEL_TANK);
 										 output.accept(BlockInit.STEEL_COMBUSTION_CHAMBER);
 										 output.accept(BlockInit.STEEL_NOZZLE_ATMOPSHERE);
+										 output.accept(BlockInit.STEEL_NOZZLE_VACUUM);
 										 output.accept(BlockInit.SEPARATOR);
 
 										 output.accept(CombustionChamberItem.create(ItemInit.STAINLESS_STEEL_COMBUSTION_CHAMBER.get(),

@@ -30,6 +30,9 @@ public class ItemInit
 	public static final DeferredItem<BucketItem> LIQUID_OXYGEN_BUCKET = ITEMS.register("liquid_oxygen_bucket",
 			() -> new BucketItem(FluidInit.SOURCE_CRYOGENIC_OXYGEN.get(), new Item.Properties().stacksTo(1)));
 
+	public static final DeferredItem<FuelTankBlockItem> FUEL_TANK = ITEMS.register("fuel_tank",
+			() -> new FuelTankBlockItem(BlockInit.FUEL_TANK.get(), new Item.Properties().stacksTo(64)));
+
 	public static final DeferredItem<Item> LAUNCH_CONTROLLER = ITEMS.register("launch_controller",
 			() -> new LaunchControllerBlockItem(BlockInit.LAUNCH_CONTROLLER.get(), new Item.Properties()));
 	public static final DeferredItem<Item> ROCKET_ASSEMBLER = ITEMS.register("rocket_assembler",

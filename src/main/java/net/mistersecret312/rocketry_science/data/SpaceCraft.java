@@ -68,7 +68,7 @@ public class SpaceCraft extends VesselData implements IOrbitObject<Orbit<SpaceCr
 	@Override
 	public String getName()
 	{
-		return "";
+		return getUUID().toString();
 	}
 
 	public UUID getUUID()
@@ -204,7 +204,7 @@ public class SpaceCraft extends VesselData implements IOrbitObject<Orbit<SpaceCr
 			}
 		}
 
-		if(false && getOrbit() instanceof ArtificialOrbit orbit)
+		if(true && getOrbit() instanceof ArtificialOrbit orbit)
 		{
 			land(OrbitUtil.getLevel(orbit.getParent(level.registryAccess()), level()));
 		}
@@ -223,7 +223,7 @@ public class SpaceCraft extends VesselData implements IOrbitObject<Orbit<SpaceCr
 		}
 
 		rocket.setState(VesselState.LANDING);
-		rocket.canLand = true;
+		rocket.canLand = false;
 		rocketEntity.setRocket(rocket);
 		rocketEntity.setPos(0.5, OrbitUtil.getSpaceHeight(level), 0.5);
 

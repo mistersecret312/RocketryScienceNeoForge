@@ -16,7 +16,7 @@ public enum RadiationRating
 		this.max = max;
 	}
 
-	RadiationRating getRating(double value)
+	public static RadiationRating getRating(double value)
 	{
 		for(RadiationRating rating : RadiationRating.values())
 		{

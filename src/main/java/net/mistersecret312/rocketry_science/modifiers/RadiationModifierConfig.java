@@ -19,7 +19,7 @@ public record RadiationModifierConfig(double radiation) implements ModifierConfi
 	@Override
 	public ModifierType<?> getType()
 	{
-		return ModifierTypeInit.TEMPERATURE.get();
+		return ModifierTypeInit.RADIATION.get();
 	}
 
 	@Override

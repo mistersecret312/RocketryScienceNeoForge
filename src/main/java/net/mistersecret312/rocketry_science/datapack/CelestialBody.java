@@ -96,7 +96,12 @@ public class CelestialBody implements IOrbitObject<CelestialOrbit>
 	public EnvironmentData getEnvironment()
 	{
 		if(environment == null)
-			return new EnvironmentData(hasAtmosphere() ? EARTH : LUNA);
+		{
+			this.environment = new EnvironmentData(hasAtmosphere() ? EARTH : LUNA);
+			for(ModifierConfig modifier : this.modifiers)
+				modifier.setup(this);
+			return environment;
+		}
 		return environment;
 	}
 

@@ -136,7 +136,7 @@ public class RocketAssemblyScreen extends AbstractContainerScreen<RocketAssembly
 			poseStack.pushPose();
 			poseStack.translate(imgX+102, imgY+35, 0);
 			poseStack.scale(0.8f, 0.8f, 0.8f);
-			graphics.drawString(font, "DeltaV: " + format.format(deltaV), 0, 0, -1);
+			graphics.drawString(font, "DeltaV: " + format.format(deltaV) + " m/s", 0, 0, -1);
 			poseStack.translate(0, 9, 0);
 			graphics.drawString(font, "TWR: " + format.format(twr), 0, 0, -1);
 
@@ -156,7 +156,7 @@ public class RocketAssemblyScreen extends AbstractContainerScreen<RocketAssembly
 				if(canTakeOff)
 				{
 					poseStack.translate(0, 9, 0);
-					graphics.drawString(font, "Takeoff DeltaV: " + format.format(takeoffDeltaV), 0, 0, -1);
+					graphics.drawString(font, "Takeoff DeltaV: " + format.format(takeoffDeltaV) + " m/s", 0, 0, -1);
 					poseStack.translate(0, 9, 0);
 					graphics.drawString(font, "Takeoff Fuel: " + OrbitalMath.deltaVToFuelMass(rocketEntity.getRocket().getCurrentStage(), takeoffDeltaV) + " mB", 0, 0, -1);
 				}
@@ -178,7 +178,7 @@ public class RocketAssemblyScreen extends AbstractContainerScreen<RocketAssembly
 				if(canReachOrbit)
 				{
 					poseStack.translate(0, 9, 0);
-					graphics.drawString(font, "Orbit DeltaV: " + format.format(orbitDeltaV), 0, 0, -1);
+					graphics.drawString(font, "Orbit DeltaV: " + format.format(orbitDeltaV) + " m/s", 0, 0, -1);
 				}
 
 				Component canLandText = Component.literal("Can Land? ")
@@ -188,7 +188,7 @@ public class RocketAssemblyScreen extends AbstractContainerScreen<RocketAssembly
 				if(canLand)
 				{
 					poseStack.translate(0, 9, 0);
-					graphics.drawString(font, "Landing DeltaV: " + format.format(landingDeltaV), 0, 0, -1);
+					graphics.drawString(font, "Landing DeltaV: " + format.format(landingDeltaV) + " m/s", 0, 0, -1);
 					poseStack.translate(0, 9, 0);
 					graphics.drawString(font, "Landing Fuel: " + OrbitalMath.deltaVToFuelMass(rocketEntity.getRocket().getCurrentStage(), landingDeltaV) + " mB", 0, 0, -1);
 				}

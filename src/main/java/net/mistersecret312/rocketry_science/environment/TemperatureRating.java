@@ -16,7 +16,7 @@ public enum TemperatureRating
 		this.max = max;
 	}
 
-	TemperatureRating getRating(double value)
+	public static TemperatureRating getRating(double value)
 	{
 		for(TemperatureRating rating : TemperatureRating.values())
 		{

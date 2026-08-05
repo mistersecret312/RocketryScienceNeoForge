@@ -40,6 +40,20 @@ public class WidgetCelestialBody extends AbstractWidget implements Renderable
 		this.body = body;
 		this.level = screen.getLevel();
 		this.screen = screen;
+
+		for(Map.Entry<UUID, SpaceCraft> entry : OrbitUtil.SPACECRAFT.entrySet())
+		{
+			SpaceCraft craft = entry.getValue();
+			if(craft.getOrbit() == null)
+				return;
+
+			CelestialBody orbitBody = OrbitUtil.getCelestialBody(craft.getOrbit().getParent(level.registryAccess()), level);
+			if(body.equals(orbitBody))
+			{
+				WidgetSpaceCraft widgetSpaceCraft = new WidgetSpaceCraft(width, height, screen, craft.getUUID());
+				screen.addRenderableWidget(widgetSpaceCraft, true);
+			}
+		}
 	}
 
 	@Override

@@ -155,7 +155,7 @@ public class Rocket extends VesselData
 					target = OrbitUtil.getChildren(body, level).getFirst();
 				else target = OrbitUtil.getCelestialBody(OrbitUtil.EARTH, level);
 
-//				target = OrbitUtil.getChildren(OrbitUtil.getCelestialBody(OrbitUtil.EARTH, level), level).getFirst();
+				target = OrbitUtil.getChildren(OrbitUtil.getCelestialBody(OrbitUtil.EARTH, level), level).getFirst();
 				ConfiguredOrbit targetOrbit = target.getSupportedOrbits().getFirst();
 
 				TravelPoint departure = new TravelPoint(configuredOrbit, level.getGameTime(), OrbitUtil.getKey(body, level));
@@ -172,7 +172,7 @@ public class Rocket extends VesselData
 				}
 				craft.stages = spaceCraftStages;
 				craft.setLevel(level);
-				craft.setOrbit(orbit);
+				craft.setOrbit(transferOrbit);
 
 				if(craft.getOrbit() instanceof TransferOrbit transfer)
 				{
@@ -331,7 +331,7 @@ public class Rocket extends VesselData
 				HashMap<BlockPos, BlockData> blocks = new HashMap<>();
 				for(Map.Entry<BlockPos, BlockData> entry : stage.blocks.entrySet())
 				{
-					BlockPos pos = entry.getKey().offset(0, (int) -height, 0);
+					BlockPos pos = entry.getKey().offset(0, (int) -height+1, 0);
 					BlockData data = entry.getValue();
 					data.pos = pos;
 					blocks.put(pos, data);

@@ -14,8 +14,8 @@ import net.mistersecret312.rocketry_science.init.ModifierTypeInit;
 public record TemperatureModifierConfig(double dayTimeTemperature, double nightTimeTemperature) implements ModifierConfig
 {
 	public static MapCodec<TemperatureModifierConfig> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
-			Codec.DOUBLE.fieldOf("night_temperature").forGetter(TemperatureModifierConfig::dayTimeTemperature),
-			Codec.DOUBLE.fieldOf("day_temperature").forGetter(TemperatureModifierConfig::nightTimeTemperature)
+			Codec.DOUBLE.fieldOf("night_temperature").forGetter(TemperatureModifierConfig::nightTimeTemperature),
+			Codec.DOUBLE.fieldOf("day_temperature").forGetter(TemperatureModifierConfig::dayTimeTemperature)
 	).apply(inst, TemperatureModifierConfig::new));
 
 	@Override

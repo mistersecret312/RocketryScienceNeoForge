@@ -131,7 +131,7 @@ public class SeparatorData extends BlockData
         }
 
         minY = Math.min(aabb.minY, rocket.position().y+pos.getY());
-        maxY = Math.max(aabb.maxY, rocket.position().y+pos.getY()+1+(extend ? 2 : 0));
+        maxY = Math.max(aabb.maxY, rocket.position().y+pos.getY()+1+(extend ? 1 : 0));
 
         return new AABB(minX, minY, minZ, maxX, maxY, maxZ);
     }

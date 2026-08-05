@@ -71,7 +71,7 @@ public abstract class AbstractMultiBlockEntity extends BlockEntity
 
         BlockPos newMaster = this.worldPosition;
         if(visited.stream().findFirst().isPresent())
-            newMaster = visited.stream().findFirst().get();
+            newMaster = visited.stream().min(Comparator.comparingLong(BlockPos::asLong)).get();
 
         for (BlockPos pos : visited)
         {
@@ -93,7 +93,7 @@ public abstract class AbstractMultiBlockEntity extends BlockEntity
             networkToReset.addAll(masterBe.connections);
             networkToReset.add(masterPos);
         }
-        
+
         networkToReset.remove(this.worldPosition);
         for (BlockPos pos : networkToReset)
         {
@@ -101,11 +101,13 @@ public abstract class AbstractMultiBlockEntity extends BlockEntity
                 be.resetData();
         }
 
-        for (BlockPos pos : networkToReset)
+        if (!networkToReset.isEmpty())
         {
-            if (level.getBlockEntity(pos) instanceof AbstractMultiBlockEntity be)
-                if (be.masterPos.equals(be.getBlockPos()))
-                    be.formNetwork();
+            BlockPos first = networkToReset.iterator().next();
+            if (level.getBlockEntity(first) instanceof AbstractMultiBlockEntity be)
+            {
+                be.formNetwork();
+            }
         }
     }
 
@@ -123,7 +125,7 @@ public abstract class AbstractMultiBlockEntity extends BlockEntity
         this.setChanged();
     }
 
-    private void resetData()
+    protected void resetData()
     {
         this.isMaster = true;
         this.masterPos = this.worldPosition;

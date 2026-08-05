@@ -215,16 +215,7 @@ public class FuelTankRenderer implements BlockEntityRenderer<FuelTankBlockEntity
 				if(overrideLight)
 					light = packedLight;
 				for (net.minecraft.client.renderer.RenderType rt : model.getRenderTypes(state, RandomSource.create(42), ModelData.EMPTY))
-				{
-					if(overrideLight)
-						modelRenderer.renderModel(pose.last(), buffer.getBuffer(rt), state, model, 1f, 1f, 1f, light, overlay);
-					else
-					{
-						modelRenderer.tesselateBlock(level, model, state, blockPos, pose, buffer.getBuffer(rt), false,
-								RandomSource.create(42), state.getSeed(blockPos), OverlayTexture.NO_OVERLAY,
-								model.getModelData(level, blockPos, state, ModelData.EMPTY), rt);
-					}
-				}
+					modelRenderer.renderModel(pose.last(), buffer.getBuffer(rt), state, model, 1f, 1f, 1f, light, overlay);
 			}
 			pose.popPose();
 		}
@@ -509,16 +500,8 @@ public class FuelTankRenderer implements BlockEntityRenderer<FuelTankBlockEntity
 			if(overrideLight)
 				light = packedLight;
 			for (net.minecraft.client.renderer.RenderType rt : model.getRenderTypes(state, RandomSource.create(42), ModelData.EMPTY))
-			{
-				if(overrideLight)
-					modelRenderer.renderModel(pose.last(), buffer.getBuffer(rt), state, model, 1f, 1f, 1f, light, overlay);
-				else
-				{
-					modelRenderer.tesselateBlock(level, model, state, blockPos, pose, buffer.getBuffer(rt), false,
-							RandomSource.create(42), state.getSeed(blockPos), OverlayTexture.NO_OVERLAY,
-							model.getModelData(level, blockPos, state, ModelData.EMPTY), rt);
-				}
-			}
+				modelRenderer.renderModel(pose.last(), buffer.getBuffer(rt), state, model, 1f, 1f, 1f, light, overlay);
+
 			pose.popPose();
 		}
 

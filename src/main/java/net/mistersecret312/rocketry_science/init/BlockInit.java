@@ -37,7 +37,7 @@ public class BlockInit
 	public static final DeferredBlock<LaunchTowerBlock> LAUNCH_TOWER = registerBlock("launch_tower",
 			() -> new LaunchTowerBlock(BlockBehaviour.Properties.of().noOcclusion()));
 
-	public static final DeferredBlock<FuelTankBlock> FUEL_TANK = registerBlock("fuel_tank",
+	public static final DeferredBlock<FuelTankBlock> FUEL_TANK = BLOCKS.register("fuel_tank",
 			() -> new FuelTankBlock(BlockBehaviour.Properties.of().noOcclusion(), 2000));
 
 	public static final DeferredBlock<CombustionChamberBlock> STEEL_COMBUSTION_CHAMBER = registerBlock("steel_combustion_chamber",

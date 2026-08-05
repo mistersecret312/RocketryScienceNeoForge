@@ -39,7 +39,6 @@ public class FuelTankBlockEntity extends BlockEntity implements IConnectiveBlock
 	protected BlockPos lastKnownPos;
 	protected boolean updateConnectivity;
 	protected boolean updateCapability;
-	protected int luminosity;
 	protected int width;
 	protected int height;
 
@@ -59,21 +58,22 @@ public class FuelTankBlockEntity extends BlockEntity implements IConnectiveBlock
 
 	private RocketFuelTank createInventory()
 	{
-		FuelTankBlockEntity fuelTank = this;
 		return new RocketFuelTank(propellants.getPropellants(), getCapacityMultiplier())
 		{
 			@Override
 			protected void onContentsChanged()
 			{
-				List<Float> ratios = new ArrayList<>();
-				for (int tank = 0; tank < this.getTanks(); tank++)
-				{
-					float ratio = 1-(float) getTankInventory().getSpace(tank)/getTankInventory().getTankCapacity(tank);
-					ratios.add(ratio/this.getTanks());
-				}
 				float totalRatio = 0f;
-				for(Float ratio : ratios)
-					totalRatio += ratio;
+				int tanks = this.getTanks();
+
+				for (int i = 0; i < tanks; i++) {
+					float capacity = getTankInventory().getTankCapacity(i);
+					if (capacity > 0) {
+						float space = getTankInventory().getSpace(i);
+						float ratio = 1.0f - (space / capacity);
+						totalRatio += (ratio / tanks);
+					}
+				}
 
 				ratio = totalRatio;
 			}
@@ -141,54 +141,22 @@ public class FuelTankBlockEntity extends BlockEntity implements IConnectiveBlock
 		if (!hasLevel())
 			return;
 
-		List<Float> ratios = new ArrayList<>();
-		for (int tank = 0; tank < this.getTanks(); tank++)
-		{
-			float ratio = 1-(float) this.getTankInventory().getSpace(tank)/this.getTankInventory().getTankCapacity(tank);
-			ratios.add(ratio/this.getTanks());
-		}
 		float totalRatio = 0f;
-		for(Float ratio : ratios)
-			totalRatio += ratio;
+		int tanks = this.getTanks();
 
-		this.ratio = totalRatio;
-
-		FluidType attributes = newFluidStack.getFluid()
-											.getFluidType();
-		int luminosity = (int) (attributes.getLightLevel(newFluidStack) / 1.2f);
-		boolean reversed = attributes.isLighterThanAir();
-		int maxY = 1;
-
-		for (int yOffset = 0; yOffset < height; yOffset++) {
-			boolean isBright = reversed ? (height - yOffset <= maxY) : (yOffset < maxY);
-			int actualLuminosity = isBright ? luminosity : luminosity > 0 ? 1 : 0;
-
-			for (int xOffset = 0; xOffset < width; xOffset++) {
-				for (int zOffset = 0; zOffset < width; zOffset++) {
-					BlockPos pos = this.worldPosition.offset(xOffset, yOffset, zOffset);
-					FuelTankBlockEntity tankAt = ConnectivityHandler.partAt(getType(), level, pos);
-					if (tankAt == null)
-						continue;
-					level.updateNeighbourForOutputSignal(pos, tankAt.getBlockState()
-																	.getBlock());
-					if (tankAt.luminosity == actualLuminosity)
-						continue;
-					tankAt.setLuminosity(actualLuminosity);
-				}
+		for (int i = 0; i < tanks; i++) {
+			float capacity = this.getTankInventory().getTankCapacity(i);
+			if (capacity > 0) {
+				float space = this.getTankInventory().getSpace(i);
+				float ratio = 1.0f - (space / capacity);
+				totalRatio += (ratio / tanks);
 			}
 		}
 
-		if (!level.isClientSide) {
-			setChanged();
-		}
-	}
+		this.ratio = totalRatio;
 
-	protected void setLuminosity(int luminosity) {
-		if (level.isClientSide)
-			return;
-		if (this.luminosity == luminosity)
-			return;
-		this.luminosity = luminosity;
+		if (!level.isClientSide)
+			sync();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -232,9 +200,8 @@ public class FuelTankBlockEntity extends BlockEntity implements IConnectiveBlock
 			getLevel().setBlock(worldPosition, state, 22);
 		}
 
-//		NetworkInit.sendToTracking(this, new FuelTankSizePacket(this.getBlockPos(), 1, this.serializeNBT()));
 		refreshCapability();
-		setChanged();
+		sync();
 	}
 
 	@Override
@@ -244,9 +211,8 @@ public class FuelTankBlockEntity extends BlockEntity implements IConnectiveBlock
 		if (controller.equals(this.controller))
 			return;
 		this.controller = controller;
-//		NetworkInit.sendToTracking(this, new FuelTankSizePacket(this.getBlockPos(), 1, this.serializeNBT()));
 		refreshCapability();
-		setChanged();
+		sync();
 	}
 
 	public void refreshCapability() {
@@ -254,9 +220,10 @@ public class FuelTankBlockEntity extends BlockEntity implements IConnectiveBlock
 		invalidateCapabilities();
 	}
 
-	public IFluidHandler handlerForCapability() {
-		return isController() ?  tankInventory : getControllerBE() != null ?
-														 getControllerBE().handlerForCapability() : new FluidTank(0);
+	public IFluidHandler handlerForCapability()
+	{
+		FuelTankBlockEntity master = getControllerBE();
+		return master != null ? master.tankInventory : new FluidTank(0);
 	}
 
 	@Override
@@ -279,10 +246,8 @@ public class FuelTankBlockEntity extends BlockEntity implements IConnectiveBlock
 		BlockPos controllerBefore = controller;
 		int prevSize = width;
 		int prevHeight = height;
-		int prevLum = luminosity;
 
 		updateConnectivity = compound.contains("Uninitialized");
-		luminosity = compound.getInt("Luminosity");
 		controller = null;
 		lastKnownPos = null;
 
@@ -291,9 +256,10 @@ public class FuelTankBlockEntity extends BlockEntity implements IConnectiveBlock
 		if (compound.contains("Controller"))
 			controller = NbtUtils.readBlockPos(compound, "Controller").get();
 
+		width = compound.getInt("Size");
+		height = compound.getInt("Height");
+
 		if (isController()) {
-			width = compound.getInt("Size");
-			height = compound.getInt("Height");
 			tankInventory.setCapacity(getTotalTankSize() * getCapacityMultiplier());
 			tankInventory.readFromNBT(compound.getCompound("TankContent"), registryAccess);
 			for (int tank = 0; tank < tankInventory.getTanks(); tank++)
@@ -313,10 +279,6 @@ public class FuelTankBlockEntity extends BlockEntity implements IConnectiveBlock
 				tankInventory.setCapacity(getCapacityMultiplier() * getTotalTankSize());
 		}
 
-		if (luminosity != prevLum && hasLevel())
-			level.getChunkSource()
-				 .getLightEngine()
-				 .checkBlock(worldPosition);
 		this.propellants = RocketFuel.valueOf(compound.getString("fuel_type").toUpperCase());
 	}
 
@@ -330,16 +292,20 @@ public class FuelTankBlockEntity extends BlockEntity implements IConnectiveBlock
 			compound.put("Controller", NbtUtils.writeBlockPos(controller));
 		if (isController()) {
 			compound.put("TankContent", tankInventory.writeToNBT(new CompoundTag(), registryAccess));
-			compound.putInt("Size", width);
-			compound.putInt("Height", height);
 		}
-		compound.putInt("Luminosity", luminosity);
+
+		compound.putInt("Size", width);
+		compound.putInt("Height", height);
 		compound.putString("fuel_type", propellants.getName());
 		super.saveAdditional(compound, registryAccess);
 		forceFluidLevelUpdate = false;
 	}
 
-
+	public void sync() {
+		setChanged();
+		if (level != null && !level.isClientSide())
+			level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
+	}
 
 	public RocketFuelTank getTankInventory() {
 		return tankInventory;
@@ -415,7 +381,6 @@ public class FuelTankBlockEntity extends BlockEntity implements IConnectiveBlock
 	public void setWidth(int width) {
 		this.width = width;
 		notifyMultiUpdated();
-//		NetworkInit.sendToTracking(this, new FuelTankSizePacket(this.getBlockPos(), width, this.serializeNBT()));
 	}
 
 	@Override

@@ -26,5 +26,5 @@
   "entity.rocketry_science.rocket": "Rocket",
 
   "desc.rocketry_science.rocket_fuel.hydrolox": "Fuel Type: Hydrolox",
-  "desc.rocketry_science.rocket_material.hydrolox": "Material: Stainless Steel"
+  "desc.rocketry_science.rocket_material.stainless_steel": "Material: Stainless Steel"
 }

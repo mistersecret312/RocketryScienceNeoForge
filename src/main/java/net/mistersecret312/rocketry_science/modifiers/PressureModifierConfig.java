@@ -20,7 +20,7 @@ public record PressureModifierConfig(double pressure) implements ModifierConfig
 	@Override
 	public ModifierType<?> getType()
 	{
-		return ModifierTypeInit.TEMPERATURE.get();
+		return ModifierTypeInit.PRESSURE.get();
 	}
 
 	@Override

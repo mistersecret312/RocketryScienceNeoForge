@@ -24,6 +24,12 @@ public class NetworkInit
 				ServerBoundStartRocketAssemblyPacket::handle
 		);
 
+		registrar.playToServer(
+				ServerBoundRequestSpacecraftEntityPacket.TYPE,
+				ServerBoundRequestSpacecraftEntityPacket.STREAM_CODEC,
+				ServerBoundRequestSpacecraftEntityPacket::handle
+		);
+
 		registrar.playToClient(
 				ClientBoundSpacecraftClearPacket.TYPE,
 				ClientBoundSpacecraftClearPacket.STREAM_CODEC,
@@ -58,6 +64,12 @@ public class NetworkInit
 				ClientBoundAssemblerUpdatePacket.TYPE,
 				ClientBoundAssemblerUpdatePacket.STREAM_CODEC,
 				ClientBoundAssemblerUpdatePacket::handle
+		);
+
+		registrar.playToClient(
+				ClientBoundRecieveSpaceCraftEntityPacket.TYPE,
+				ClientBoundRecieveSpaceCraftEntityPacket.STREAM_CODEC,
+				ClientBoundRecieveSpaceCraftEntityPacket::handle
 		);
 	}
 }

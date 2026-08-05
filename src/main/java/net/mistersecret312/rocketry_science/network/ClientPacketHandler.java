@@ -10,6 +10,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.mistersecret312.rocketry_science.block_entities.RocketAssemblerBlockEntity;
 import net.mistersecret312.rocketry_science.blocks.SeparatorBlock;
 import net.mistersecret312.rocketry_science.client.screen.RocketAssemblyScreen;
+import net.mistersecret312.rocketry_science.client.screen.SpaceMapScreen;
 import net.mistersecret312.rocketry_science.data.SpaceCraft;
 import net.mistersecret312.rocketry_science.entities.RocketEntity;
 import net.mistersecret312.rocketry_science.util.OrbitUtil;
@@ -126,6 +127,18 @@ public class ClientPacketHandler
 			assemblerBlockEntity.progress = progress;
 			assemblerBlockEntity.maxProgress = maxProgress;
 			assemblerBlockEntity.started = started;
+		}
+	}
+
+	public static void recieveSpaceCraft(Rocket rocket)
+	{
+		Screen screen = Minecraft.getInstance().screen;
+		rocket.isInUI = true;
+		if(screen instanceof SpaceMapScreen mapScreen)
+		{
+			RocketEntity rocketEntity = new RocketEntity(mapScreen.getLevel());
+			rocketEntity.setRocket(rocket);
+			mapScreen.spaceCraftRocket = rocketEntity;
 		}
 	}
 

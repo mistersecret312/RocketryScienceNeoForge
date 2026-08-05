@@ -19,6 +19,8 @@ import net.mistersecret312.rocketry_science.data.rocket_pad.RocketPadData;
 import net.mistersecret312.rocketry_science.entities.RocketEntity;
 import net.mistersecret312.rocketry_science.menu.RocketAssemblyMenu;
 import net.mistersecret312.rocketry_science.network.ClientPacketHandler;
+import net.mistersecret312.rocketry_science.vessel.Stage;
+import net.mistersecret312.rocketry_science.vessel.block_data.BlockData;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
@@ -73,8 +75,17 @@ public record ServerBoundRequestRocketEntityPacket() implements CustomPacketPayl
 						String msg = blockEntity.assembleRocket(padBE, rocketEntity, true);
 
 						AABB box = rocketEntity.makeBoundingBox();
+						double desiredTime = 0;
+
+						AABB stagesBox = new AABB(rocketEntity.position(), rocketEntity.position());
+						for(Stage stage : rocketEntity.getRocket().getStages())
+							for(BlockData value : stage.blocks.values())
+							{
+								desiredTime += 20;
+							}
+
 						double volume = box.getXsize()*box.getYsize()*box.getZsize();
-						blockEntity.maxProgress = volume*20;
+						blockEntity.maxProgress = desiredTime;
 						blockEntity.setChanged();
 						level.sendBlockUpdated(blockEntity.getBlockPos(), blockEntity.getBlockState(), blockEntity.getBlockState(), 2);
 

@@ -16,7 +16,7 @@ public enum GravityRating
 		this.max = max;
 	}
 
-	GravityRating getRating(double value)
+	public static GravityRating getRating(double value)
 	{
 		for(GravityRating rating : GravityRating.values())
 		{

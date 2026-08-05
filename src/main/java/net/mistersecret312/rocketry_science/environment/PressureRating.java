@@ -26,7 +26,7 @@ public enum PressureRating
 		return min;
 	}
 
-	public PressureRating getRating(double value)
+	public static PressureRating getRating(double value)
 	{
 		for(PressureRating rating : PressureRating.values())
 		{

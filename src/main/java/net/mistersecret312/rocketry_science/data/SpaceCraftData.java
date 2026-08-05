@@ -8,6 +8,7 @@ import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.storage.DimensionDataStorage;
 import net.mistersecret312.rocketry_science.RocketryScience;
 import net.mistersecret312.rocketry_science.data.orbits.Orbit;
+import net.mistersecret312.rocketry_science.network.packets.ClientBoundSpacecraftRemovePacket;
 import net.mistersecret312.rocketry_science.network.packets.ClientBoundSpacecraftSyncPacket;
 import net.neoforged.neoforge.network.PacketDistributor;
 
@@ -92,6 +93,7 @@ public class SpaceCraftData extends SavedData
 		{
 			this.spaceCraft.remove(uuid);
 			this.setDirty();
+			PacketDistributor.sendToAllPlayers(new ClientBoundSpacecraftRemovePacket(uuid));
 		}
 		toRemove.clear();
 

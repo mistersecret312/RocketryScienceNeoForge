@@ -70,7 +70,10 @@ public class RocketPadBlockEntity extends AbstractMultiBlockEntity
         {
             BlockEntity master = this.level.getBlockEntity(this.getMasterPos());
             if(master instanceof RocketPadBlockEntity pad)
-                return pad.getUUID();
+            {
+                this.uuid = pad.getUUID();
+                return this.uuid;
+            }
         }
         return uuid;
     }
@@ -94,12 +97,12 @@ public class RocketPadBlockEntity extends AbstractMultiBlockEntity
     @Override
     public void formNetwork()
     {
+        super.formNetwork();
         if(getLevel() != null && !getLevel().isClientSide() && isMaster())
         {
             RocketPadData data = RocketPadData.get(getLevel());
             data.addRocketPad(getUUID(), getBlockPos(), getLevel().dimension());
         }
-        super.formNetwork();
     }
 
     @Override

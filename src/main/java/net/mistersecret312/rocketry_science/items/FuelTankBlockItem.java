@@ -16,10 +16,13 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.mistersecret312.rocketry_science.block_entities.fuel_tank.FuelTankBlockEntity;
+import net.mistersecret312.rocketry_science.block_entities.fuel_tank.RocketFuelTank;
 import net.mistersecret312.rocketry_science.blocks.FuelTankBlock;
 import net.mistersecret312.rocketry_science.init.BlockEntityInit;
 import net.mistersecret312.rocketry_science.util.ConnectivityHandler;
 import net.neoforged.neoforge.fluids.FluidStack;
+
+import java.util.ArrayList;
 
 public class FuelTankBlockItem extends BlockItem
 {
@@ -53,11 +56,16 @@ public class FuelTankBlockItem extends BlockItem
             nbt.remove("Controller");
             nbt.remove("LastKnownPos");
             if (nbt.contains("TankContent")) {
-                FluidStack fluid = FluidStack.parseOptional(minecraftserver.registryAccess(), nbt.getCompound("TankContent"));
-                if (!fluid.isEmpty()) {
-                    fluid.setAmount(Math.min(FuelTankBlockEntity.getCapacityMultiplier(), fluid.getAmount()));
-                    nbt.put("TankContent", fluid.saveOptional(minecraftserver.registryAccess()));
+                RocketFuelTank rocketFuelTank = new RocketFuelTank(new ArrayList<>(), 0);
+                rocketFuelTank.readFromNBT(nbt.getCompound("TankContent"), minecraftserver.registryAccess());
+                for(int i = 0; i < rocketFuelTank.getTanks(); i++)
+                {
+                    FluidStack fluid = rocketFuelTank.getFluidInTank(i);
+                    if (!fluid.isEmpty())
+                        fluid.setAmount(Math.min(FuelTankBlockEntity.getCapacityMultiplier(), fluid.getAmount()));
                 }
+                nbt.put("TankContent", rocketFuelTank.writeToNBT(new CompoundTag(),
+                        minecraftserver.registryAccess()));
             }
             itemStack.set(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(nbt));
         }
