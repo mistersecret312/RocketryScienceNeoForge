@@ -121,13 +121,13 @@ public class RocketAssemblyScreen extends AbstractContainerScreen<RocketAssembly
 					imgY + 21, -1);
 
 			double deltaV = 0;
-			double twr = rocket.getMaxTWR();
-			boolean canLand = rocket.canLand();
-			double takeoffDeltaV = rocket.takeoffDeltaV;
-			double landingDeltaV = rocket.landingDeltaV;
-
 			for(Stage rocketStage : rocket.stages)
 				deltaV += rocketStage.calculateDeltaV();
+
+			double twr = rocket.getMaxTWR();
+			double takeoffDeltaV = rocket.takeoffDeltaV;
+			double landingDeltaV = rocket.landingDeltaV;
+			boolean canLand = rocket.canLand() && twr > 1 && deltaV > landingDeltaV;
 
 			NumberFormat format = NumberFormat.getNumberInstance();
 			format.setMaximumFractionDigits(1);
@@ -146,7 +146,7 @@ public class RocketAssemblyScreen extends AbstractContainerScreen<RocketAssembly
 				String takeoffDV = format.format(takeoffDeltaV);
 				String landingDV = format.format(landingDeltaV);
 
-				boolean canTakeOff = !takeoffDV.equals("NaN");
+				boolean canTakeOff = !takeoffDV.equals("NaN") && deltaV > 0 && twr > 1;
 				canLand = canLand && !landingDV.equals("NaN");
 				poseStack.translate(0, 18, 0);
 				Component canTakeoffText = Component.literal("Can Takeoff? ")

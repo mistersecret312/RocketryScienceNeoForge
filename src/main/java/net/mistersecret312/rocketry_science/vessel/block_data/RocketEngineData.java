@@ -29,14 +29,12 @@ import net.mistersecret312.rocketry_science.vessel.VesselState;
 import net.mistersecret312.rocketry_science.vessel.Stage;
 import net.mistersecret312.rocketry_science.vessel.VesselData;
 import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import org.apache.commons.lang3.function.TriFunction;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiFunction;
 
 public class RocketEngineData extends BlockData
@@ -228,7 +226,22 @@ public class RocketEngineData extends BlockData
     @Override
     public double getDryMass()
     {
-        return this.mass;
+        double leftoverFuel = 0;
+        Map<FluidType, Integer> fluids = new HashMap<>();
+        for(int tank = 0; tank < this.tank.getTanks(); tank++)
+            fluids.put(this.tank.getFluidInTank(tank).getFluidType(), this.tank.getFluidInTank(tank).getAmount());
+
+        int max = Integer.MIN_VALUE;
+        for(Integer fluid : fluids.values())
+            if(fluid > max)
+                max = fluid;
+        for(FluidType type : fluids.keySet())
+            fluids.put(type, fluids.get(type)-max);
+
+        for(Integer leftover : fluids.values())
+            leftoverFuel += Math.abs(leftover);
+
+        return this.mass + leftoverFuel;
     }
 
     public double getIsp()
