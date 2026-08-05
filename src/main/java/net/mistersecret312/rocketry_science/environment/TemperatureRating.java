@@ -20,7 +20,7 @@ public enum TemperatureRating
 	{
 		for(TemperatureRating rating : TemperatureRating.values())
 		{
-			if(value > rating.min && value <= rating.max)
+			if(value >= rating.min && value < rating.max)
 				return rating;
 		}
 

@@ -30,7 +30,7 @@ public enum PressureRating
 	{
 		for(PressureRating rating : PressureRating.values())
 		{
-			if(value > rating.min && value <= rating.max)
+			if(value >= rating.min && value < rating.max)
 				return rating;
 		}
 

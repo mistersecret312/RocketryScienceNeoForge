@@ -20,7 +20,7 @@ public enum GravityRating
 	{
 		for(GravityRating rating : GravityRating.values())
 		{
-			if(value > rating.min && value <= rating.max)
+			if(value >= rating.min && value < rating.max)
 				return rating;
 		}
 

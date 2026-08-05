@@ -20,7 +20,7 @@ public enum RadiationRating
 	{
 		for(RadiationRating rating : RadiationRating.values())
 		{
-			if(value > rating.min && value <= rating.max)
+			if(value >= rating.min && value < rating.max)
 				return rating;
 		}
 

@@ -18,8 +18,8 @@
     },
     {
       "type": "rocketry_science:temperature",
-      "night_temperature": -110,
-      "day_temperature": 35
+      "night_temperature": 163,
+      "day_temperature": 308
     },
     {
       "type": "rocketry_science:radiation",
