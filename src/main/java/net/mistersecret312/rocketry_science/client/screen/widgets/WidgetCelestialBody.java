@@ -67,16 +67,22 @@ public class WidgetCelestialBody extends AbstractWidget implements Renderable
 		poseStack.translate(position.x, position.y, 0);
 
 		if(body.getOrbit() != null && !screen.selectedBody.equals(body))
-			OrbitRenderer.drawOrbitCircle(graphics, (float) -position.x, (float) -position.y,
-				(float) position.length(), 1, -1);
-		renderOrbits(graphics, mouseX, mouseY, partialTick);
+		{
+			OrbitRenderer.drawOrbitCircle(graphics, (float) -position.x, (float) -position.y, (float) position.length(),
+					1.5f, screen.getZoom(),-1);
 
+		}
+
+		poseStack.pushPose();
+		poseStack.scale(width/16f, height/16f, 1);
 		graphics.blit(body.getIcon(), -16, -16, 0, 0, 32, 32, 32, 32);
+		poseStack.popPose();
 
-		double bounds = 8;
+		double bounds = 8*height/16f;
 		if(mouseX >= position.x-bounds && mouseY >= position.y-bounds)
 			if(mouseX <= position.x+bounds && mouseY <= position.y+bounds)
-				graphics.drawString(Minecraft.getInstance().font, Component.literal(body.getName()), -Minecraft.getInstance().font.width(body.getName())/2, -16, -1, true);
+				graphics.drawString(Minecraft.getInstance().font, Component.literal(body.getName()), -Minecraft.getInstance().font.width(body.getName())/2,
+						(int) (-bounds*2), -1, true);
 
 		poseStack.translate(-position.x, -position.y, 0);
 	}
@@ -96,8 +102,8 @@ public class WidgetCelestialBody extends AbstractWidget implements Renderable
 			{
 				if(craft.getOrbit() instanceof ArtificialOrbit)
 				{
-					OrbitRenderer.drawOrbitCircle(graphics, (float) 0, (float) 0, (float) orbitPos.length() / 5, 0.5f,
-							0xFF00C8FF);
+					OrbitRenderer.drawOrbitCircle(graphics, (float) 0, (float) 0, (float) orbitPos.length() / 5,
+							0.5f, screen.getZoom(), 0xFF00C8FF);
 					graphics.renderItem(Items.STICK.getDefaultInstance(), (int) orbitPos.x / 5 -8, (int) orbitPos.y / 5 -8);
 				}
 				else if(craft.getOrbit() instanceof TransferOrbit transfer)
@@ -123,11 +129,11 @@ public class WidgetCelestialBody extends AbstractWidget implements Renderable
 						departurePosition.div(5);
 						arrivalPosition.div(5);
 
-						OrbitRenderer.drawOrbitCircle(graphics, (float) 0, (float) 0, (float) departurePosition.length(), 0.5f,
-								0xFF00C8FF);
+						OrbitRenderer.drawOrbitCircle(graphics, (float) 0, (float) 0, (float) departurePosition.length(),
+								0.5f, screen.getZoom(), 0xFF00C8FF);
 
-						OrbitRenderer.drawOrbitCircle(graphics, (float) 0, (float) 0, (float) arrivalPosition.length(), 0.5f,
-								0xFF00C8FF);
+						OrbitRenderer.drawOrbitCircle(graphics, (float) 0, (float) 0, (float) arrivalPosition.length(),
+								0.5f, screen.getZoom(), 0xFF00C8FF);
 
 					}
 					else
@@ -143,7 +149,6 @@ public class WidgetCelestialBody extends AbstractWidget implements Renderable
 						arrivalPosition.mul(body.getOrbitScale());
 					}
 
-					OrbitRenderer.drawOrbitTransfer(graphics, departurePosition, arrivalPosition, 0xFF00C8FF);
 
 					double x = Mth.lerp(transfer.getProgress(level.getGameTime()), departurePosition.x, arrivalPosition.x);
 					double y = Mth.lerp(transfer.getProgress(level.getGameTime()), departurePosition.y, arrivalPosition.y);

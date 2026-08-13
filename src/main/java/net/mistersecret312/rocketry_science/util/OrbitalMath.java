@@ -46,7 +46,7 @@ public class OrbitalMath
 		CelestialBody parentB = OrbitUtil.getCelestialBody(destination.getParent(level.registryAccess()), level);
 
 		if (parentA.equals(parentB))
-			return getHohmann(origin.getOrbitalAltitude()+parentA.getRadius(), destination.getOrbitalAltitude()+parentB.getRadius(), parentA, 0); // No window penalty for same parent
+			return getHohmann(origin.getOrbitalAltitude()+parentA.getRadius(), destination.getOrbitalAltitude()+parentB.getRadius(), parentA, 0);
 
 		CelestialBody commonAncestor = OrbitUtil.findCommonAncestor(level.registryAccess(), parentA, parentB);
 		if (commonAncestor == null) {
@@ -112,10 +112,20 @@ public class OrbitalMath
 
 	public static int deltaVToFuelMass(Stage stage, double deltaV)
 	{
-		double stageMass = stage.getTotalMass();
-		double massWithoutDeltaV = stage.getTotalMass()*Math.pow(2.718, -(deltaV/(stage.getAverageIsp()*9.81)));
+		double payloadMass = 0;
+		boolean foundSelf = false;
 
-		return (int) (stageMass-massWithoutDeltaV);
+		for (Stage s : stage.getVessel().getStages())
+		{
+			if (foundSelf)
+				payloadMass += s.getTotalMass();
+			else if (s == stage)
+				foundSelf = true;
+		}
+
+		double initialMass = payloadMass + stage.getTotalMass();
+		double massWithoutDeltaV = initialMass * Math.exp(-(deltaV / (stage.getAverageIsp() * 9.81)));
+		return (int) (initialMass - massWithoutDeltaV);
 	}
 
 	public static int deltaVToFuelMass(double totalMass, double Isp, double deltaV)

@@ -63,7 +63,8 @@ public class WidgetSpaceCraft extends AbstractWidget implements Renderable
 
 		if (craft.getOrbit() instanceof ArtificialOrbit)
 		{
-			OrbitRenderer.drawOrbitCircle(graphics, 0, 0, (float) craftPos.length(), 0.5f, 0xFF00C8FF);
+			OrbitRenderer.drawOrbitCircle(graphics, 0, 0, (float) craftPos.length(),
+					1.5f, screen.getZoom(), 0xFF00C8FF);
 			graphics.renderItem(Items.STICK.getDefaultInstance(), (int) craftPos.x - 8, (int) craftPos.y - 8);
 		}
 		else if (craft.getOrbit() instanceof TransferOrbit transfer)
@@ -75,6 +76,8 @@ public class WidgetSpaceCraft extends AbstractWidget implements Renderable
 			CelestialBody departureBody = OrbitUtil.getCelestialBody(transfer.getDeparture().getBody(), level);
 			CelestialBody arrivalBody = OrbitUtil.getCelestialBody(transfer.getArrival().getBody(), level);
 
+			double departureAlt = transfer.getDeparture().getOrbit().orbit().getAltitude();
+			double arrivalAlt = transfer.getArrival().getOrbit().orbit().getAltitude();
 			if (transfer.getArrival().getBody().equals(transfer.getDeparture().getBody()))
 			{
 				ArtificialOrbit departureOrbit = new ArtificialOrbit(transfer.getDeparture().getBody(), null, transfer.getDeparture().getOrbit());
@@ -85,22 +88,27 @@ public class WidgetSpaceCraft extends AbstractWidget implements Renderable
 
 				departurePosition.div(5);
 				arrivalPosition.div(5);
-
-				OrbitRenderer.drawOrbitCircle(graphics, 0, 0, (float) departurePosition.length(), 0.5f, 0xFF00C8FF);
-				OrbitRenderer.drawOrbitCircle(graphics, 0, 0, (float) arrivalPosition.length(), 0.5f, 0xFF00C8FF);
 			}
 			else
 			{
-				if (departureBody.getOrbit() != null)
-					departurePosition = OrbitUtil.getOrderPosition(transfer.getDeparture().getTick(), departureBody.getOrbit(), level.registryAccess(), screen.selectedBody);
-				if (arrivalBody.getOrbit() != null)
-					arrivalPosition = OrbitUtil.getOrderPosition(transfer.getArrival().getTick(), arrivalBody.getOrbit(), level.registryAccess(), screen.selectedBody);
-
-				departurePosition.mul(orbitBody.getOrbitScale());
-				arrivalPosition.mul(orbitBody.getOrbitScale());
+				arrivalAlt = arrivalBody.getAltitude()*50;
 			}
 
-			OrbitRenderer.drawOrbitTransfer(graphics, departurePosition, arrivalPosition, 0xFF00C8FF);
+			OrbitRenderer.drawOrbitCircle(graphics, 0, 0, (float) departureAlt/5f,
+					0.5f, screen.getZoom(),0xFF00C8FF);
+			OrbitRenderer.drawOrbitCircle(graphics, 0, 0, (float) arrivalAlt/5f,
+					0.5f, screen.getZoom(),0xFF00C8FF);
+
+
+			ArtificialOrbit departureOrbit = new ArtificialOrbit(transfer.getDeparture().getBody(),
+					craft, transfer.getDeparture().getOrbit());
+			OrbitRenderer.drawOrbitTransfer(graphics, 0, 0,
+					departureAlt,
+					arrivalAlt,
+					departureOrbit.getAngle(transfer.getDeparture().getTick()),
+					screen.getZoom(),
+					transfer.getProgress(level.getGameTime()),
+					0xFF00C8FF);
 
 			graphics.renderItem(Blocks.COBBLESTONE.asItem().getDefaultInstance(), (int) craftPos.x - 8, (int) craftPos.y - 8);
 
@@ -110,14 +118,12 @@ public class WidgetSpaceCraft extends AbstractWidget implements Renderable
 					(int) craftPos.x, (int) (craftPos.y - 16), -1);
 		}
 
-		// Handle Hover and Name Rendering
 		double absX = parentPos.x + craftPos.x;
 		double absY = parentPos.y + craftPos.y;
 		double bounds = 8;
 
 		if (mouseX >= absX - bounds && mouseY >= absY - bounds && mouseX <= absX + bounds && mouseY <= absY + bounds)
 		{
-			// Offset Y by 26 so it doesn't overlap with the transfer progress text
 			graphics.drawString(Minecraft.getInstance().font, Component.literal(craft.getName()),
 					(int) craftPos.x - Minecraft.getInstance().font.width(craft.getName()) / 2,
 					(int) craftPos.y - 26, -1, true);
@@ -180,43 +186,48 @@ public class WidgetSpaceCraft extends AbstractWidget implements Renderable
 		}
 		else if (craft.getOrbit() instanceof TransferOrbit transfer)
 		{
-			Vector2d arrivalPosition = new Vector2d();
-			Vector2d departurePosition = new Vector2d();
+			CelestialBody orbitBody = OrbitUtil.getCelestialBody(transfer.getParent(level.registryAccess()), level);
 
-			CelestialBody common = OrbitUtil.getCelestialBody(transfer.getParent(level.registryAccess()), level);
-			CelestialBody departureBody = OrbitUtil.getCelestialBody(transfer.getDeparture().getBody(), level);
-			CelestialBody arrivalBody = OrbitUtil.getCelestialBody(transfer.getArrival().getBody(), level);
-			CelestialBody orbitBody = OrbitUtil.getCelestialBody(craft.getOrbit().getParent(level.registryAccess()), level);
+			double r1 = transfer.getDeparture().getOrbit().orbit().getAltitude() / 5.0;
+			double r2 = transfer.getArrival().getOrbit().orbit().getAltitude() / 5.0;
+
+			double departureAngle = orbitBody.getOrbitAngle(transfer.getDeparture().getTick());
+			double progress = transfer.getProgress(level.getGameTime()); // 0.0 to 1.0
 
 			if (transfer.getArrival().getBody().equals(transfer.getDeparture().getBody()))
 			{
-				ArtificialOrbit departureOrbit = new ArtificialOrbit(transfer.getDeparture().getBody(), null, transfer.getDeparture().getOrbit());
-				departurePosition = OrbitUtil.getOrderPosition(transfer.getDeparture().getTick(), departureOrbit, level.registryAccess(), common);
 
-				ArtificialOrbit arrivalOrbit = new ArtificialOrbit(transfer.getArrival().getBody(), null, transfer.getArrival().getOrbit());
-				arrivalPosition = OrbitUtil.getOrderPosition(transfer.getArrival().getTick(), arrivalOrbit, level.registryAccess(), common);
-
-				departurePosition.div(5);
-				arrivalPosition.div(5);
 			}
 			else
 			{
-				if (departureBody.getOrbit() != null)
-					departurePosition = OrbitUtil.getOrderPosition(transfer.getDeparture().getTick(), departureBody.getOrbit(), level.registryAccess(), screen.selectedBody);
-				if (arrivalBody.getOrbit() != null)
-					arrivalPosition = OrbitUtil.getOrderPosition(transfer.getArrival().getTick(), arrivalBody.getOrbit(), level.registryAccess(), screen.selectedBody);
-
-				departurePosition.mul(orbitBody.getOrbitScale());
-				arrivalPosition.mul(orbitBody.getOrbitScale());
+				CelestialBody body = OrbitUtil.getCelestialBody(transfer.getArrival().getBody(), level);
+				r2 = body.getAltitude()*10;
 			}
 
-			double x = Mth.lerp(transfer.getProgress(level.getGameTime()), departurePosition.x, arrivalPosition.x);
-			double y = Mth.lerp(transfer.getProgress(level.getGameTime()), departurePosition.y, arrivalPosition.y);
-			return new Vector2d(x, y);
+			double c = (r1 - r2) / 2.0;
+			double a = (r1 + r2) / 2.0;
+			double b = Math.sqrt(r1 * r2);
+
+			double progressAngle = progress * Math.PI;
+			double normX = Math.cos(progressAngle);
+			double normY = Math.sin(progressAngle);
+
+			double rotatedX = (normX * a) + c;
+			double rotatedY = (normY * b);
+
+			double cosA = Math.cos(departureAngle);
+			double sinA = Math.sin(departureAngle);
+
+			double topDownX = rotatedX * cosA - rotatedY * sinA;
+			double topDownY = rotatedX * sinA + rotatedY * cosA;
+
+			// 7. Apply Squish Factor if necessary (Set to 1.0 for the top-down circular map)
+			double squishFactor = 1.0;
+
+			return new Vector2d(topDownX, topDownY * squishFactor);
 		}
 		return new Vector2d();
 	}
-
 	@Override
 	protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput)
 	{

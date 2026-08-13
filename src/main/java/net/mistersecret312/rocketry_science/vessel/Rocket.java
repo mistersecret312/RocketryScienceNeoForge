@@ -114,13 +114,14 @@ public class Rocket extends VesselData
 				if(configuredOrbit == null || body == null)
 					return;
 
+				Stage currentStage = getCurrentStage();
 				double height = configuredOrbit.orbit().getAltitude();
 				double deltaVRequired = OrbitalMath.getOrbitDeltaV(body, height) - accumulatedOrbitalVelocity;
-				double totalDeltaV = getCurrentStage().calculateDeltaV();
+				double totalDeltaV = currentStage.calculateDeltaV();
 				double currentLeftDeltaV = totalDeltaV - landingDeltaV;
 
-				double dryMass = getCurrentStage().getTotalDryMass();
-				double wetMass = getCurrentStage().getTotalMass();
+				double dryMass = currentStage.getTotalDryMass();
+				double wetMass = currentStage.getTotalMass();
 				if(currentLeftDeltaV >= deltaVRequired)
 				{
 					System.out.println("Consumed fuel from stage to get into orbit : " + deltaVRequired);
@@ -155,13 +156,19 @@ public class Rocket extends VesselData
 					target = OrbitUtil.getChildren(body, level).getFirst();
 				else target = OrbitUtil.getCelestialBody(OrbitUtil.EARTH, level);
 
-				target = OrbitUtil.getChildren(OrbitUtil.getCelestialBody(OrbitUtil.EARTH, level), level).getFirst();
-				ConfiguredOrbit targetOrbit = target.getSupportedOrbits().getFirst();
+//				target = OrbitUtil.getChildren(OrbitUtil.getCelestialBody(OrbitUtil.EARTH, level), level).getFirst();
+				ConfiguredOrbit targetOrbit = target.getSupportedOrbits().getLast();
 
 				TravelPoint departure = new TravelPoint(configuredOrbit, level.getGameTime(), OrbitUtil.getKey(body, level));
 				TravelPoint arrival = new TravelPoint(targetOrbit, level.getGameTime()+2000, OrbitUtil.getKey(target, level));
 
-				TransferOrbit transferOrbit = new TransferOrbit(craft, departure, arrival, departure.getTick()- arrival.getTick());
+				ArtificialOrbit departureOrbit = new ArtificialOrbit(OrbitUtil.getKey(body, level), craft, configuredOrbit);
+				ArtificialOrbit arrivalOrbit = new ArtificialOrbit(OrbitUtil.getKey(target, level), craft, targetOrbit);
+
+				TransferOrbit.TransferData transferData = OrbitalMath.calculateTransfer(level, departureOrbit, arrivalOrbit, level.getGameTime());
+
+				TransferOrbit transferOrbit = new TransferOrbit(craft, departure, arrival,
+						(long) transferData.transferTime);
 				ArtificialOrbit orbit = new ArtificialOrbit(OrbitUtil.getKey(body, level), craft, configuredOrbit);
 
 				LinkedHashSet<Stage> spaceCraftStages = new LinkedHashSet<>();
@@ -318,7 +325,9 @@ public class Rocket extends VesselData
 
 			rocketNew.stages.add(stageNew);
 			rocketNew.canLand = true;
+			rocketNew.landingDeltaV = this.landingDeltaV;
 
+			this.landingDeltaV = 0;
 			this.stages.remove(oldDetach);
 			rocketEntityNew.setRocket(rocketNew);
 
@@ -578,8 +587,8 @@ public class Rocket extends VesselData
 		double thrust = getMaxThrustKiloNewtons();
 		double height = this.getRocketEntity().makeBoundingBox().getYsize();
 		double fuelFlow = getAverageFuelUsage();
-		double mass = stage.getTotalMass();
-		double massAccounted = stage.getTotalMass();
+		double mass = this.getMassKilogram();
+		double massAccounted = this.getMassKilogram();
 		double rocketMass = getMassKilogram();
 
 		double altitude = 0;
@@ -592,7 +601,7 @@ public class Rocket extends VesselData
 
 		while(altitude < spaceY)
 		{
-			if(ticks >= 1000)
+			if(ticks >= 2400)
 				return 0;
 
 			velocity -= gravity;

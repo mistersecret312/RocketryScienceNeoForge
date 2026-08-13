@@ -9,8 +9,12 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LightBlock;
+import net.minecraft.world.level.block.WaterloggedTransparentBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.mistersecret312.rocketry_science.block_entities.rocket_engine.RocketEngineBlockEntity;
@@ -69,6 +73,7 @@ public class RocketEngineData extends BlockData
     @Override
     public void tick(Level level)
     {
+        super.tick(level);
         if(level.isClientSide())
             return;
 
@@ -274,6 +279,24 @@ public class RocketEngineData extends BlockData
     }
 
     @Override
+    public boolean emitsLight()
+    {
+        return true;
+    }
+
+    @Override
+    public int getLightLevel()
+    {
+        return 15;
+	}
+
+    @Override
+    public boolean emitLightCondition()
+    {
+        return enabled;
+    }
+
+    @Override
     public BlockDataType<?> getType()
     {
         return BlockDataInit.ROCKET_ENGINE.get();
@@ -358,6 +381,12 @@ public class RocketEngineData extends BlockData
     }
 
     @Override
+    public AABB getIndividualBoundingBox()
+    {
+        return new AABB(-0.5, -1, -0.5, 0.5, 1, 0.5);
+    }
+
+    @Override
     public void placeInLevel(Level level, BlockPos pos)
     {
         super.placeInLevel(level, pos);
@@ -369,6 +398,7 @@ public class RocketEngineData extends BlockData
     public void toNetwork(RegistryFriendlyByteBuf buffer)
     {
         super.toNetwork(buffer);
+        buffer.writeDouble(this.mass);
         buffer.writeBoolean(this.enabled);
         buffer.writeDouble(this.thrustPercentage);
         buffer.writeInt(this.frame);
@@ -381,6 +411,7 @@ public class RocketEngineData extends BlockData
     public void fromNetwork(RegistryFriendlyByteBuf buffer, BlockPos pos, Stage stage)
     {
         super.fromNetwork(buffer, pos, stage);
+        this.mass = buffer.readDouble();
         this.enabled = buffer.readBoolean();
         this.thrustPercentage = buffer.readDouble();
         this.frame = buffer.readInt();

@@ -52,10 +52,7 @@ public class RocketEngineDataRenderer extends AbstractBlockDataRenderer<RocketEn
 						model.getModelData(level, data.pos, data.nozzleState, ModelData.EMPTY), rt);
 			else
 			{
-				dispatcher.getModelRenderer()
-						  .tesselateBlock(level, model, data.nozzleState, mutablePos, poseStack, buffer.getBuffer(rt),
-								  false, RandomSource.create(42), data.nozzleState.getSeed(mutablePos),
-								  OverlayTexture.NO_OVERLAY,
+				dispatcher.renderSingleBlock(data.nozzleState, poseStack, buffer, packedLight, OverlayTexture.NO_OVERLAY,
 								  model.getModelData(level, mutablePos, data.nozzleState, ModelData.EMPTY), rt);
 			}
 		}

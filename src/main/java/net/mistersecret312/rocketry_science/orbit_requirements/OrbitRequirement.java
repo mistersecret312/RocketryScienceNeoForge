@@ -7,7 +7,7 @@ import net.mistersecret312.rocketry_science.init.OrbitRequirementInit;
 
 public interface OrbitRequirement {
     RequirementType<?> getType();
-    boolean test(SpaceCraft craft); // Add your SpaceCraft entity parameter here later
+    boolean test(SpaceCraft craft);
     Component getFailureMessage();
 
     Codec<OrbitRequirement> CODEC = OrbitRequirementInit.REGISTRY.byNameCodec()

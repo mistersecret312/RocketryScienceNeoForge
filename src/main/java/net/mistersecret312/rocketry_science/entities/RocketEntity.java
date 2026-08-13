@@ -33,6 +33,9 @@ public class RocketEntity extends Entity
 	private static final EntityDataAccessor<Rocket> ROCKET =
 			SynchedEntityData.defineId(RocketEntity.class, EntityDataSerializersInit.ROCKET.get());
 
+	public boolean mustRemove = false;
+	public int removeTick = 0;
+
 	public RocketEntity(EntityType<RocketEntity> type, Level level)
 	{
 		super(type, level);
@@ -62,8 +65,12 @@ public class RocketEntity extends Entity
 			return;
 
 		if (!this.isNoGravity())
-		{
 			this.addDeltaMovement(new Vec3(0.0D, -0.025D, 0.0D));
+		if(mustRemove)
+		{
+			removeTick++;
+			if(removeTick == 3)
+				discard();
 		}
 
 		this.setDeltaMovement(0, Math.max(Math.min(this.getDeltaMovement().y, MAX_SPEED_UP_BT), MAX_SPEED_DOWN_BT), 0);
@@ -78,12 +85,17 @@ public class RocketEntity extends Entity
 		Rocket rocket = new Rocket(this, new LinkedHashSet<>());
 		rocket.load(tag.getCompound(ROCKET_DATA), level().getServer());
 		this.entityData.set(ROCKET, rocket);
+
+		this.mustRemove = tag.getBoolean("must_remove");
+		this.removeTick = tag.getInt("remove_tick");
 	}
 
 	@Override
 	public void addAdditionalSaveData(CompoundTag tag)
 	{
 		tag.put(ROCKET_DATA, this.entityData.get(ROCKET).save());
+		tag.putInt("remove_tick", removeTick);
+		tag.putBoolean("must_remove", mustRemove);
 	}
 
 	@Override
@@ -134,9 +146,15 @@ public class RocketEntity extends Entity
 				entry.getValue().placeInLevel(player.level(), entry.getKey().offset(this.getOnPos().above()));
 			}
 		}
-		this.discard();
+		this.markForRemoval();
 
 		return InteractionResult.PASS;
+	}
+
+	public void markForRemoval()
+	{
+		this.mustRemove = true;
+		this.removeTick = 0;
 	}
 
 	public Rocket getRocket()

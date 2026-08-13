@@ -11,6 +11,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.mistersecret312.rocketry_science.blocks.NozzleBlock;
 import net.mistersecret312.rocketry_science.init.BlockDataInit;
 import net.mistersecret312.rocketry_science.init.BlockInit;
 import net.mistersecret312.rocketry_science.util.OrbitUtil;
@@ -97,11 +98,34 @@ public class Stage
 	public double calculateDeltaV()
 	{
 		double averageIsp = getAverageIsp();
-		if(getTotalDryMass() == 0)
+		if (blocks.values().stream().anyMatch(data -> {
+			if(data instanceof RocketEngineData rocketEngineData)
+				if(rocketEngineData.nozzleState.getBlock() instanceof NozzleBlock nozzleBlock)
+					return nozzleBlock.isVacuum();
+			return false;
+		}))
+		{
+			if(getVessel().isInUI())
+				averageIsp = getVacuumIsp();
+		}
+		if (averageIsp <= 0 || getTotalDryMass() <= 0)
 			return 0;
-		double massRatio = getTotalMass()/getTotalDryMass();
-		double log = Math.log(massRatio);
-		return 9.81*averageIsp*log;
+
+		double payloadMass = 0;
+		boolean foundSelf = false;
+		for (Stage stage : getVessel().getStages())
+		{
+			if (foundSelf)
+				payloadMass += stage.getTotalMass();
+			else if (stage == this)
+				foundSelf = true;
+		}
+
+		double initialMass = payloadMass + getTotalMass();
+		double finalMass = payloadMass + getTotalDryMass();
+
+		double massRatio = initialMass / finalMass;
+		return 9.81 * averageIsp * Math.log(massRatio);
 	}
 
 	public double getTotalMass()
@@ -189,6 +213,24 @@ public class Stage
 			if(entry.getValue() instanceof RocketEngineData data)
 			{
 				Isp += data.getIsp();
+				amount++;
+			}
+		}
+		if(amount == 0)
+			return 0;
+
+		return Isp/amount;
+	}
+
+	public double getVacuumIsp()
+	{
+		double Isp = 0;
+		int amount = 0;
+		for(Map.Entry<BlockPos, BlockData> entry : this.blocks.entrySet())
+		{
+			if(entry.getValue() instanceof RocketEngineData data)
+			{
+				Isp += data.fuelType.getVacuumISP();
 				amount++;
 			}
 		}

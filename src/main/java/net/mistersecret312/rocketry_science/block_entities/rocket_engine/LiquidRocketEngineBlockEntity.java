@@ -80,7 +80,7 @@ public class LiquidRocketEngineBlockEntity extends RocketEngineBlockEntity
                     return;
 
                 this.rocketFuel = fuelType;
-                this.setMass(2500*material.getMassCoefficient());
+                this.setMass(1000*material.getMassCoefficient());
                 this.setThrust(fuelType.getThrustKiloNewtons());
                 this.setEfficiency(fuelType.getVacuumISP());
                 materialEfficiencyMult += material.getEfficiencyCoefficient();
@@ -93,7 +93,7 @@ public class LiquidRocketEngineBlockEntity extends RocketEngineBlockEntity
                 if(material == null)
                     return;
 
-                this.setMass(this.getMass()+(1000*material.getMassCoefficient()));
+                this.setMass(this.getMass()+(750*material.getMassCoefficient()));
                 materialThrustMult += material.getThrustCoefficient();
                 materialEfficiencyMult += material.getEfficiencyCoefficient();
             }

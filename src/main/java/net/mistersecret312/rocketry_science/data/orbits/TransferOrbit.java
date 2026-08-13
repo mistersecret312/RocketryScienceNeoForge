@@ -91,10 +91,28 @@ public class TransferOrbit extends Orbit<SpaceCraft>
 	public double getAngle(long tick)
 	{
 		if(getTravelDuration() <= 0)
-			return 1;
+			return 1.0;
 
-		double progress = (double) (tick - getDeparture().getTick()) / getTravelDuration();
-		return Mth.clamp(progress, 0D, 1D);
+		double t = (double) (tick - getDeparture().getTick()) / getTravelDuration();
+		t = Mth.clamp(t, 0D, 1D);
+
+		double r1 = getDeparture().getOrbit().orbit().getAltitude();
+		double r2 = getArrival().getOrbit().orbit().getAltitude();
+
+		double e = Math.abs(r1 - r2) / (r1 + r2);
+
+		boolean outward = r1 <= r2;
+		double M = outward ? (t * Math.PI) : (Math.PI + (t * Math.PI));
+
+		double E = M;
+		for (int i = 0; i < 5; i++)
+			E = E - (E - e * Math.sin(E) - M) / (1.0 - e * Math.cos(E));
+
+		double nu = 2.0 * Math.atan2(Math.sqrt(1.0 + e) * Math.sin(E / 2.0), Math.sqrt(1.0 - e) * Math.cos(E / 2.0));
+		if (nu < 0)
+			nu += 2.0 * Math.PI;
+
+		return outward ? (nu / Math.PI) : ((nu - Math.PI) / Math.PI);
 	}
 
 	public double getProgress(long tick)

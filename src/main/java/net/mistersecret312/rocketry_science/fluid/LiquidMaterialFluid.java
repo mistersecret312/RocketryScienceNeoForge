@@ -77,7 +77,7 @@ public class LiquidMaterialFluid extends FluidType
                                         float nearDistance, float farDistance, FogShape shape) {
                 RenderSystem.setShaderFogStart(1f);
                 RenderSystem.setShaderFogColor(fogColor.x, fogColor.y, fogColor.z);
-                RenderSystem.setShaderFogEnd(6f); // distance when the fog starts
+                RenderSystem.setShaderFogEnd(6f);
             }
         });
     }

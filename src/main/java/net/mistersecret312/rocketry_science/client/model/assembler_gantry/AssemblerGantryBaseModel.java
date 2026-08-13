@@ -17,7 +17,6 @@ import net.mistersecret312.rocketry_science.RocketryScience;
 
 public class AssemblerGantryBaseModel extends EntityModel<Entity>
 {
-	// This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
 	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(
 			RocketryScience.MODID, "rocket_assembler_base"), "main");
 	private final ModelPart bone;

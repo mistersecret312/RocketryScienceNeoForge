@@ -12,12 +12,13 @@ import net.mistersecret312.rocketry_science.network.ClientPacketHandler;
 import net.mistersecret312.rocketry_science.vessel.Rocket;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-public record ClientBoundRecieveRocketEntityPacket(Rocket rocket, String msg) implements CustomPacketPayload
+public record ClientBoundRecieveRocketEntityPacket(int id, Rocket rocket, String msg) implements CustomPacketPayload
 {
 	public static final Type<ClientBoundRecieveRocketEntityPacket> TYPE = new Type<>(
 			ResourceLocation.fromNamespaceAndPath(RocketryScience.MODID, "s2c_receive_rocket"));
 
 	public static final StreamCodec<RegistryFriendlyByteBuf, ClientBoundRecieveRocketEntityPacket> STREAM_CODEC = StreamCodec.composite(
+			ByteBufCodecs.INT, ClientBoundRecieveRocketEntityPacket::id,
 			Rocket.STREAM_CODEC, ClientBoundRecieveRocketEntityPacket::rocket,
 			ByteBufCodecs.STRING_UTF8, ClientBoundRecieveRocketEntityPacket::msg,
 			ClientBoundRecieveRocketEntityPacket::new
@@ -33,7 +34,7 @@ public record ClientBoundRecieveRocketEntityPacket(Rocket rocket, String msg) im
 	{
 		ctx.enqueueWork(() ->
 			{
-				ClientPacketHandler.recieveRocketEntity(packet.rocket, packet.msg);
+				ClientPacketHandler.recieveRocketEntity(packet.id, packet.rocket, packet.msg);
 			});
 	}
 }

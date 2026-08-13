@@ -58,7 +58,7 @@ public class FuelTankData extends BlockData
             fluidMass += this.tank.getFluidInTank(tank).getAmount();
         }
 
-        double hullMass = this.width*width*height*500;
+        double hullMass = this.width*width*height*200;
 
         return fluidMass+hullMass;
     }
@@ -81,7 +81,7 @@ public class FuelTankData extends BlockData
         for(Integer leftover : fluids.values())
             leftoverFuel += Math.abs(leftover);
 
-        return this.width*width*height*500 + leftoverFuel;
+        return this.width*width*height*200 + leftoverFuel;
     }
 
     @Override
@@ -161,6 +161,22 @@ public class FuelTankData extends BlockData
         maxY = Math.max(aabb.maxY, rocket.position().y+pos.getY()+height);
 
         return new AABB(minX, minY, minZ, maxX, maxY, maxZ);
+    }
+
+    @Override
+    public AABB getIndividualBoundingBox()
+    {
+        return switch(width)
+        {
+            case 1:
+                yield new AABB(-0.5, 0, -0.5, 0.5, height, 0.5);
+            case 2:
+                yield new AABB(-0.5, 0, -0.5, 1.5, height, 1.5);
+            case 3:
+                yield new AABB(-0.5, 0, -0.5, 2.5, height, 2.5);
+			default:
+				yield new AABB(-0.5, 0, -0.5, 0.5, 1, 0.5);
+		};
     }
 
     public TriFunction<Stage, BlockPos, Boolean, BlockData> create()

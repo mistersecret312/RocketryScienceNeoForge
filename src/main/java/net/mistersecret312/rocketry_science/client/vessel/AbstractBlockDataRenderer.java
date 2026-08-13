@@ -5,6 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -15,6 +16,8 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.phys.AABB;
+import net.mistersecret312.rocketry_science.vessel.Rocket;
 import net.mistersecret312.rocketry_science.vessel.block_data.BlockData;
 import net.neoforged.neoforge.client.model.data.ModelData;
 
@@ -26,39 +29,39 @@ public abstract class AbstractBlockDataRenderer<T extends BlockData> implements 
 	{
 		boolean isInUI = data.stage.getVessel().isInUI();
 		packedLight = LevelRenderer.getLightColor(level, mutablePos);
-		if(isInUI)
-			packedLight = LightTexture.FULL_BRIGHT;
+		if(isInUI) packedLight = LightTexture.FULL_BRIGHT;
 
 		BlockEntityRenderDispatcher blockDispatcher = Minecraft.getInstance().getBlockEntityRenderDispatcher();
 		BlockRenderDispatcher dispatcher = Minecraft.getInstance().getBlockRenderer();
 
 		BakedModel model = dispatcher.getBlockModel(data.getBlockState());
-		for (net.minecraft.client.renderer.RenderType rt : model.getRenderTypes(data.getBlockState(), RandomSource.create(42), ModelData.EMPTY))
+		for(net.minecraft.client.renderer.RenderType rt : model.getRenderTypes(data.getBlockState(),
+				RandomSource.create(42), ModelData.EMPTY))
 		{
-			if((data.getBlockState().getRenderShape() == RenderShape.MODEL
-						&& data.getBlockState().hasBlockEntity())
-					   || data.getBlockState().getRenderShape() == RenderShape.ENTITYBLOCK_ANIMATED)
+			if((data.getBlockState().getRenderShape() == RenderShape.MODEL && data.getBlockState()
+																				  .hasBlockEntity()) || data.getBlockState()
+																											.getRenderShape() == RenderShape.ENTITYBLOCK_ANIMATED)
 			{
-				if (!data.extraData.isEmpty() && data.extraData != null)
+				if(!data.extraData.isEmpty() && data.extraData != null)
 				{
-					BlockEntity blockEntity = BlockEntity.loadStatic(mutablePos, data.getBlockState(), data.extraData, Minecraft.getInstance().level.registryAccess());
-					if (blockEntity != null)
+					BlockEntity blockEntity = BlockEntity.loadStatic(mutablePos, data.getBlockState(), data.extraData,
+							Minecraft.getInstance().level.registryAccess());
+					if(blockEntity != null)
 					{
 						blockEntity.setLevel(level);
 						poseStack.pushPose();
 						BlockEntityRenderer<BlockEntity> renderer = blockDispatcher.getRenderer(blockEntity);
-						if(renderer != null)
-							renderer.render(blockEntity, partialTick, poseStack, buffer, packedLight, OverlayTexture.NO_OVERLAY);
+						if(renderer != null) renderer.render(blockEntity, partialTick, poseStack, buffer, packedLight,
+								OverlayTexture.NO_OVERLAY);
 						poseStack.popPose();
 					}
 				}
 			}
 			if(data.getBlockState().getRenderShape() == RenderShape.MODEL)
 			{
-				if(isInUI)
-					dispatcher.renderSingleBlock(data.getBlockState(), poseStack, buffer,
-							packedLight, OverlayTexture.NO_OVERLAY, model.getModelData(level, mutablePos,
-									data.getBlockState(), ModelData.EMPTY), rt);
+				if(isInUI) dispatcher.renderSingleBlock(data.getBlockState(), poseStack, buffer, packedLight,
+						OverlayTexture.NO_OVERLAY,
+						model.getModelData(level, mutablePos, data.getBlockState(), ModelData.EMPTY), rt);
 				else
 				{
 					dispatcher.getModelRenderer()
@@ -69,5 +72,18 @@ public abstract class AbstractBlockDataRenderer<T extends BlockData> implements 
 				}
 			}
 		}
+
+//		if(data.getStage().getVessel() instanceof Rocket rocket)
+//		{
+//			poseStack.pushPose();
+//			poseStack.scale(2, 2, 2);
+//			poseStack.translate(-Minecraft.getInstance().cameraEntity.position().x,
+//					-Minecraft.getInstance().cameraEntity.position().y+2,
+//					-Minecraft.getInstance().cameraEntity.position().z);
+//			BlockPos rocketPos = rocket.getRocketEntity().blockPosition().offset(data.pos);
+//			LevelRenderer.renderLineBox(poseStack, buffer.getBuffer(RenderType.lines()), new AABB(rocketPos),
+//					1f, 0f, 0f, 1f);
+//			poseStack.popPose();
+//		}
 	}
 }

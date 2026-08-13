@@ -8,11 +8,15 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LightBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.AABB;
 import net.mistersecret312.rocketry_science.entities.RocketEntity;
 import net.mistersecret312.rocketry_science.init.BlockDataInit;
+import net.mistersecret312.rocketry_science.vessel.Rocket;
 import net.mistersecret312.rocketry_science.vessel.Stage;
 import org.apache.commons.lang3.function.TriFunction;
 
@@ -25,6 +29,8 @@ public class BlockData
     public BlockPos pos;
     public int state;
     public CompoundTag extraData;
+
+    public BlockPos lightPos;
 
     public Stage stage;
 
@@ -43,7 +49,37 @@ public class BlockData
 
     public void tick(Level level)
     {
+        if(emitsLight() && getStage().getVessel() instanceof Rocket rocket)
+        {
+            RocketEntity rocketEntity = rocket.getRocketEntity();
+            if(hasCustomLightLogic())
+            {
+                customLightLogic();
+                return;
+            }
 
+            if(lightPos != null && !rocketEntity.level().isClientSide())
+            {
+                BlockState lightState = level.getBlockState(lightPos);
+                if(lightState.is(Blocks.LIGHT))
+                {
+                    BlockState newState = lightState.getValue(
+                            BlockStateProperties.WATERLOGGED) ? Blocks.WATER.defaultBlockState() : Blocks.AIR.defaultBlockState();
+                    level.setBlockAndUpdate(lightPos, newState);
+                }
+            }
+
+            lightPos = rocketEntity.blockPosition().offset(pos);
+            if(emitLightCondition())
+            {
+                BlockState prevState = level.getBlockState(lightPos);
+                if(prevState.is(Blocks.WATER)) level.setBlockAndUpdate(lightPos,
+                        Blocks.LIGHT.defaultBlockState().setValue(LightBlock.LEVEL, getLightLevel())
+                                    .setValue(BlockStateProperties.WATERLOGGED, true));
+                if(prevState.is(Blocks.AIR))
+                    level.setBlockAndUpdate(lightPos, Blocks.LIGHT.defaultBlockState().setValue(LightBlock.LEVEL, getLightLevel()));
+            }
+        }
     }
 
     public void clientTick(Level level)
@@ -54,6 +90,46 @@ public class BlockData
     public void orbitalTick(MinecraftServer server)
     {
 
+    }
+
+    public boolean emitsLight()
+    {
+        if(getStage().getVessel() instanceof Rocket rocket)
+        {
+            BlockPos lightPos = rocket.getRocketEntity().blockPosition().offset(pos);
+            return getBlockState().getLightEmission(rocket.level(), lightPos) != 0;
+        }
+        return false;
+    }
+
+    public int getLightLevel()
+    {
+        if(getStage().getVessel() instanceof Rocket rocket)
+        {
+            BlockPos lightPos = rocket.getRocketEntity().blockPosition().offset(pos);
+            return getBlockState().getLightEmission(rocket.level(), lightPos);
+        }
+        return 15;
+    }
+
+    public boolean hasCustomLightLogic()
+    {
+        return false;
+    }
+
+    public void customLightLogic()
+    {
+
+    }
+
+    public boolean emitLightCondition()
+    {
+        if(getStage().getVessel() instanceof Rocket rocket)
+        {
+            BlockPos lightPos = rocket.getRocketEntity().blockPosition().offset(pos);
+            return getBlockState().getLightEmission(rocket.level(), lightPos) != 0;
+        }
+        return false;
     }
 
     public BlockDataType<?> getType()
@@ -92,6 +168,11 @@ public class BlockData
         return new AABB(minX, minY, minZ, maxX, maxY, maxZ);
     }
 
+    public AABB getIndividualBoundingBox()
+    {
+        return new AABB(-0.5, 0, -0.5, 0.5, 1, 0.5);
+    }
+
     public TriFunction<Stage, BlockPos, Boolean, BlockData> create()
     {
         return (stage, pos, simulate) ->
@@ -110,6 +191,11 @@ public class BlockData
             {
                 level.removeBlockEntity(pos);
                 level.removeBlock(pos, false);
+                if(state.getLightEmission(level, pos) != 0)
+                {
+                    level.setBlockAndUpdate(pos, Blocks.LIGHT.defaultBlockState()
+                                                         .setValue(LightBlock.LEVEL, state.getLightEmission(level, pos)));
+                }
             }
 
             return new BlockData(stage, stage.palette.indexOf(state), pos, extraData);
@@ -118,7 +204,7 @@ public class BlockData
 
     public boolean doesTick(Level level)
     {
-        return false;
+        return emitsLight();
     }
 
     public boolean ticksInSpace(MinecraftServer server)
@@ -130,7 +216,7 @@ public class BlockData
     {
         BlockState state = this.stage.palette.get(this.state);
 
-        level.setBlock(pos, state, Block.UPDATE_ALL);
+        level.setBlockAndUpdate(pos, state);
         if(extraData == null || extraData.isEmpty())
             return;
 

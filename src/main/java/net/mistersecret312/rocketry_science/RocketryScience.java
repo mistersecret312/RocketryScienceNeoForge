@@ -23,6 +23,7 @@ import net.mistersecret312.rocketry_science.client.renderer.block.SeparatorRende
 import net.mistersecret312.rocketry_science.client.renderer.entity.AssemblerGantryRenderer;
 import net.mistersecret312.rocketry_science.client.renderer.entity.RocketRenderer;
 import net.mistersecret312.rocketry_science.client.screen.CombustionChamberScreen;
+import net.mistersecret312.rocketry_science.client.screen.LaunchControllerScreen;
 import net.mistersecret312.rocketry_science.client.screen.RocketAssemblyScreen;
 import net.mistersecret312.rocketry_science.client.vessel.BlockDataRendererRegistry;
 import net.mistersecret312.rocketry_science.client.vessel.block_data.BlockDataRenderer;
@@ -174,15 +175,20 @@ public class RocketryScience
 		public static AssemblerGantryRingCornerModel gantryRingCorner;
 
 		public static ShaderInstance orbit;
+		public static ShaderInstance transferOrbit;
 
 		@SubscribeEvent
 		public static void registerShaders(RegisterShadersEvent event) throws IOException
 		{
-
 			event.registerShader(new ShaderInstance(event.getResourceProvider(),
 							ResourceLocation.fromNamespaceAndPath(MODID, "orbit"),
 							DefaultVertexFormat.POSITION_TEX_COLOR),
 					shaderInstance -> orbit = shaderInstance);
+
+			event.registerShader(new ShaderInstance(event.getResourceProvider(),
+							ResourceLocation.fromNamespaceAndPath(MODID, "transfer_orbit"),
+							DefaultVertexFormat.POSITION_TEX_COLOR),
+					shaderInstance -> transferOrbit = shaderInstance);
 		}
 
 		@SubscribeEvent
@@ -214,6 +220,7 @@ public class RocketryScience
 		public static void registerScreens(RegisterMenuScreensEvent event) {
 			event.register(MenuInit.COMBUSTION_CHAMBER.get(), CombustionChamberScreen::new);
 			event.register(MenuInit.ROCKET_ASSEMBLY.get(), RocketAssemblyScreen::new);
+			event.register(MenuInit.LAUNCH_CONTROLLER.get(), LaunchControllerScreen::new);
 		}
 
 		@SubscribeEvent

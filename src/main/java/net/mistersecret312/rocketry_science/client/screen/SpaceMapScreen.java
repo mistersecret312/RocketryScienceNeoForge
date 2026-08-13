@@ -66,7 +66,7 @@ public class SpaceMapScreen extends Screen
 	}
 
 	@Override
-	protected void init()
+	public void init()
 	{
 		this.shouldRebuild = false;
 		super.init();
@@ -74,7 +74,7 @@ public class SpaceMapScreen extends Screen
 
 		addRenderableWidget(new WidgetCelestialBody(32, 32, this, selectedBody), true);
 		for(CelestialBody child : OrbitUtil.getChildren(selectedBody, getLevel()))
-			addRenderableWidget(new WidgetCelestialBody(16, 16, this, child), true);
+			addRenderableWidget(new WidgetCelestialBody(24, 24, this, child), true);
 	}
 
 	@Override
@@ -150,16 +150,17 @@ public class SpaceMapScreen extends Screen
 			format.setMaximumFractionDigits(1);
 			format.setRoundingMode(RoundingMode.HALF_UP);
 
-			// Add a little padding if the celestial body data was also drawn
-			if (focusBody != null) currentY += 9;
+			if (focusBody != null)
+				currentY += 9;
 
 			SpaceCraft craft = OrbitUtil.SPACECRAFT.get(selectedCraft);
 			graphics.drawString(font, "Spacecraft name : " + craft.getName(), startX, currentY, -1);
 			currentY += 9;
 
 			double deltaV = 0;
-			for(Stage stage : craft.getStages())
-				deltaV += stage.calculateDeltaV();
+			for(Stage stageI : craft.getStages())
+				deltaV += stageI.calculateDeltaV();
+
 			double currentDeltaV = craft.getCurrentStage().calculateDeltaV();
 
 			graphics.drawString(font, "Current Stage DeltaV: " + format.format(currentDeltaV) + " m/s", startX, currentY, -1);

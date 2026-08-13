@@ -9,6 +9,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.mistersecret312.rocketry_science.block_entities.RocketAssemblerBlockEntity;
 import net.mistersecret312.rocketry_science.blocks.SeparatorBlock;
+import net.mistersecret312.rocketry_science.client.screen.LaunchControllerScreen;
 import net.mistersecret312.rocketry_science.client.screen.RocketAssemblyScreen;
 import net.mistersecret312.rocketry_science.client.screen.SpaceMapScreen;
 import net.mistersecret312.rocketry_science.data.SpaceCraft;
@@ -26,16 +27,22 @@ public class ClientPacketHandler
 	public static void syncSpacecraft(SpaceCraft craft)
 	{
 		OrbitUtil.addSpaceCraft(craft);
+		if(Minecraft.getInstance().screen instanceof SpaceMapScreen screen)
+			screen.markForRebuild();
 	}
 
 	public static void clearSpacecraft()
 	{
 		OrbitUtil.clearSpaceCraft();
+		if(Minecraft.getInstance().screen instanceof SpaceMapScreen screen)
+			screen.markForRebuild();
 	}
 
 	public static void removeSpaceCraft(UUID uuid)
 	{
 		OrbitUtil.removeSpaceCraft(uuid);
+		if(Minecraft.getInstance().screen instanceof SpaceMapScreen screen)
+			screen.markForRebuild();
 	}
 
 	public static void updateRocket(int id, Rocket rocket)
@@ -45,10 +52,13 @@ public class ClientPacketHandler
 			rocketEntity.setRocket(rocket);
 	}
 
-	public static void recieveRocketEntity(Rocket rocket, String msg)
+	public static void recieveRocketEntity(int id, Rocket rocket, String msg)
 	{
 		Screen screen = Minecraft.getInstance().screen;
 		rocket.isInUI = true;
+		if(screen instanceof LaunchControllerScreen launchControllerScreen)
+			launchControllerScreen.id = id;
+
 		if(screen instanceof RocketAssemblyScreen assemblyScreen)
 		{
 			assemblyScreen.rocketEntity.setRocket(rocket);
@@ -65,7 +75,7 @@ public class ClientPacketHandler
 				{
 					if(assemblyScreen.stage == i)
 					{
-						Stage copy = new Stage(stage.vessel, stage.palette, stage.blocks,
+						Stage copy = new Stage(rocket, stage.palette, stage.blocks,
 								stage.fluidStacks, stage.maxFluids);
 
 						RocketEntity heightCheckRocketEntity = new RocketEntity(assemblyScreen.rocketEntity.level());
@@ -96,7 +106,7 @@ public class ClientPacketHandler
 								state = state.setValue(SeparatorBlock.EXTENDED, false);
 							palleteCopy.add(state);
 						}
-						Stage belowCopy = new Stage(stage.vessel, palleteCopy, stage.blocks, stage.fluidStacks,
+						Stage belowCopy = new Stage(rocket, palleteCopy, stage.blocks, stage.fluidStacks,
 								stage.maxFluids);
 						for(Map.Entry<BlockPos, BlockData> entry : belowCopy.blocks.entrySet())
 							entry.getValue().stage = belowCopy;

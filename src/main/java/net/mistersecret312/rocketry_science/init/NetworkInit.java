@@ -30,6 +30,12 @@ public class NetworkInit
 				ServerBoundRequestSpacecraftEntityPacket::handle
 		);
 
+		registrar.playToServer(
+				ServerBoundRocketTakeoffPacket.TYPE,
+				ServerBoundRocketTakeoffPacket.STREAM_CODEC,
+				ServerBoundRocketTakeoffPacket::handle
+		);
+
 		registrar.playToClient(
 				ClientBoundSpacecraftClearPacket.TYPE,
 				ClientBoundSpacecraftClearPacket.STREAM_CODEC,

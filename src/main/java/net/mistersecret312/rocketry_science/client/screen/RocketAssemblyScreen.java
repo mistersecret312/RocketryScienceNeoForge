@@ -20,6 +20,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.mistersecret312.rocketry_science.RocketryScience;
 import net.mistersecret312.rocketry_science.block_entities.RocketAssemblerBlockEntity;
 import net.mistersecret312.rocketry_science.block_entities.multiblock.RocketPadBlockEntity;
+import net.mistersecret312.rocketry_science.blocks.NozzleBlock;
 import net.mistersecret312.rocketry_science.client.screen.widgets.WidgetAssembleRocket;
 import net.mistersecret312.rocketry_science.client.screen.widgets.WidgetStageChange;
 import net.mistersecret312.rocketry_science.data.orbits.ConfiguredOrbit;
@@ -99,7 +100,7 @@ public class RocketAssemblyScreen extends AbstractContainerScreen<RocketAssembly
 		poseStack.translate(0, 0, 0);
 		graphics.blit(TEXTURE, imgX, imgY, 0, 0, 192, 192);
 		graphics.fillRenderType(RenderType.endGateway(), imgX+18, imgY+18,imgX+94, imgY+158,0);
-		renderRocket(graphics, poseStack, imgX, imgY);
+		renderRocket(renderRocket, graphics, poseStack, imgX, imgY);
 
 		graphics.blit(TEXTURE, imgX+22, imgY+166, 1, 242,  141, 13);
 		poseStack.popPose();
@@ -121,8 +122,8 @@ public class RocketAssemblyScreen extends AbstractContainerScreen<RocketAssembly
 					imgY + 21, -1);
 
 			double deltaV = 0;
-			for(Stage rocketStage : rocket.stages)
-				deltaV += rocketStage.calculateDeltaV();
+			for(Stage stageI : rocket.getStages())
+				deltaV += stageI.calculateDeltaV();
 
 			double twr = rocket.getMaxTWR();
 			double takeoffDeltaV = rocket.takeoffDeltaV;
@@ -207,6 +208,7 @@ public class RocketAssemblyScreen extends AbstractContainerScreen<RocketAssembly
 
 				double atmosphericIsp = 0;
 				double vacuumIsp = 0;
+				boolean vacuum = false;
 
 				RocketFuel fuelType = RocketFuel.HYDROLOX;
 				for(Map.Entry<BlockPos, BlockData> entry : rocket.getCurrentStage().blocks.entrySet())
@@ -216,8 +218,13 @@ public class RocketAssemblyScreen extends AbstractContainerScreen<RocketAssembly
 						atmosphericIsp = engineData.fuelType.getAtmosphericISP();
 						vacuumIsp = engineData.fuelType.getVacuumISP();
 						fuelType = engineData.fuelType;
+						if(engineData.nozzleState.getBlock() instanceof NozzleBlock nozzle)
+							vacuum = nozzle.isVacuum();
 					}
 				}
+
+				vacuumIsp *= vacuum ? 1 : 0.915;
+				atmosphericIsp *= vacuum ? 0.5 : 1;
 
 				poseStack.translate(0, 18, 0);
 				graphics.drawString(font, "Atm. Isp: " + atmosphericIsp + " s", 0, 0, -1);
@@ -226,12 +233,14 @@ public class RocketAssemblyScreen extends AbstractContainerScreen<RocketAssembly
 
 				poseStack.translate(0, 18, 0);
 				graphics.drawString(font, Component.translatable("desc.rocketry_science.rocket_fuel."+fuelType.getSerializedName()), 0, 0, -1);
+				poseStack.translate(0, 9, 0);
+				graphics.drawString(font, "Type: " + (vacuum ? "Vacuum" : "Atmosphere"), 0, 0, -1);
 			}
 			poseStack.popPose();
 		}
 	}
 
-	public void renderRocket(GuiGraphics graphics, PoseStack poseStack, int imgX, int imgY)
+	public static void renderRocket(RocketEntity renderRocket, GuiGraphics graphics, PoseStack poseStack, int imgX, int imgY)
 	{
 		if(renderRocket != null)
 		{

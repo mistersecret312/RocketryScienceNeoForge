@@ -136,6 +136,25 @@ public class SeparatorData extends BlockData
         return new AABB(minX, minY, minZ, maxX, maxY, maxZ);
     }
 
+    @Override
+    public AABB getIndividualBoundingBox()
+    {
+        boolean extend = this.getBlockState().getValue(SeparatorBlock.EXTENDED);
+        int extension = extend ? 1 : 0;
+
+        return switch(width)
+        {
+            case 1:
+                yield new AABB(-0.5, 0, -0.5, 0.5, 1+extension, 0.5);
+            case 2:
+                yield new AABB(-0.5, 0, -0.5, 1.5, 1+extension, 1.5);
+            case 3:
+                yield new AABB(-0.5, 0, -0.5, 2.5, 1+extension, 1.5);
+			default:
+				yield new AABB(-0.5, 0, -0.5, 0.5, 1, 0.5);
+		};
+    }
+
     public TriFunction<Stage, BlockPos, Boolean, BlockData> create()
     {
         return (stage, pos, simulate) ->
@@ -196,6 +215,8 @@ public class SeparatorData extends BlockData
                 super.placeInLevel(level, pos.offset(0, 0, 0));
         }
     }
+
+
 
     @Override
     public boolean doesTick(Level level)

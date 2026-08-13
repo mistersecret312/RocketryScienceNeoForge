@@ -69,13 +69,11 @@ public class AssemblerGantryRenderer extends EntityRenderer<RocketAssemblerGantr
 
 
 		int pillarHeight = (int) (height/0.4375f);
-		float ticker = ((entity.level().getGameTime() % 200) + partial) / 200.0f;
 		float progress = entity.getProgress();
 		double currentHeight = progress*(pillarHeight+1);
 
 		for(Vector4d pos : corners)
 		{
-			// Calculate Absolute World Y for the base (accounting for the 1.5 translation above)
 			double baseY = pos.y + 1.5;
 			BlockPos basePos = BlockPos.containing(pos.x, baseY, pos.z);
 			int baseLight = LevelRenderer.getLightColor(level, basePos);
