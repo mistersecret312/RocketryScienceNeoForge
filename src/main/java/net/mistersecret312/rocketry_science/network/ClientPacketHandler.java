@@ -13,12 +13,16 @@ import net.mistersecret312.rocketry_science.client.screen.LaunchControllerScreen
 import net.mistersecret312.rocketry_science.client.screen.RocketAssemblyScreen;
 import net.mistersecret312.rocketry_science.client.screen.SpaceMapScreen;
 import net.mistersecret312.rocketry_science.data.SpaceCraft;
+import net.mistersecret312.rocketry_science.data.room.Room;
+import net.mistersecret312.rocketry_science.data.room.RoomManager;
 import net.mistersecret312.rocketry_science.entities.RocketEntity;
+import net.mistersecret312.rocketry_science.init.AttachmentTypeInit;
 import net.mistersecret312.rocketry_science.util.OrbitUtil;
 import net.mistersecret312.rocketry_science.vessel.Rocket;
 import net.mistersecret312.rocketry_science.vessel.Stage;
 import net.mistersecret312.rocketry_science.vessel.block_data.BlockData;
 import net.mistersecret312.rocketry_science.vessel.block_data.SeparatorData;
+import net.neoforged.neoforge.attachment.AttachmentType;
 
 import java.util.*;
 
@@ -159,5 +163,23 @@ public class ClientPacketHandler
 			return null;
 		Entity entity = level.getEntity(id);
 		return (T) entity;
+	}
+
+	public static void updateRoom(UUID uuid, double oxygen, double volume,
+								  double targetAtmosphere, double targetTemperature)
+	{
+		ClientLevel level = Minecraft.getInstance().level;
+		if(level != null)
+		{
+			RoomManager manager = level.getData(AttachmentTypeInit.ROOM_MANAGER);
+			Room room = manager.getRoom(uuid);
+			if(room != null)
+			{
+				room.setCurrentOxygen(level, (float) oxygen);
+				room.setVolume((float) volume);
+				room.setTargetAtmosphere(level, targetAtmosphere);
+				room.setTargetTemperature(level, targetTemperature);
+			}
+		}
 	}
 }

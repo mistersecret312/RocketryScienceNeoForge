@@ -8,7 +8,8 @@
     "LevelTimeAccessMixin"
   ],
   "client": [
-    "ClientLevelMixin"
+    "ClientLevelMixin",
+    "SoundEngineMixin"
   ],
   "injectors": {
     "defaultRequire": 1

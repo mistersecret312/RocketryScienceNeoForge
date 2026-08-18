@@ -11,7 +11,7 @@ import net.mistersecret312.rocketry_science.environment.modifiers.ModifierConfig
 import net.mistersecret312.rocketry_science.environment.modifiers.ModifierType;
 import net.mistersecret312.rocketry_science.init.ModifierTypeInit;
 
-public record TemperatureModifierConfig(double dayTimeTemperature, double nightTimeTemperature) implements ModifierConfig
+public record TemperatureModifierConfig(double nightTimeTemperature, double dayTimeTemperature) implements ModifierConfig
 {
 	public static MapCodec<TemperatureModifierConfig> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
 			Codec.DOUBLE.fieldOf("night_temperature").forGetter(TemperatureModifierConfig::nightTimeTemperature),

@@ -23,8 +23,8 @@ public class WidgetLaunchRocket extends AbstractWidget implements Renderable
 	@Override
 	protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
 	{
-		graphics.blit(LaunchControllerScreen.TEXTURE, getX(), getY(), 1, 240, 62, 15);
-		graphics.drawString(Minecraft.getInstance().font, "Takeoff", getX()+6, getY()+4, -1, false);
+		graphics.blit(LaunchControllerScreen.TEXTURE, getX(), getY(), 1, 239, 64, 17);
+		graphics.drawString(Minecraft.getInstance().font, "Takeoff", getX()+7, getY()+5, -1, false);
 	}
 
 	@Override

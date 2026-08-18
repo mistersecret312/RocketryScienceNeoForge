@@ -5,15 +5,19 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.mistersecret312.rocketry_science.RocketryScience;
 import net.mistersecret312.rocketry_science.data.SpaceCraft;
 import net.mistersecret312.rocketry_science.data.SpaceCraftData;
+import net.mistersecret312.rocketry_science.data.room.Room;
+import net.mistersecret312.rocketry_science.data.room.RoomManager;
 import net.mistersecret312.rocketry_science.datapack.CelestialBody;
 import net.mistersecret312.rocketry_science.environment.EnvironmentData;
 import net.mistersecret312.rocketry_science.environment.modifiers.ModifierConfig;
+import net.mistersecret312.rocketry_science.init.AttachmentTypeInit;
 import net.mistersecret312.rocketry_science.network.packets.ClientBoundSpacecraftSyncPacket;
 import net.mistersecret312.rocketry_science.util.EnvironmentUtil;
 import net.mistersecret312.rocketry_science.util.OrbitUtil;
@@ -26,6 +30,7 @@ import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 @EventBusSubscriber(modid = RocketryScience.MODID, bus = EventBusSubscriber.Bus.GAME)
@@ -50,25 +55,8 @@ public class CommonEvents
 	{
 		EnvironmentUtil.modifiersAffect(event.getEntity());
 		OrbitalMath.gravityAffect(event.getEntity());
-
-		if(event.getEntity() instanceof Player player)
-		{
-			Level level = player.level();
-			if(level.isClientSide() || level.getGameTime() % 20 != 0)
-				return;
-
-			EnvironmentData environment = EnvironmentUtil.getEnvironment(level);
-
-			double pressure = EnvironmentUtil.getPressure(level, player.position().y);
-			double temperature = EnvironmentUtil.getTemperatureCelsius(level);
-			double gravity = environment.getGravity();
-			double radiation = environment.getRadiation();
-//
-//			System.out.println("Environment - Atmospheric Pressure: "+pressure);
-//			System.out.println("Environment - Temperature: "+temperature);
-//			System.out.println("Environment - Gravity: "+gravity);
-//			System.out.println("Environment - Radiation: "+radiation);
-		}
+		if(event.getEntity() instanceof LivingEntity living)
+			EnvironmentUtil.airAffect(living);
 	}
 
 	@SubscribeEvent
@@ -90,6 +78,9 @@ public class CommonEvents
 				SpaceCraft craft = entry.getValue();
 				craft.tick(serverLevel);
 			}
+
+			RoomManager manager = level.getData(AttachmentTypeInit.ROOM_MANAGER);
+			manager.tick();
 		}
 	}
 }

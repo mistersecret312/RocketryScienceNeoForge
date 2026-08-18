@@ -1,11 +1,15 @@
 package net.mistersecret312.rocketry_science.mixin;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelTimeAccess;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.dimension.DimensionType;
+import net.mistersecret312.rocketry_science.data.room.RoomManager;
 import net.mistersecret312.rocketry_science.datapack.CelestialBody;
+import net.mistersecret312.rocketry_science.init.AttachmentTypeInit;
 import net.mistersecret312.rocketry_science.util.OrbitUtil;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -13,6 +17,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Level.class)
 public abstract class LevelMixin
@@ -53,5 +58,20 @@ public abstract class LevelMixin
 		this.skyDarken = (int)((1.0D - dayLightFactor * weatherFactor) * maxDarkness);
 
 		ci.cancel();
+	}
+
+	@Inject(method = "setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;II)Z",
+			at = @At("HEAD"))
+	private void onSetBlock(BlockPos pos, BlockState newState, int flags, int recursionLeft, CallbackInfoReturnable<Boolean> cir) {
+		Level level = (Level) (Object) this;
+		if (level.isClientSide())
+			return;
+
+		BlockState oldState = level.getBlockState(pos);
+		if (oldState == newState)
+			return;
+
+		RoomManager manager = level.getData(AttachmentTypeInit.ROOM_MANAGER);
+		manager.onBlockStateChanged(pos, oldState, newState);
 	}
 }

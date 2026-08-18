@@ -60,7 +60,7 @@ public class RocketAssemblyScreen extends AbstractContainerScreen<RocketAssembly
 
 	public int stage = -1;
 
-	public String constructionMessage;
+	public String constructionMessage = "";
 
 	public RocketAssemblyScreen(RocketAssemblyMenu menu, Inventory playerInventory, Component title)
 	{

@@ -355,10 +355,10 @@ public class RocketEngineData extends BlockData
             }
             if(state.getBlock() instanceof NozzleBlock)
             {
-                RocketEngineBlockEntity rocketEngineBlockEntity = (RocketEngineBlockEntity) level.getBlockEntity(pos.relative(state.getValue(NozzleBlock.FACING)));
-                if(rocketEngineBlockEntity != null && rocketEngineBlockEntity.isBuilt)
-                    return BlockData.VOID;
-
+                BlockEntity bE = level.getBlockEntity(pos.relative(state.getValue(NozzleBlock.FACING)));
+                if(bE instanceof RocketEngineBlockEntity rocketEngineBlockEntity)
+                    if(rocketEngineBlockEntity.isBuilt)
+                        return BlockData.VOID;
             }
             return null;
         };

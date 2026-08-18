@@ -59,7 +59,7 @@ public class LaunchControllerScreen extends AbstractContainerScreen<LaunchContro
 		int imgX = (width - 192) / 2;
 		int imgY = (height - 192) / 2;
 
-		this.addRenderableWidget(new WidgetLaunchRocket(imgX+125, imgY+165, 62, 15, this));
+		this.addRenderableWidget(new WidgetLaunchRocket(imgX+124, imgY+164, 64, 17, this));
 	}
 
 	@Override

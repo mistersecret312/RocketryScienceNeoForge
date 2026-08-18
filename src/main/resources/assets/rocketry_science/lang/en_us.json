@@ -26,5 +26,15 @@
   "entity.rocketry_science.rocket": "Rocket",
 
   "desc.rocketry_science.rocket_fuel.hydrolox": "Fuel Type: Hydrolox",
-  "desc.rocketry_science.rocket_material.stainless_steel": "Material: Stainless Steel"
+  "desc.rocketry_science.rocket_material.stainless_steel": "Material: Stainless Steel",
+
+  "config.jade.plugin_rocketry_science.rocket": "Rocket",
+
+  "rocketry_science.celestial_body": "Celestial Body",
+  "celestial_body.rocketry_science.sun": "Sun",
+  "celestial_body.rocketry_science.earth": "Earth",
+  "celestial_body.rocketry_science.luna": "Luna",
+  "celestial_body.rocketry_science.mars": "Mars",
+  "celestial_body.rocketry_science.mercury": "Mercury",
+  "celestial_body.rocketry_science.venus": "Venus"
 }

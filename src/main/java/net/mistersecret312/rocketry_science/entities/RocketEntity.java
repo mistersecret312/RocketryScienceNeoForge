@@ -1,7 +1,9 @@
 package net.mistersecret312.rocketry_science.entities;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.InteractionHand;
@@ -10,19 +12,26 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.mistersecret312.rocketry_science.init.EntityDataSerializersInit;
 import net.mistersecret312.rocketry_science.init.EntityInit;
+import net.mistersecret312.rocketry_science.util.RocketUtil;
 import net.mistersecret312.rocketry_science.vessel.Rocket;
 import net.mistersecret312.rocketry_science.vessel.VesselState;
 import net.mistersecret312.rocketry_science.vessel.Stage;
 import net.mistersecret312.rocketry_science.vessel.block_data.BlockData;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Optional;
 
 public class RocketEntity extends Entity
 {
@@ -139,16 +148,181 @@ public class RocketEntity extends Entity
 			return InteractionResult.SUCCESS;
 		}
 
-		for (Stage stage : this.getRocket().getStages())
+		BlockHitResult hitResult = getTargetedBlockHit(player);
+
+		if(hitResult != null)
+		{
+			ItemStack stack = player.getItemInHand(hand);
+			if(!stack.isEmpty() && stack.getItem() instanceof BlockItem)
+			{
+				UseOnContext context = new UseOnContext(player, hand, hitResult);
+				InteractionResult placeResult = stack.useOn(context);
+
+				if(placeResult.consumesAction())
+					return placeResult;
+			}
+		}
+
+		if(player.isShiftKeyDown())
+		{
+			for(Stage stage : this.getRocket().getStages())
+			{
+				for(Map.Entry<BlockPos, BlockData> entry : stage.blocks.entrySet())
+				{
+					entry.getValue().placeInLevel(player.level(), entry.getKey().offset(this.getOnPos().above()));
+				}
+			}
+			this.markForRemoval();
+		}
+
+		return InteractionResult.PASS;
+	}
+
+	public BlockHitResult getTargetedBlockHit(Player player)
+	{
+		Vec3 cameraPos = player.getEyePosition();
+		double reach = player.blockInteractionRange();
+		Vec3 viewVector = player.getViewVector(1.0F);
+		Vec3 endPos = cameraPos.add(viewVector.scale(reach));
+
+		Vec3 rocketPos = this.position();
+		Rocket rocket = this.getRocket();
+
+		BlockHitResult closestHit = null;
+		double minDistance = reach * reach;
+
+		for (Stage stage : rocket.getStages())
 		{
 			for (Map.Entry<BlockPos, BlockData> entry : stage.blocks.entrySet())
 			{
-				entry.getValue().placeInLevel(player.level(), entry.getKey().offset(this.getOnPos().above()));
+				BlockPos relativePos = entry.getKey();
+
+				AABB blockAABB = entry.getValue().getIndividualBoundingBox().move(
+						rocketPos.x + relativePos.getX(),
+						rocketPos.y + relativePos.getY(),
+						rocketPos.z + relativePos.getZ()
+				);
+
+				Optional<Vec3> hitOpt = blockAABB.clip(cameraPos, endPos);
+				if (hitOpt.isPresent())
+				{
+					Vec3 hitVec = hitOpt.get();
+					double distSq = cameraPos.distanceToSqr(hitVec);
+					if (distSq < minDistance)
+					{
+						minDistance = distSq;
+
+						Direction hitDir = Direction.UP;
+						double bestDist = Double.MAX_VALUE;
+
+						double[] distances = {
+								Math.abs(hitVec.y - blockAABB.minY), // DOWN
+								Math.abs(hitVec.y - blockAABB.maxY), // UP
+								Math.abs(hitVec.z - blockAABB.minZ), // NORTH
+								Math.abs(hitVec.z - blockAABB.maxZ), // SOUTH
+								Math.abs(hitVec.x - blockAABB.minX), // WEST
+								Math.abs(hitVec.x - blockAABB.maxX)  // EAST
+						};
+
+						Direction[] directions = {
+								Direction.DOWN, Direction.UP, Direction.NORTH,
+								Direction.SOUTH, Direction.WEST, Direction.EAST
+						};
+
+						for (int i = 0; i < 6; i++)
+							if (distances[i] < bestDist)
+							{
+								bestDist = distances[i];
+								hitDir = directions[i];
+							}
+
+						BlockPos targetWorldPos = BlockPos.containing(
+								hitVec.x + hitDir.getStepX() * 0.05,
+								hitVec.y + hitDir.getStepY() * 0.05,
+								hitVec.z + hitDir.getStepZ() * 0.05
+						);
+
+						closestHit = new BlockHitResult(hitVec, hitDir, targetWorldPos, false);
+					}
+				}
 			}
 		}
-		this.markForRemoval();
+		return closestHit;
+	}
 
-		return InteractionResult.PASS;
+	public BlockData getTargetedBlockData(Player player)
+	{
+		Vec3 cameraPos = player.getEyePosition();
+		double reach = player.blockInteractionRange();
+		Vec3 viewVector = player.getViewVector(1.0F);
+		Vec3 endPos = cameraPos.add(viewVector.scale(reach));
+
+		Vec3 rocketPos = this.position();
+		Rocket rocket = this.getRocket();
+
+		BlockData closestData = null;
+		double minDistance = reach * reach;
+
+		for (Stage stage : rocket.getStages())
+		{
+			for (Map.Entry<BlockPos, BlockData> entry : stage.blocks.entrySet())
+			{
+				BlockPos relativePos = entry.getKey();
+
+				AABB blockAABB = entry.getValue().getIndividualBoundingBox().move(
+						rocketPos.x + relativePos.getX(),
+						rocketPos.y + relativePos.getY(),
+						rocketPos.z + relativePos.getZ()
+				);
+
+				Optional<Vec3> hitOpt = blockAABB.clip(cameraPos, endPos);
+				if (hitOpt.isPresent())
+				{
+					Vec3 hitVec = hitOpt.get();
+					double distSq = cameraPos.distanceToSqr(hitVec);
+					if (distSq < minDistance)
+					{
+						minDistance = distSq;
+						double bestDist = Double.MAX_VALUE;
+
+						double[] distances = {
+								Math.abs(hitVec.y - blockAABB.minY), // DOWN
+								Math.abs(hitVec.y - blockAABB.maxY), // UP
+								Math.abs(hitVec.z - blockAABB.minZ), // NORTH
+								Math.abs(hitVec.z - blockAABB.maxZ), // SOUTH
+								Math.abs(hitVec.x - blockAABB.minX), // WEST
+								Math.abs(hitVec.x - blockAABB.maxX)  // EAST
+						};
+
+						for (int i = 0; i < 6; i++)
+							if (distances[i] < bestDist)
+								bestDist = distances[i];
+
+						closestData = entry.getValue();
+					}
+				}
+			}
+		}
+		return closestData;
+	}
+
+
+	@Override
+	public @Nullable ItemStack getPickResult()
+	{
+		if(level().isClientSide())
+			return RocketUtil.getPickedBlock(this);
+
+		return null;
+	}
+
+	@Override
+	public Component getName()
+	{
+		if(level().isClientSide())
+			return RocketUtil.getPickedBlock(this).getHoverName();
+
+		return super.getName();
 	}
 
 	public void markForRemoval()

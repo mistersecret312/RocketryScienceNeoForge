@@ -7,6 +7,8 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.material.Fluid;
 import net.mistersecret312.rocketry_science.block_entities.fuel_tank.FuelTankBlockEntity;
@@ -16,6 +18,7 @@ import net.mistersecret312.rocketry_science.client.model.assembler_gantry.Assemb
 import net.mistersecret312.rocketry_science.client.model.assembler_gantry.AssemblerGantryPillarModel;
 import net.mistersecret312.rocketry_science.client.model.assembler_gantry.AssemblerGantryRingCornerModel;
 import net.mistersecret312.rocketry_science.client.model.assembler_gantry.AssemblerGantryRingSideModel;
+import net.mistersecret312.rocketry_science.client.overlay.EnvironmentDataOverlay;
 import net.mistersecret312.rocketry_science.client.renderer.block.FuelTankRenderer;
 import net.mistersecret312.rocketry_science.client.renderer.block.LaunchControllerRenderer;
 import net.mistersecret312.rocketry_science.client.renderer.block.RocketAssemblerRenderer;
@@ -49,10 +52,7 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import net.neoforged.neoforge.client.event.EntityRenderersEvent;
-import net.neoforged.neoforge.client.event.RegisterDimensionSpecialEffectsEvent;
-import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
-import net.neoforged.neoforge.client.event.RegisterShadersEvent;
+import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.registries.DataPackRegistryEvent;
@@ -67,8 +67,13 @@ public class RocketryScience
 {
 	public static final String MODID = "rocketry_science";
 
-	public static final TagKey<Fluid> OXYGEN = TagKey.create(Registries.FLUID, ResourceLocation.fromNamespaceAndPath(MODID, "liquid_oxygen"));
-	public static final TagKey<Fluid> HYDROGEN = TagKey.create(Registries.FLUID, ResourceLocation.fromNamespaceAndPath(MODID, "liquid_hydrogen"));
+	public static final TagKey<Fluid> OXYGEN = TagKey.create(Registries.FLUID,
+			ResourceLocation.fromNamespaceAndPath(MODID, "liquid_oxygen"));
+	public static final TagKey<Fluid> HYDROGEN = TagKey.create(Registries.FLUID,
+			ResourceLocation.fromNamespaceAndPath(MODID, "liquid_hydrogen"));
+
+	public static final TagKey<Block> AIR_FLOWS_THROUGH = TagKey.create(Registries.BLOCK,
+			ResourceLocation.fromNamespaceAndPath(MODID, "air_flows_through"));
 
 	public RocketryScience(IEventBus modEventBus, ModContainer modContainer)
 	{
@@ -86,6 +91,8 @@ public class RocketryScience
 
 		EntityInit.register(modEventBus);
 		EntityDataSerializersInit.register(modEventBus);
+
+		AttachmentTypeInit.register(modEventBus);
 
 		OrbitTypeInit.register(modEventBus);
 		OrbitRequirementInit.register(modEventBus);
@@ -221,6 +228,13 @@ public class RocketryScience
 			event.register(MenuInit.COMBUSTION_CHAMBER.get(), CombustionChamberScreen::new);
 			event.register(MenuInit.ROCKET_ASSEMBLY.get(), RocketAssemblyScreen::new);
 			event.register(MenuInit.LAUNCH_CONTROLLER.get(), LaunchControllerScreen::new);
+		}
+
+		@SubscribeEvent
+		public static void registerOverlays(RegisterGuiLayersEvent event)
+		{
+			event.registerAboveAll(ResourceLocation.fromNamespaceAndPath(MODID, "envirionment_data"),
+					EnvironmentDataOverlay.INSTANCE);
 		}
 
 		@SubscribeEvent

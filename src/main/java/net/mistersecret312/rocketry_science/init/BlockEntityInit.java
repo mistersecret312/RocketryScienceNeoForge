@@ -4,6 +4,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.mistersecret312.rocketry_science.RocketryScience;
 import net.mistersecret312.rocketry_science.block_entities.LaunchControllerBlockEntity;
+import net.mistersecret312.rocketry_science.block_entities.OxygenVentBlockEntity;
 import net.mistersecret312.rocketry_science.block_entities.RocketAssemblerBlockEntity;
 import net.mistersecret312.rocketry_science.block_entities.SeparatorBlockEntity;
 import net.mistersecret312.rocketry_science.block_entities.fuel_tank.FuelTankBlockEntity;
@@ -37,6 +38,10 @@ public class BlockEntityInit
 			BLOCK_ENTITIES.register("launch_controller",
 					() -> BlockEntityType.Builder.of(LaunchControllerBlockEntity::new,
 							BlockInit.LAUNCH_CONTROLLER.get()).build(null));
+	public static final Supplier<BlockEntityType<OxygenVentBlockEntity>> OXYGEN_VENT =
+			BLOCK_ENTITIES.register("oxygen_vent",
+					() -> BlockEntityType.Builder.of(OxygenVentBlockEntity::new,
+							BlockInit.OXYGEN_VENT.get()).build(null));
 
 
 	public static final Supplier<BlockEntityType<FuelTankBlockEntity>> FUEL_TANK =

@@ -2,6 +2,7 @@ package net.mistersecret312.rocketry_science.events;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.RenderType;
@@ -17,7 +18,6 @@ import net.mistersecret312.rocketry_science.vessel.block_data.BlockData;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RenderHighlightEvent;
 
 import java.util.Map;
@@ -49,8 +49,10 @@ public class ClientEvents
 		AABB closestHitShape = null;
 		double minDistance = reach * reach;
 
-		for (Stage stage : rocket.getStages()) {
-			for (Map.Entry<BlockPos, BlockData> entry : stage.blocks.entrySet()) {
+		for (Stage stage : rocket.getStages())
+		{
+			for (Map.Entry<BlockPos, BlockData> entry : stage.blocks.entrySet())
+			{
 				BlockPos relativePos = entry.getKey();
 
 				AABB blockAABB = entry.getValue().getIndividualBoundingBox().move(

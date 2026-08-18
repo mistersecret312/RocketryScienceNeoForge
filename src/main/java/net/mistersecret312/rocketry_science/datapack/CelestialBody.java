@@ -4,6 +4,8 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
@@ -35,6 +37,7 @@ public class CelestialBody implements IOrbitObject<CelestialOrbit>
 			Codec.DOUBLE.fieldOf("altitude").forGetter(CelestialBody::getAltitude),
 			Codec.DOUBLE.fieldOf("period").forGetter(CelestialBody::getPeriod),
 			Codec.BOOL.optionalFieldOf("has_atmosphere", false).forGetter(CelestialBody::hasAtmosphere),
+			Codec.BOOL.optionalFieldOf("breathable_atmosphere", false).forGetter(CelestialBody::isBreathableAtmosphere),
 			Codec.INT.optionalFieldOf("day_length", 20).forGetter(CelestialBody::getDayLength),
 			Codec.DOUBLE.fieldOf("radius").forGetter(CelestialBody::getRadius),
 			Codec.DOUBLE.optionalFieldOf("local_orbit_scale", 1d).forGetter(CelestialBody::getOrbitScale),
@@ -49,6 +52,7 @@ public class CelestialBody implements IOrbitObject<CelestialOrbit>
 	private final double altitude;
 	private final double period;
 	private final boolean hasAtmosphere;
+	private final boolean breathableAtmosphere;
 	private final int dayLength;
 	private final double radius;
 	private final double orbitScale;
@@ -59,7 +63,8 @@ public class CelestialBody implements IOrbitObject<CelestialOrbit>
 	private EnvironmentData environment = null;
 
 	public CelestialBody(String name, ResourceLocation icon, Optional<ResourceKey<Level>> dimension, Optional<ResourceKey<CelestialBody>> parentKey, double altitude, double period,
-						 boolean hasAtmosphere, int dayLength, double radius, double orbitScale, List<ConfiguredOrbit> supportedOrbits,
+						 boolean hasAtmosphere, boolean breathableAtmosphere, int dayLength,
+						 double radius, double orbitScale, List<ConfiguredOrbit> supportedOrbits,
 						 List<ModifierConfig> modifiers)
 	{
 		this.name = name;
@@ -72,6 +77,7 @@ public class CelestialBody implements IOrbitObject<CelestialOrbit>
 		this.modifiers = modifiers;
 
 		this.hasAtmosphere = hasAtmosphere;
+		this.breathableAtmosphere = breathableAtmosphere;
 		this.dayLength = dayLength;
 		this.radius = radius;
 		this.orbitScale = orbitScale;
@@ -184,5 +190,16 @@ public class CelestialBody implements IOrbitObject<CelestialOrbit>
 	public List<ConfiguredOrbit> getSupportedOrbits()
 	{
 		return supportedOrbits;
+	}
+
+	public MutableComponent getTranslatableName()
+	{
+		String translateString = "celestial_body."+this.getName().replace(':', '.');
+		return Component.translatable(translateString);
+	}
+
+	public boolean isBreathableAtmosphere()
+	{
+		return breathableAtmosphere;
 	}
 }

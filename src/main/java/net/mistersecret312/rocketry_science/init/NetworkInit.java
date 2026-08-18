@@ -77,5 +77,11 @@ public class NetworkInit
 				ClientBoundRecieveSpaceCraftEntityPacket.STREAM_CODEC,
 				ClientBoundRecieveSpaceCraftEntityPacket::handle
 		);
+
+		registrar.playToClient(
+				ClientBoundRoomUpdatePacket.TYPE,
+				ClientBoundRoomUpdatePacket.STREAM_CODEC,
+				ClientBoundRoomUpdatePacket::handle
+		);
 	}
 }

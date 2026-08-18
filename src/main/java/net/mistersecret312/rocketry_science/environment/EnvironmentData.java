@@ -66,10 +66,9 @@ public class EnvironmentData
 			return minTemp;
 		}
 
-		public double getTemperature(int skyLight)
+		public double getTemperature(double skyLight)
 		{
-			double delta = skyLight/15d;
-			return Mth.clampedLerp(getMinTemp(), getMaxTemp(), delta);
+			return Mth.clampedLerp(getMinTemp(), getMaxTemp(), skyLight);
 		}
 
 		public double getAverageTemperature()
