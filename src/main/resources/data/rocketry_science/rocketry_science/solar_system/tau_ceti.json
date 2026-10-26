@@ -1,0 +1,9 @@
+{
+  "name": "rocketry_science:tau_ceti",
+  "icon": "stellarview:textures/environment/star/template/yellow_star.png",
+  "star": "rocketry_science:tau_ceti/tau_ceti",
+  "star_surface_temperature": 5800,
+  "escape_velocity": 618000,
+  "size": 10000,
+  "position": [-4160, -17215]
+}

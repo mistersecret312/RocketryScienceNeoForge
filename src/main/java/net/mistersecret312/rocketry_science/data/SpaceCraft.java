@@ -71,6 +71,12 @@ public class SpaceCraft extends VesselData implements IOrbitObject<Orbit<SpaceCr
 		return getUUID().toString();
 	}
 
+	@Override
+	public double getEpoch()
+	{
+		return 0;
+	}
+
 	public UUID getUUID()
 	{
 		return uuid;

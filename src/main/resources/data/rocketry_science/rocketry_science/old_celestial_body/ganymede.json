@@ -1,0 +1,56 @@
+{
+  "name": "rocketry_science:ganymede",
+  "icon":"stellarview:textures/environment/planet/sol/ganymede.png",
+  "parent": "rocketry_science:jupiter",
+  "has_atmosphere": false,
+  "day_length": 6868.3708416,
+  "radius": 2634100,
+  "altitude": 13,
+  "period": 0.195885,
+  "orbit_color": -5862285,
+  "modifiers":[
+    {
+      "type": "rocketry_science:gravity",
+      "gravity": 0.146
+    },
+    {
+      "type": "rocketry_science:pressure",
+      "pressure": 0.0000000000118
+    },
+    {
+      "type": "rocketry_science:temperature",
+      "night_temperature": 70,
+      "day_temperature": 152
+    },
+    {
+      "type": "rocketry_science:radiation",
+      "radiation": 27
+    }
+  ],
+  "supported_orbits": [
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:low_orbit",
+        "altitude": 50,
+        "period": 1
+      }
+    },
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:medium_orbit",
+        "altitude": 200,
+        "period": 5
+      }
+    },
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:high_orbit",
+        "altitude": 500,
+        "period": 10
+      }
+    }
+  ]
+}

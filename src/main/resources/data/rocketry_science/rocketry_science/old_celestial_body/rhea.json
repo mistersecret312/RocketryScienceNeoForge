@@ -1,0 +1,56 @@
+{
+  "name": "rocketry_science:rhea",
+  "icon":"stellarview:textures/environment/planet/sol/rhea.png",
+  "parent": "rocketry_science:saturn",
+  "has_atmosphere": false,
+  "day_length": 6506.22528,
+  "radius": 763500,
+  "altitude": 12,
+  "period": 0.1237,
+  "orbit_color": -3355457,
+  "modifiers":[
+    {
+      "type": "rocketry_science:gravity",
+      "gravity": 0.02653
+    },
+    {
+      "type": "rocketry_science:pressure",
+      "pressure": 0
+    },
+    {
+      "type": "rocketry_science:temperature",
+      "night_temperature": 53,
+      "day_temperature": 99
+    },
+    {
+      "type": "rocketry_science:radiation",
+      "radiation": 0.03
+    }
+  ],
+  "supported_orbits": [
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:low_orbit",
+        "altitude": 25,
+        "period": 1
+      }
+    },
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:medium_orbit",
+        "altitude": 50,
+        "period": 5
+      }
+    },
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:high_orbit",
+        "altitude": 100,
+        "period": 10
+      }
+    }
+  ]
+}

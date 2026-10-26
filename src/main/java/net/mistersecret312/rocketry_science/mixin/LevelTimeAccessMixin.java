@@ -22,8 +22,8 @@ public interface LevelTimeAccessMixin
 
 		long dayLength = timeAccess.dayTime();
 		CelestialBody body = OrbitUtil.getCelestialBody(level);
-		if(body != null)
-			dayLength = (long) body.getDayLength()*60*20;
+		if(body != null && body.getSurfaceData().isPresent())
+			dayLength = (long) body.getSurfaceData().get().dayLength()*60*20;
 
 		double d0 = Mth.frac((double)timeAccess.dimensionType().fixedTime().orElse(timeAccess.dayTime()) / (double)dayLength - (double)0.25F);
 		double d1 = (double)0.5F - Math.cos(d0 * Math.PI) / (double)2.0F;

@@ -1,0 +1,41 @@
+{
+  "name": "rocketry_science:tau_ceti_f",
+  "icon":"stellarview:textures/environment/planet/proxima_centauri/proxima_b.png",
+  "parent": "rocketry_science:tau_ceti/tau_ceti",
+  "radius": 6378000,
+  "period": 2.135,
+  "altitude": 138,
+  "orbit_color": -9197901,
+  "supported_orbits": [
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:low_orbit",
+        "altitude": 100,
+        "period": 0.01
+      },
+      "requirements": [
+        {
+          "type": "rocketry_science:true",
+          "value": true
+        }
+      ]
+    },
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:medium_orbit",
+        "altitude": 500,
+        "period": 0.1
+      }
+    },
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:high_orbit",
+        "altitude": 1000,
+        "period": 1
+      }
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "name": "rocketry_science:pluto_charon_barycenter",
+  "parent": "rocketry_science:sun",
+  "radius": 1,
+  "period": 247.94,
+  "altitude": 1150,
+  "local_orbit_scale": 2,
+  "orbit_color": -6717325
+}

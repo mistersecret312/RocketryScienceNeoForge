@@ -1,0 +1,42 @@
+{
+  "name": "rocketry_science:luna",
+  "type": "barren_moon",
+  "radius": 1737400,
+  "surface":
+  {
+    "dimension": "rocketry_science:luna",
+    "day_length": 160
+  },
+  "orbit":
+  {
+    "parent": "rocketry_science:planets/sol/earth",
+    "altitude": 0.26,
+    "map_altitude": 18,
+    "period": 0.1,
+    "orbit_color": -2500135
+  },
+  "display":
+  {
+    "icon": "rocketry_science:textures/gui/moon.png",
+    "icon_size": 8
+  },
+  "modifiers":[
+    {
+      "type": "rocketry_science:gravity",
+      "gravity": 0.165
+    },
+    {
+      "type": "rocketry_science:pressure",
+      "pressure": 0
+    },
+    {
+      "type": "rocketry_science:temperature",
+      "night_temperature": 140,
+      "day_temperature": 400
+    },
+    {
+      "type": "rocketry_science:radiation",
+      "radiation": 0.06
+    }
+  ]
+}

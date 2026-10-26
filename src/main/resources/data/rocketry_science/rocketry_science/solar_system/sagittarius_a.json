@@ -1,0 +1,9 @@
+{
+  "name": "rocketry_science:sagittarius_a",
+  "icon": "rocketry_science:textures/misc/black_hole.png",
+  "star": "rocketry_science:sagittarius_a/black_hole",
+  "star_surface_temperature": 5800,
+  "escape_velocity": 618000,
+  "size": 10000,
+  "position": [-51200, -985600]
+}

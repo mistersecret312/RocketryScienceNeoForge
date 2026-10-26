@@ -1,0 +1,57 @@
+{
+  "name": "rocketry_science:triton",
+  "icon":"stellarview:textures/environment/planet/sol/triton.png",
+  "parent": "rocketry_science:neptune",
+  "has_atmosphere": false,
+  "day_length": -8462.669759999999,
+  "radius": 1353400,
+  "altitude": 13,
+  "period": 0.16090292961766192,
+  "is_retrograde_orbit": true,
+  "orbit_color": -4987175,
+  "modifiers":[
+    {
+      "type": "rocketry_science:gravity",
+      "gravity": 0.0794
+    },
+    {
+      "type": "rocketry_science:pressure",
+      "pressure": 0.00001454
+    },
+    {
+      "type": "rocketry_science:temperature",
+      "night_temperature": 32,
+      "day_temperature": 45
+    },
+    {
+      "type": "rocketry_science:radiation",
+      "radiation": 0.01
+    }
+  ],
+  "supported_orbits": [
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:low_orbit",
+        "altitude": 25,
+        "period": 1
+      }
+    },
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:medium_orbit",
+        "altitude": 50,
+        "period": 5
+      }
+    },
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:high_orbit",
+        "altitude": 100,
+        "period": 10
+      }
+    }
+  ]
+}

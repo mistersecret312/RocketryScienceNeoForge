@@ -1,0 +1,66 @@
+{
+  "name": "rocketry_science:jupiter",
+  "type": "gas_giant",
+  "radius": 69886000,
+  "orbit":
+  {
+    "parent": "rocketry_science:stars/sol",
+    "altitude": 350,
+    "period": 11.862,
+    "orbit_color": -3365248
+  },
+  "display":
+  {
+    "icon": "stellarview:textures/environment/planet/sol/jupiter.png",
+    "icon_size": 8,
+    "icon_scale": 3
+  },
+  "supported_orbits": [
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:low_orbit",
+        "altitude": 100,
+        "map_altitude": 7,
+        "period": 0.01
+      }
+    },
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:medium_orbit",
+        "altitude": 500,
+        "map_altitude": 13,
+        "period": 0.1
+      }
+    },
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:high_orbit",
+        "altitude": 510720,
+        "map_altitude":24,
+        "period": 1
+      }
+    }
+  ],
+  "modifiers":[
+    {
+      "type": "rocketry_science:gravity",
+      "gravity": 3.25
+    },
+    {
+      "type": "rocketry_science:pressure",
+      "pressure": 1200000
+    },
+    {
+      "type": "rocketry_science:temperature",
+      "night_temperature": 5000,
+      "day_temperature": 5000
+    },
+    {
+      "type": "rocketry_science:radiation",
+      "radiation": 0.0
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "name": "rocketry_science:earth",
+  "type": "rocky_planet",
+  "radius": 6371000,
+  "surface":
+  {
+    "dimension": "minecraft:overworld"
+  },
+  "orbit":
+  {
+    "parent": "rocketry_science:stars/sol",
+    "altitude": 100,
+    "period": 1,
+    "orbit_color": -11691559
+  },
+  "display":
+  {
+    "icon": "rocketry_science:textures/celestial_bodies/sol/earth.png",
+    "icon_size": 16,
+    "icon_scale": 2
+  },
+  "supported_orbits": [
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:low_orbit",
+        "altitude": 100,
+        "map_altitude": 7,
+        "period": 0.01
+      }
+    },
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:medium_orbit",
+        "altitude": 500,
+        "map_altitude": 12,
+        "period": 0.1
+      }
+    },
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:high_orbit",
+        "altitude": 510720,
+        "map_altitude":27,
+        "period": 1
+      }
+    }
+  ],
+  "modifiers":
+  [
+    {
+      "type": "rocketry_science:breathable_atmosphere"
+    },
+    {
+      "type": "rocketry_science:gravity",
+      "gravity": 1
+    },
+    {
+      "type": "rocketry_science:pressure",
+      "pressure": 1
+    },
+    {
+      "type": "rocketry_science:temperature",
+      "night_temperature": 260,
+      "day_temperature": 300
+    },
+    {
+      "type": "rocketry_science:radiation",
+      "radiation": 0
+    }
+  ]
+}

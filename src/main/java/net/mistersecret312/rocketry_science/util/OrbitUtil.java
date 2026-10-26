@@ -12,7 +12,7 @@ import net.mistersecret312.rocketry_science.data.orbits.ConfiguredOrbit;
 import net.mistersecret312.rocketry_science.data.orbits.Orbit;
 import net.mistersecret312.rocketry_science.data.orbits.OrbitConfig;
 import net.mistersecret312.rocketry_science.datapack.CelestialBody;
-import net.mistersecret312.rocketry_science.datapack.SolarSystem;
+import net.mistersecret312.rocketry_science.datapack.Galaxy;
 import org.joml.Vector2d;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import java.util.*;
 public class OrbitUtil
 {
 	public static HashMap<UUID, SpaceCraft> SPACECRAFT = new HashMap<>();
-	public static HashMap<ResourceKey<CelestialBody>, SolarSystem> SYSTEM_MAP = new HashMap<>();
+	public static HashMap<ResourceKey<CelestialBody>, Galaxy> SYSTEM_MAP = new HashMap<>();
 
 	public static final ResourceKey<CelestialBody> THE_SUN = ResourceKey.create(CelestialBody.REGISTRY_KEY,
 			ResourceLocation.fromNamespaceAndPath(RocketryScience.MODID, "sun"));
@@ -32,9 +32,9 @@ public class OrbitUtil
 		return registryAccess.registryOrThrow(CelestialBody.REGISTRY_KEY);
 	}
 
-	public static Registry<SolarSystem> getSystemRegistry(Level level)
+	public static Registry<Galaxy> getSystemRegistry(Level level)
 	{
-		return level.registryAccess().registryOrThrow(SolarSystem.REGISTRY_KEY);
+		return level.registryAccess().registryOrThrow(Galaxy.REGISTRY_KEY);
 	}
 
 	public static CelestialBody getCelestialBody(ResourceKey<CelestialBody> key, Level level)
@@ -116,8 +116,16 @@ public class OrbitUtil
 		for(Map.Entry<ResourceKey<CelestialBody>, CelestialBody> entry : registry.entrySet())
 		{
 			CelestialBody body = entry.getValue();
-			if(body.getParent().isPresent() && body.getParentKey().location().equals(registry.getKey(parent)))
-				children.add(body);
+			if(body.getOrbitData().isPresent())
+			{
+				CelestialBody.OrbitData orbitData = body.getOrbitData().get();
+				ResourceLocation location = orbitData.parent().location();
+				ResourceLocation parentKey = registry.getKey(parent);
+				if(location.equals(parentKey))
+					children.add(body);
+			}
+//			if(body.getOrbitData().isPresent() && body.getOrbitData().get().parent().location().equals(registry.getKey(parent)))
+//				children.add(body);
 		}
 
 		return children;
@@ -131,7 +139,7 @@ public class OrbitUtil
 		for(Map.Entry<ResourceKey<CelestialBody>, CelestialBody> entry : registry.entrySet())
 		{
 			CelestialBody body = entry.getValue();
-			if(body.getParent().isPresent() && getHighestOrderBody(body, level.registryAccess()).equals(parent))
+			if(body.getOrbitData().isPresent() && getHighestOrderBody(body, level.registryAccess()).equals(parent))
 				children.add(body);
 		}
 
@@ -142,15 +150,15 @@ public class OrbitUtil
 	{
 		Registry<CelestialBody> registry = getCelestialRegistry(registryAccess);
 		CelestialBody current = body;
-		if(current.getParentKey() == null)
+		if(current.getOrbitData().isEmpty())
 			return current;
 
-		CelestialBody parent = registry.get(current.getParentKey());
+		CelestialBody parent = registry.get(current.getOrbitData().get().parent());
 		while(parent != null)
 		{
 			current = parent;
-			if(parent.getParentKey() != null)
-				parent = registry.get(parent.getParentKey());
+			if(parent.getOrbitData().isPresent())
+				parent = registry.get(parent.getOrbitData().get().parent());
 			else return current;
 		}
 
@@ -172,12 +180,12 @@ public class OrbitUtil
 				position.add(current.getOrbit().getPosition(tick, registryAccess));
 		}
 
-		if(current == null || current.getParentKey() == null)
+		if(current == null || current.getOrbitData().isEmpty())
 			return position;
 		if(current.equals(finish) && orbit instanceof CelestialOrbit)
 			return new Vector2d();
 
-		CelestialBody parent = registry.get(current.getParentKey());
+		CelestialBody parent = registry.get(current.getOrbitData().get().parent());
 		while(parent != null && !parent.equals(finish))
 		{
 			if(parent.getOrbit() != null)
@@ -185,15 +193,15 @@ public class OrbitUtil
 				Vector2d offset = parent.getOrbit().getPosition(tick, registryAccess);
 				position.add(offset);
 			}
-			if(parent.getParentKey() != null)
-				parent = registry.get(parent.getParentKey());
+			if(parent.getOrbitData().isPresent())
+				parent = registry.get(parent.getOrbitData().get().parent());
 			else return position;
 		}
 
 		return position;
 	}
 
-	public static SolarSystem getSystem(CelestialBody body, Level level)
+	public static Galaxy getSystem(CelestialBody body, Level level)
 	{
 		CelestialBody highest = getHighestOrderBody(body, level.registryAccess());
 		ResourceLocation location = getCelestialRegistry(level.registryAccess()).getKey(highest);
@@ -232,8 +240,8 @@ public class OrbitUtil
 		{
 			ancestorsOfA.add(currentA);
 
-			if (currentA.getParent().isPresent())
-				currentA = OrbitUtil.getCelestialRegistry(registryAccess).get(currentA.getParentKey());
+			if (currentA.getOrbitData().isPresent())
+				currentA = OrbitUtil.getCelestialRegistry(registryAccess).get(currentA.getOrbitData().get().parent());
 			else currentA = null;
 		}
 
@@ -243,8 +251,8 @@ public class OrbitUtil
 			if (ancestorsOfA.contains(currentB))
 				return currentB;
 
-			if (currentB.getParent().isPresent())
-				currentB = OrbitUtil.getCelestialRegistry(registryAccess).get(currentB.getParentKey());
+			if (currentB.getOrbitData().isPresent())
+				currentB = OrbitUtil.getCelestialRegistry(registryAccess).get(currentB.getOrbitData().get().parent());
 			else currentB = null;
 
 		}
@@ -252,13 +260,14 @@ public class OrbitUtil
 		return null;
 	}
 
-	public static double getRadiusRelativeToAncestor(Level level, CelestialBody body, CelestialBody ancestor) {
+	public static double getRadiusRelativeToAncestor(Level level, CelestialBody body, CelestialBody ancestor)
+	{
 		double r = 0;
 		CelestialBody current = body;
 		while (current != null && !current.equals(ancestor))
 		{
 			r += current.getOrbit().getOrbitalAltitude() + current.getRadius();
-			current = getCelestialBodyByDimension(current.getParentKey().location(), level.registryAccess());
+			current = getCelestialBodyByDimension(current.getOrbitData().get().parent().location(), level.registryAccess());
 		}
 		return Math.max(r, 1.0);
 	}
@@ -293,15 +302,5 @@ public class OrbitUtil
 	{
 		SYSTEM_MAP.clear();
 		SPACECRAFT.clear();
-
-		Registry<CelestialBody> bodyRegistry = getCelestialRegistry(level.registryAccess());
-		Registry<SolarSystem> systemRegistry = getSystemRegistry(level);
-
-		for(Map.Entry<ResourceKey<SolarSystem>, SolarSystem> systemEntry : systemRegistry.entrySet())
-			for(Map.Entry<ResourceKey<CelestialBody>, CelestialBody> bodyEntry : bodyRegistry.entrySet())
-			{
-				if(systemEntry.getValue().getStar().equals(bodyEntry.getKey()))
-					SYSTEM_MAP.put(bodyEntry.getKey(), systemEntry.getValue());
-			}
 	}
 }

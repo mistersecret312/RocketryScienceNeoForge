@@ -1,0 +1,56 @@
+{
+  "name": "rocketry_science:dione",
+  "icon":"stellarview:textures/environment/planet/sol/dione.png",
+  "parent": "rocketry_science:saturn",
+  "has_atmosphere": false,
+  "day_length": 3941.1576,
+  "radius": 561400,
+  "altitude": 9,
+  "period": 0.074934249,
+  "orbit_color": -5000257,
+  "modifiers":[
+    {
+      "type": "rocketry_science:gravity",
+      "gravity": 0.0216
+    },
+    {
+      "type": "rocketry_science:pressure",
+      "pressure": 0
+    },
+    {
+      "type": "rocketry_science:temperature",
+      "night_temperature": 87,
+      "day_temperature": 168
+    },
+    {
+      "type": "rocketry_science:radiation",
+      "radiation": 0.055
+    }
+  ],
+  "supported_orbits": [
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:low_orbit",
+        "altitude": 25,
+        "period": 1
+      }
+    },
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:medium_orbit",
+        "altitude": 50,
+        "period": 5
+      }
+    },
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:high_orbit",
+        "altitude": 100,
+        "period": 10
+      }
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "name": "rocketry_science:luna",
+  "icon":"rocketry_science:textures/gui/moon.png",
+  "parent": "rocketry_science:earth",
+  "dimension": "rocketry_science:luna",
+  "has_atmosphere": false,
+  "day_length": 160,
+  "radius": 1737400,
+  "altitude": 15,
+  "period": 0.1,
+  "orbit_color": -2500135,
+  "modifiers":[
+    {
+      "type": "rocketry_science:gravity",
+      "gravity": 0.165
+    },
+    {
+      "type": "rocketry_science:pressure",
+      "pressure": 0
+    },
+    {
+      "type": "rocketry_science:temperature",
+      "night_temperature": 140,
+      "day_temperature": 400
+    },
+    {
+      "type": "rocketry_science:radiation",
+      "radiation": 0.06
+    }
+  ],
+  "supported_orbits": [
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:low_orbit",
+        "altitude": 100,
+        "period": 1
+      }
+    },
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:medium_orbit",
+        "altitude": 500,
+        "period": 5
+      }
+    },
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:high_orbit",
+        "altitude": 1000,
+        "period": 10
+      }
+    }
+  ]
+}

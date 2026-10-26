@@ -1,0 +1,20 @@
+{
+  "name": "rocketry_science:alpha_centauri_barycenter",
+  "type": "barycenter",
+  "galactic":
+  {
+    "position": [45080, 983400],
+    "escape_velocity_kms": 617.7
+  },
+  "display":
+  {
+    "collapse_data":
+    {
+      "icon": "rocketry_science:textures/misc/alpha_centauri.png",
+      "icon_scale": 0.5,
+      "system_size": 750,
+      "fade_start_pixels": 32,
+      "fade_end_pixels": 64
+    }
+  }
+}

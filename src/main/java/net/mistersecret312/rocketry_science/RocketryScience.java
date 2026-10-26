@@ -2,12 +2,9 @@ package net.mistersecret312.rocketry_science;
 
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import net.minecraft.client.renderer.ShaderInstance;
-import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.material.Fluid;
@@ -33,13 +30,8 @@ import net.mistersecret312.rocketry_science.client.vessel.block_data.BlockDataRe
 import net.mistersecret312.rocketry_science.client.vessel.block_data.FuelTankDataRenderer;
 import net.mistersecret312.rocketry_science.client.vessel.block_data.RocketEngineDataRenderer;
 import net.mistersecret312.rocketry_science.client.vessel.block_data.SeparatorDataRenderer;
-import net.mistersecret312.rocketry_science.data.SpaceCraftData;
-import net.mistersecret312.rocketry_science.data.SpaceCraft;
-import net.mistersecret312.rocketry_science.data.orbits.ArtificialOrbit;
-import net.mistersecret312.rocketry_science.data.orbits.ConfiguredOrbit;
 import net.mistersecret312.rocketry_science.datapack.CelestialBody;
-import net.mistersecret312.rocketry_science.datapack.SolarSystem;
-import net.mistersecret312.rocketry_science.environment.modifiers.ModifierConfig;
+import net.mistersecret312.rocketry_science.datapack.Galaxy;
 import net.mistersecret312.rocketry_science.init.*;
 import net.mistersecret312.rocketry_science.util.OrbitUtil;
 import net.neoforged.api.distmarker.Dist;
@@ -54,13 +46,11 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.server.ServerStartingEvent;
+import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.registries.DataPackRegistryEvent;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 
 import java.io.IOException;
-import java.util.Map;
-import java.util.UUID;
 
 @Mod(RocketryScience.MODID)
 public class RocketryScience
@@ -108,7 +98,7 @@ public class RocketryScience
 		modEventBus.addListener((DataPackRegistryEvent.NewRegistry event) ->
 			{
 				event.dataPackRegistry(CelestialBody.REGISTRY_KEY, CelestialBody.CODEC, CelestialBody.CODEC);
-				event.dataPackRegistry(SolarSystem.REGISTRY_KEY, SolarSystem.CODEC, SolarSystem.CODEC);
+				event.dataPackRegistry(Galaxy.REGISTRY_KEY, Galaxy.CODEC, Galaxy.CODEC);
 			});
 	}
 
@@ -126,16 +116,9 @@ public class RocketryScience
 	}
 
 	@SubscribeEvent
-	public void onServerStarting(ServerStartingEvent event)
+	public void onServerStarting(ServerStartedEvent event)
 	{
 		OrbitUtil.init(event.getServer().overworld());
-		Registry<CelestialBody> registry = event.getServer().registryAccess().registryOrThrow(CelestialBody.REGISTRY_KEY);
-		for(Map.Entry<ResourceKey<CelestialBody>, CelestialBody> entry : registry.entrySet())
-		{
-			CelestialBody body = entry.getValue();
-			for(ModifierConfig modifier : body.getModifiers())
-				modifier.setup(body);
-		}
 	}
 
 	public void registerCapabilities(RegisterCapabilitiesEvent event) {
@@ -183,6 +166,7 @@ public class RocketryScience
 
 		public static ShaderInstance orbit;
 		public static ShaderInstance transferOrbit;
+		public static ShaderInstance orbitType;
 
 		@SubscribeEvent
 		public static void registerShaders(RegisterShadersEvent event) throws IOException
@@ -196,6 +180,11 @@ public class RocketryScience
 							ResourceLocation.fromNamespaceAndPath(MODID, "transfer_orbit"),
 							DefaultVertexFormat.POSITION_TEX_COLOR),
 					shaderInstance -> transferOrbit = shaderInstance);
+
+			event.registerShader(new ShaderInstance(event.getResourceProvider(),
+							ResourceLocation.fromNamespaceAndPath(MODID, "orbit_type"),
+							DefaultVertexFormat.POSITION_TEX_COLOR),
+					shaderInstance -> orbitType = shaderInstance);
 		}
 
 		@SubscribeEvent

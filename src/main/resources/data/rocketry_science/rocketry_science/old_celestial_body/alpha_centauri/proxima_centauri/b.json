@@ -1,0 +1,41 @@
+{
+  "name": "rocketry_science:proxima_centauri_b",
+  "icon":"stellarview:textures/environment/planet/proxima_centauri/proxima_b.png",
+  "parent": "rocketry_science:alpha_centauri/proxima_centauri",
+  "radius": 6378000,
+  "period": 0.09,
+  "altitude": 4.8,
+  "orbit_color": -11678554,
+  "supported_orbits": [
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:low_orbit",
+        "altitude": 100,
+        "period": 0.01
+      },
+      "requirements": [
+        {
+          "type": "rocketry_science:true",
+          "value": true
+        }
+      ]
+    },
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:medium_orbit",
+        "altitude": 500,
+        "period": 0.1
+      }
+    },
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:high_orbit",
+        "altitude": 1000,
+        "period": 1
+      }
+    }
+  ]
+}

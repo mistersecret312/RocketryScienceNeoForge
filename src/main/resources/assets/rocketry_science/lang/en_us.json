@@ -31,10 +31,104 @@
   "config.jade.plugin_rocketry_science.rocket": "Rocket",
 
   "rocketry_science.celestial_body": "Celestial Body",
-  "celestial_body.rocketry_science.sun": "Sun",
+
+  "celestial_body.rocketry_science.sol.collapsed": "The Solar System",
+  "celestial_body.rocketry_science.sol": "Sun",
+
+  "celestial_body.rocketry_science.mercury": "Mercury",
+  "celestial_body.rocketry_science.venus": "Venus",
+
   "celestial_body.rocketry_science.earth": "Earth",
   "celestial_body.rocketry_science.luna": "Luna",
+
   "celestial_body.rocketry_science.mars": "Mars",
-  "celestial_body.rocketry_science.mercury": "Mercury",
-  "celestial_body.rocketry_science.venus": "Venus"
+  "celestial_body.rocketry_science.phobos": "Phobos",
+  "celestial_body.rocketry_science.deimos": "Deimos",
+
+  "celestial_body.rocketry_science.vesta": "Vesta",
+  "celestial_body.rocketry_science.ceres": "Ceres",
+
+  "celestial_body.rocketry_science.jupiter": "Jupiter",
+  "celestial_body.rocketry_science.metis": "Metis",
+  "celestial_body.rocketry_science.adrastea": "Adrastea",
+  "celestial_body.rocketry_science.amalthea": "Amalthea",
+  "celestial_body.rocketry_science.thebe": "Thebe",
+  "celestial_body.rocketry_science.io": "Io",
+  "celestial_body.rocketry_science.europa": "Europa",
+  "celestial_body.rocketry_science.ganymede": "Ganymede",
+  "celestial_body.rocketry_science.callisto": "Callisto",
+
+  "celestial_body.rocketry_science.saturn": "Saturn",
+  "celestial_body.rocketry_science.janus": "Janus",
+  "celestial_body.rocketry_science.mimas": "Mimas",
+  "celestial_body.rocketry_science.enceladus": "Enceladus",
+  "celestial_body.rocketry_science.tethys": "Tethys",
+  "celestial_body.rocketry_science.dione": "Dione",
+  "celestial_body.rocketry_science.rhea": "Rhea",
+  "celestial_body.rocketry_science.titan": "Titan",
+  "celestial_body.rocketry_science.hyperion": "Hyperion",
+  "celestial_body.rocketry_science.iapetus": "Iapetus",
+
+  "celestial_body.rocketry_science.uranus": "Uranus",
+  "celestial_body.rocketry_science.portia": "Portia",
+  "celestial_body.rocketry_science.puck": "Puck",
+  "celestial_body.rocketry_science.miranda": "Miranda",
+  "celestial_body.rocketry_science.ariel": "Ariel",
+  "celestial_body.rocketry_science.umbriel": "Umbriel",
+  "celestial_body.rocketry_science.titania": "Titania",
+  "celestial_body.rocketry_science.oberon": "Oberon",
+
+  "celestial_body.rocketry_science.neptune": "Neptune",
+  "celestial_body.rocketry_science.despina": "Despina",
+  "celestial_body.rocketry_science.galatea": "Galatea",
+  "celestial_body.rocketry_science.larissa": "Larissa",
+  "celestial_body.rocketry_science.proteus": "Proteus",
+  "celestial_body.rocketry_science.triton": "Triton",
+  "celestial_body.rocketry_science.nereid": "Nereid",
+
+  "celestial_body.rocketry_science.orcus": "Orcus",
+  "celestial_body.rocketry_science.vanth": "Vanth",
+
+  "celestial_body.rocketry_science.pluto_charon_barycenter.collapsed": "Pluto-Charon Barycenter",
+  "celestial_body.rocketry_science.pluto_charon_barycenter": "Pluto-Charon Barycenter",
+  "celestial_body.rocketry_science.pluto": "Pluto",
+  "celestial_body.rocketry_science.charon": "Charon",
+
+  "celestial_body.rocketry_science.alpha_centauri_barycenter.collapsed": "Alpha Centauri",
+  "celestial_body.rocketry_science.alpha_centauri_barycenter": "Alpha Centauri Barycenter",
+  "celestial_body.rocketry_science.rigil_kentaurus": "Rigil Kentaurus",
+  "celestial_body.rocketry_science.toliman": "Toliman",
+
+  "celestial_body.rocketry_science.proxima_centauri": "Proxima Centauri",
+  "celestial_body.rocketry_science.proxima_centauri_b": "Proxima Centauri b",
+  "celestial_body.rocketry_science.proxima_centauri_d": "Proxima Centauri d",
+
+  "celestial_body.rocketry_science.barnards.collapsed": "Barnard's Star",
+  "celestial_body.rocketry_science.barnards": "Barnard's Star",
+  "celestial_body.rocketry_science.barnards_b": "Barnard's Star b",
+
+  "celestial_body.rocketry_science.sirius_barycenter.collapsed": "Sirius",
+  "celestial_body.rocketry_science.sirius_barycenter": "Sirius Barycenter",
+  "celestial_body.rocketry_science.sirius_a": "Sirius A",
+  "celestial_body.rocketry_science.sirius_b": "Sirius B",
+
+  "celestial_body.rocketry_science.tau_ceti.collapsed": "Tau Ceti",
+  "celestial_body.rocketry_science.tau_ceti": "Tau Ceti",
+  "celestial_body.rocketry_science.tau_ceti_f": "Tau Ceti f",
+
+  "celestial_body.rocketry_science.sagittarius_a.collapsed": "Sagittarius A*",
+  "celestial_body.rocketry_science.sagittarius_a": "Sagittarius A*",
+
+  "rocketry_science.celestial_body.type.rocky_planet": "Rocky Planet",
+  "rocketry_science.celestial_body.type.dwarf_planet": "Dwarf Planet",
+  "rocketry_science.celestial_body.type.barren_moon": "Barren Moon",
+  "rocketry_science.celestial_body.type.gas_giant": "Gas Giant",
+  "rocketry_science.celestial_body.type.ice_giant": "Ice Giant",
+  "rocketry_science.celestial_body.type.main_sequence_star": "Main Sequence Star",
+  "rocketry_science.celestial_body.type.supermassive_black_hole": "Supermassive Black Hole",
+  "rocketry_science.celestial_body.type.black_hole": "Black Hole",
+  "rocketry_science.celestial_body.type.stellar_remnant": "Stellar Remnant",
+  "rocketry_science.celestial_body.type.barycenter": "Barycenter",
+
+  "rocketry_science.star.spectral_class": "Spectral Class: "
 }

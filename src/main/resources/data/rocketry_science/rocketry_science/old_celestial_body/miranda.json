@@ -1,0 +1,56 @@
+{
+  "name": "rocketry_science:miranda",
+  "icon":"stellarview:textures/environment/planet/sol/miranda.png",
+  "parent": "rocketry_science:uranus",
+  "has_atmosphere": false,
+  "day_length": 2035.40976,
+  "radius": 235800,
+  "altitude": 5,
+  "period": 0.03869977,
+  "orbit_color": -4990465,
+  "modifiers":[
+    {
+      "type": "rocketry_science:gravity",
+      "gravity": 0.0077551
+    },
+    {
+      "type": "rocketry_science:pressure",
+      "pressure": 0
+    },
+    {
+      "type": "rocketry_science:temperature",
+      "night_temperature": 55,
+      "day_temperature": 84
+    },
+    {
+      "type": "rocketry_science:radiation",
+      "radiation": 2.75
+    }
+  ],
+  "supported_orbits": [
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:low_orbit",
+        "altitude": 25,
+        "period": 1
+      }
+    },
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:medium_orbit",
+        "altitude": 50,
+        "period": 5
+      }
+    },
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:high_orbit",
+        "altitude": 100,
+        "period": 10
+      }
+    }
+  ]
+}

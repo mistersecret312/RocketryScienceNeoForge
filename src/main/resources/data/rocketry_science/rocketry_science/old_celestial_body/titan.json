@@ -1,0 +1,56 @@
+{
+  "name": "rocketry_science:titan",
+  "icon":"stellarview:textures/environment/planet/sol/titan.png",
+  "parent": "rocketry_science:saturn",
+  "has_atmosphere": true,
+  "day_length": 22960.8,
+  "radius": 2574730,
+  "altitude": 18,
+  "period": 0.4365596,
+  "orbit_color": -1664730,
+  "modifiers":[
+    {
+      "type": "rocketry_science:gravity",
+      "gravity": 0.138
+    },
+    {
+      "type": "rocketry_science:pressure",
+      "pressure": 1.45
+    },
+    {
+      "type": "rocketry_science:temperature",
+      "night_temperature": 93.7,
+      "day_temperature": 105
+    },
+    {
+      "type": "rocketry_science:radiation",
+      "radiation": 0.02
+    }
+  ],
+  "supported_orbits": [
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:low_orbit",
+        "altitude": 25,
+        "period": 1
+      }
+    },
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:medium_orbit",
+        "altitude": 50,
+        "period": 5
+      }
+    },
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:high_orbit",
+        "altitude": 100,
+        "period": 10
+      }
+    }
+  ]
+}

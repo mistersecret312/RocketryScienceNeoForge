@@ -1,0 +1,57 @@
+{
+  "name": "rocketry_science:mars",
+  "icon":"rocketry_science:textures/celestial_bodies/sol/mars.png",
+  "parent": "rocketry_science:sun",
+  "has_atmosphere": true,
+  "day_length": 21,
+  "radius": 6052000,
+  "period": 2.135,
+  "altitude": 138,
+  "orbit_color": -2533069,
+  "local_orbit_scale": 2,
+  "modifiers":[
+    {
+      "type": "rocketry_science:gravity",
+      "gravity": 0.38
+    },
+    {
+      "type": "rocketry_science:pressure",
+      "pressure": 0.006
+    },
+    {
+      "type": "rocketry_science:temperature",
+      "night_temperature": 163,
+      "day_temperature": 308
+    },
+    {
+      "type": "rocketry_science:radiation",
+      "radiation": 0.027
+    }
+  ],
+  "supported_orbits": [
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:low_orbit",
+        "altitude": 100,
+        "period": 1
+      }
+    },
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:medium_orbit",
+        "altitude": 500,
+        "period": 5
+      }
+    },
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:high_orbit",
+        "altitude": 1000,
+        "period": 10
+      }
+    }
+  ]
+}

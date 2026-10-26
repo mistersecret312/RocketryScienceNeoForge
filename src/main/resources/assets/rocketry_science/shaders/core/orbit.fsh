@@ -5,39 +5,38 @@ in vec2 texCoord0;
 out vec4 fragColor;
 
 uniform vec4 Color;
-uniform float InnerRadius;
-uniform float OuterRadius;
 uniform float QuadSize;
-uniform float SquishFactor;
-uniform float DashSegments;
+uniform float Thickness;
+uniform float Angle;
+uniform float Direction;
+
+const float PI = 3.14159265359;
 
 void main() {
-    vec2 uv = texCoord0 - vec2(0.5);
+    vec2 pixelPos = (texCoord0 - 0.5) * QuadSize;
+    float targetRadius = (QuadSize - Thickness) / 2.0;
 
-    vec2 pixelated = (floor(uv * QuadSize) + 0.5) / QuadSize;
+    vec2 d = abs(pixelPos) - vec2(targetRadius);
+    float distToBoundary = max(d.x, d.y);
+    float distToRing = abs(distToBoundary);
 
-    vec2 orbitPos = pixelated;
-    orbitPos.y *= SquishFactor;
-
-    float dist = length(orbitPos);
-
-    float midRadius = (InnerRadius + OuterRadius) / 2.0;
-    float halfThickness = (OuterRadius - InnerRadius) / 2.0;
-
-    halfThickness = max(halfThickness, 1.0 / QuadSize);
-
-    float distToRing = abs(dist - midRadius);
-    float ringMask = 1.0 - step(halfThickness, distToRing);
-
-    if (DashSegments > 0.0) {
-        float angle = atan(pixelated.y, pixelated.x);
-        float dashMask = step(0.0, sin(angle * DashSegments));
-        ringMask *= dashMask;
-    }
-
+    float ringMask = 1.0 - smoothstep((Thickness / 2.0) - 0.5, (Thickness / 2.0) + 0.5, distToRing);
     if (ringMask <= 0.0) {
         discard;
     }
 
-    fragColor = vertexColor * Color * vec4(1.0, 1.0, 1.0, ringMask);
+    float pixelAngle = atan(pixelPos.y, pixelPos.x);
+
+    float normalizedPixel = mod(pixelAngle + 2.0 * PI, 2.0 * PI);
+    float normalizedTarget = mod(Angle, 2.0 * PI);
+
+    float rawDiff = normalizedTarget - normalizedPixel;
+    float angleDiff = mod((rawDiff * Direction) + 2.0 * PI, 2.0 * PI);
+
+    float fadeProgress = 1.0 - (angleDiff / (2.0 * PI));
+
+    float minAlpha = 0.15;
+    float tailAlphaMultiplier = mix(minAlpha, 1.0, fadeProgress);
+
+    fragColor = vertexColor * Color * vec4(1.0, 1.0, 1.0, ringMask * tailAlphaMultiplier);
 }

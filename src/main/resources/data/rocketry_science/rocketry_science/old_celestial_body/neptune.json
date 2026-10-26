@@ -1,0 +1,57 @@
+{
+  "name": "rocketry_science:neptune",
+  "icon":"stellarview:textures/environment/planet/sol/neptune.png",
+  "parent": "rocketry_science:sun",
+  "has_atmosphere": true,
+  "day_length": 966.6,
+  "radius": 24760600,
+  "period": 164.8,
+  "altitude": 1000,
+  "orbit_color": -12553242,
+  "local_orbit_scale": 3,
+  "modifiers":[
+    {
+      "type": "rocketry_science:gravity",
+      "gravity": 1.25
+    },
+    {
+      "type": "rocketry_science:pressure",
+      "pressure": 200000
+    },
+    {
+      "type": "rocketry_science:temperature",
+      "night_temperature": 2500,
+      "day_temperature": 2500
+    },
+    {
+      "type": "rocketry_science:radiation",
+      "radiation": 0.0
+    }
+  ],
+  "supported_orbits": [
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:low_orbit",
+        "altitude": 100,
+        "period": 1
+      }
+    },
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:medium_orbit",
+        "altitude": 500,
+        "period": 5
+      }
+    },
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:high_orbit",
+        "altitude": 1000,
+        "period": 10
+      }
+    }
+  ]
+}

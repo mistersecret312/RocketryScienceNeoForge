@@ -1,0 +1,56 @@
+{
+  "name": "rocketry_science:europa",
+  "icon":"stellarview:textures/environment/planet/sol/europa.png",
+  "parent": "rocketry_science:jupiter",
+  "has_atmosphere": false,
+  "day_length": 5113.70064,
+  "radius": 1560800,
+  "altitude": 10,
+  "period": 0.097228,
+  "orbit_color": -6701095,
+  "modifiers":[
+    {
+      "type": "rocketry_science:gravity",
+      "gravity": 0.134
+    },
+    {
+      "type": "rocketry_science:pressure",
+      "pressure": 0.000000000001
+    },
+    {
+      "type": "rocketry_science:temperature",
+      "night_temperature": 50,
+      "day_temperature": 125
+    },
+    {
+      "type": "rocketry_science:radiation",
+      "radiation": 225
+    }
+  ],
+  "supported_orbits": [
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:low_orbit",
+        "altitude": 50,
+        "period": 1
+      }
+    },
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:medium_orbit",
+        "altitude": 200,
+        "period": 5
+      }
+    },
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:high_orbit",
+        "altitude": 500,
+        "period": 10
+      }
+    }
+  ]
+}

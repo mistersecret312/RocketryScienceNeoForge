@@ -1,0 +1,58 @@
+{
+  "name": "rocketry_science:rigil_kentaurus",
+  "type": "main_sequence_star",
+  "radius": 851532095,
+  "orbit":
+  {
+    "parent": "rocketry_science:stars/alpha_centauri/barycenter",
+    "altitude": 11.808,
+    "period": 0.05,
+    "orbit_color": -858496
+  },
+  "star":
+  {
+    "luminosity": 1.5,
+    "surface_temperature": 5790,
+    "spectral_class": "G2V"
+  },
+  "display":
+  {
+    "icon": "stellarview:textures/environment/star/template/yellow_star.png",
+    "icon_scale": 2,
+    "icon_size": 16
+  },
+
+  "supported_orbits":
+  [
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:low_orbit",
+        "altitude": 6960000,
+        "map_altitude": 100,
+        "period": 0.01
+      }
+    }
+  ],
+
+  "modifiers":
+  [
+    {
+      "type": "rocketry_science:gravity",
+      "gravity": 28.0
+    },
+    {
+      "type": "rocketry_science:pressure",
+      "pressure": 0.088
+    },
+    {
+      "type": "rocketry_science:temperature",
+      "night_temperature": 5790,
+      "day_temperature": 5790
+    },
+    {
+      "type": "rocketry_science:radiation",
+      "radiation": 1000.0
+    }
+  ]
+}

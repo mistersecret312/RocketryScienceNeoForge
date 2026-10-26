@@ -10,14 +10,15 @@
   "uniforms": [
     { "name": "ModelViewMat", "type": "matrix4x4", "count": 16, "values": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ] },
     { "name": "ProjMat",      "type": "matrix4x4", "count": 16, "values": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ] },
-    { "name": "Color",        "type": "float", "count": 4,  "values": [ 1.0, 1.0, 1.0, 1.0 ] },
-    { "name": "SquishFactor", "type": "float", "count":  1, "values": [1.0]},
-    { "name": "DashSegments", "type": "float", "count": 1, "values": [1.0]},
-    { "name": "Progress", "type": "float", "count": 1, "values": [1.0]},
-    { "name": "R1", "type": "float", "count": 1, "values": [1.0]},
-    { "name": "R2", "type": "float", "count": 1, "values": [1.0]},
-    { "name": "Rotation", "type": "float", "count": 1, "values": [1.0]},
-    { "name": "Thickness", "type": "float", "count": 1, "values": [1.0]},
-    { "name": "QuadSize", "type": "float", "count": 1, "values":  [1.0]}
+    { "name": "QuadSize",     "type": "float",     "count": 2,  "values": [ 1.0, 1.0 ] },
+    { "name": "StartSize",    "type": "float",     "count": 2,  "values": [ 1.0, 1.0 ] },
+    { "name": "EndSize",      "type": "float",     "count": 2,  "values": [ 1.0, 1.0 ] },
+    { "name": "StartAngle",   "type": "float",     "count": 1,  "values": [ 0.0 ] },
+    { "name": "EndAngle",     "type": "float",     "count": 1,  "values": [ 3.14159 ] },
+    { "name": "CurrentAngle", "type": "float",     "count": 1,  "values": [ 0.0 ] },
+    { "name": "Direction",    "type": "float",     "count": 1,  "values": [ 1.0 ] },
+    { "name": "Thickness",    "type": "float",     "count": 1,  "values": [ 1.0 ] },
+    { "name": "Color",        "type": "float",     "count": 4,  "values": [ 1.0, 1.0, 1.0, 0.4 ] },
+    { "name": "PassedColor",  "type": "float",     "count": 4,  "values": [ 0.0, 1.0, 0.0, 1.0 ] }
   ]
 }

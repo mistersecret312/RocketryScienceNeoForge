@@ -4,14 +4,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.mistersecret312.rocketry_science.block_entities.RocketAssemblerBlockEntity;
 import net.mistersecret312.rocketry_science.blocks.SeparatorBlock;
 import net.mistersecret312.rocketry_science.client.screen.LaunchControllerScreen;
 import net.mistersecret312.rocketry_science.client.screen.RocketAssemblyScreen;
-import net.mistersecret312.rocketry_science.client.screen.SpaceMapScreen;
 import net.mistersecret312.rocketry_science.data.SpaceCraft;
 import net.mistersecret312.rocketry_science.data.room.Room;
 import net.mistersecret312.rocketry_science.data.room.RoomManager;
@@ -21,8 +19,6 @@ import net.mistersecret312.rocketry_science.util.OrbitUtil;
 import net.mistersecret312.rocketry_science.vessel.Rocket;
 import net.mistersecret312.rocketry_science.vessel.Stage;
 import net.mistersecret312.rocketry_science.vessel.block_data.BlockData;
-import net.mistersecret312.rocketry_science.vessel.block_data.SeparatorData;
-import net.neoforged.neoforge.attachment.AttachmentType;
 
 import java.util.*;
 
@@ -30,23 +26,23 @@ public class ClientPacketHandler
 {
 	public static void syncSpacecraft(SpaceCraft craft)
 	{
-		OrbitUtil.addSpaceCraft(craft);
-		if(Minecraft.getInstance().screen instanceof SpaceMapScreen screen)
-			screen.markForRebuild();
+//		OrbitUtil.addSpaceCraft(craft);
+//		if(Minecraft.getInstance().screen instanceof SpaceMapScreen screen)
+//			screen.markForRebuild();
 	}
 
 	public static void clearSpacecraft()
 	{
-		OrbitUtil.clearSpaceCraft();
-		if(Minecraft.getInstance().screen instanceof SpaceMapScreen screen)
-			screen.markForRebuild();
+//		OrbitUtil.clearSpaceCraft();
+//		if(Minecraft.getInstance().screen instanceof SpaceMapScreen screen)
+//			screen.markForRebuild();
 	}
 
 	public static void removeSpaceCraft(UUID uuid)
 	{
-		OrbitUtil.removeSpaceCraft(uuid);
-		if(Minecraft.getInstance().screen instanceof SpaceMapScreen screen)
-			screen.markForRebuild();
+//		OrbitUtil.removeSpaceCraft(uuid);
+//		if(Minecraft.getInstance().screen instanceof SpaceMapScreen screen)
+//			screen.markForRebuild();
 	}
 
 	public static void updateRocket(int id, Rocket rocket)
@@ -148,12 +144,12 @@ public class ClientPacketHandler
 	{
 		Screen screen = Minecraft.getInstance().screen;
 		rocket.isInUI = true;
-		if(screen instanceof SpaceMapScreen mapScreen)
-		{
-			RocketEntity rocketEntity = new RocketEntity(mapScreen.getLevel());
-			rocketEntity.setRocket(rocket);
-			mapScreen.spaceCraftRocket = rocketEntity;
-		}
+//		if(screen instanceof SpaceMapScreen mapScreen)
+//		{
+//			RocketEntity rocketEntity = new RocketEntity(mapScreen.getLevel());
+//			rocketEntity.setRocket(rocket);
+//			mapScreen.spaceCraftRocket = rocketEntity;
+//		}
 	}
 
 	public static <T extends Entity> T getEntity(int id)

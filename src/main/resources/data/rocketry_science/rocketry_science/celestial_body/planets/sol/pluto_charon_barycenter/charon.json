@@ -1,0 +1,66 @@
+{
+  "name": "rocketry_science:charon",
+  "type": "dwarf_planet",
+  "radius": 606000,
+  "orbit":
+  {
+    "parent": "rocketry_science:planets/sol/pluto_charon_barycenter/barycenter",
+    "altitude": 6,
+    "period": 0.17487631494936784,
+    "orbit_color": -7562842,
+    "epoch": 180
+  },
+  "display":
+  {
+    "icon": "stellarview:textures/environment/planet/sol/charon.png",
+    "icon_size": 8
+  },
+  "supported_orbits": [
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:low_orbit",
+        "altitude": 100,
+        "map_altitude": 7,
+        "period": 0.01
+      }
+    },
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:medium_orbit",
+        "altitude": 500,
+        "map_altitude": 13,
+        "period": 0.1
+      }
+    },
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:high_orbit",
+        "altitude": 510720,
+        "map_altitude":24,
+        "period": 1
+      }
+    }
+  ],
+  "modifiers":[
+    {
+      "type": "rocketry_science:gravity",
+      "gravity": 0.2288
+    },
+    {
+      "type": "rocketry_science:pressure",
+      "pressure": 0
+    },
+    {
+      "type": "rocketry_science:temperature",
+      "night_temperature": 44,
+      "day_temperature": 55
+    },
+    {
+      "type": "rocketry_science:radiation",
+      "radiation": 0.01
+    }
+  ]
+}

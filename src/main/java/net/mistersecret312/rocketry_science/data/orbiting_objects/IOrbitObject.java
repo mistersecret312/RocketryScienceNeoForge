@@ -8,4 +8,5 @@ public interface IOrbitObject<O extends Orbit<?>>
 	void setOrbit(O orbit);
 
 	String getName();
+	double getEpoch();
 }

@@ -1,0 +1,56 @@
+{
+  "name": "rocketry_science:hyperion",
+  "icon":"stellarview:textures/environment/planet/sol/hyperion.png",
+  "parent": "rocketry_science:saturn",
+  "has_atmosphere": false,
+  "day_length": 43200,
+  "radius": 133600,
+  "altitude": 23,
+  "period": 0.5825355887,
+  "orbit_color": -4223898,
+  "modifiers":[
+    {
+      "type": "rocketry_science:gravity",
+      "gravity": 0.00197959
+    },
+    {
+      "type": "rocketry_science:pressure",
+      "pressure": 0
+    },
+    {
+      "type": "rocketry_science:temperature",
+      "night_temperature": 58,
+      "day_temperature": 115
+    },
+    {
+      "type": "rocketry_science:radiation",
+      "radiation": 0.02
+    }
+  ],
+  "supported_orbits": [
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:low_orbit",
+        "altitude": 25,
+        "period": 1
+      }
+    },
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:medium_orbit",
+        "altitude": 50,
+        "period": 5
+      }
+    },
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:high_orbit",
+        "altitude": 100,
+        "period": 10
+      }
+    }
+  ]
+}

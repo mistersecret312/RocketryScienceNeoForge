@@ -1,0 +1,55 @@
+{
+  "name": "rocketry_science:ceres",
+  "icon":"stellarview:textures/environment/planet/sol/ceres.png",
+  "parent": "rocketry_science:sun",
+  "has_atmosphere": false,
+  "day_length": 544.4502,
+  "radius": 469700,
+  "period": 4.6,
+  "altitude": 277,
+  "modifiers":[
+    {
+      "type": "rocketry_science:gravity",
+      "gravity": 0.22
+    },
+    {
+      "type": "rocketry_science:pressure",
+      "pressure": 0
+    },
+    {
+      "type": "rocketry_science:temperature",
+      "night_temperature": 110,
+      "day_temperature": 235
+    },
+    {
+      "type": "rocketry_science:radiation",
+      "radiation": 0.03
+    }
+  ],
+  "supported_orbits": [
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:low_orbit",
+        "altitude": 100,
+        "period": 1
+      }
+    },
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:medium_orbit",
+        "altitude": 500,
+        "period": 5
+      }
+    },
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:high_orbit",
+        "altitude": 1000,
+        "period": 10
+      }
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "name": "rocketry_science:sol",
+  "type": "main_sequence_star",
+  "radius": 696265000,
+  "galactic":
+  {
+    "position": [51200, 985600],
+    "escape_velocity_kms": 617.7
+  },
+  "star":
+  {
+    "luminosity": 1,
+    "surface_temperature": 5777,
+    "spectral_class": "G2V"
+  },
+  "display":
+  {
+    "icon": "rocketry_science:textures/celestial_bodies/sol.png",
+    "icon_scale": 2,
+    "icon_size": 16,
+    "collapse_data":
+    {
+      "icon": "rocketry_science:textures/misc/sol.png",
+      "system_size": 2000,
+      "fade_start_pixels": 64,
+      "fade_end_pixels": 128
+    }
+  },
+
+  "supported_orbits":
+  [
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:low_orbit",
+        "altitude": 6960000,
+        "period": 0.01
+      }
+    }
+  ],
+
+  "modifiers":
+  [
+    {
+      "type": "rocketry_science:gravity",
+      "gravity": 28.0
+    },
+    {
+      "type": "rocketry_science:pressure",
+      "pressure": 0.088
+    },
+    {
+      "type": "rocketry_science:temperature",
+      "night_temperature": 5777,
+      "day_temperature": 5777
+    },
+    {
+      "type": "rocketry_science:radiation",
+      "radiation": 1000.0
+    }
+  ]
+}

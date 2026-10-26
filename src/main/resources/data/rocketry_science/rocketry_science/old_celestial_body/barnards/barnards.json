@@ -1,0 +1,36 @@
+{
+  "name": "rocketry_science:barnards",
+  "icon": "stellarview:textures/environment/star/template/red_star.png",
+  "radius": 696265000,
+  "period": 0,
+  "altitude": 0,
+  "modifiers":[
+    {
+      "type": "rocketry_science:gravity",
+      "gravity": 28.0
+    },
+    {
+      "type": "rocketry_science:pressure",
+      "pressure": 0.088
+    },
+    {
+      "type": "rocketry_science:temperature",
+      "night_temperature": 5800,
+      "day_temperature": 5800
+    },
+    {
+      "type": "rocketry_science:radiation",
+      "radiation": 1000.0
+    }
+  ],
+  "supported_orbits": [
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:low_orbit",
+        "altitude": 10000000,
+        "period": 100
+      }
+    }
+  ]
+}

@@ -10,5 +10,6 @@ public interface OrbitConfig {
 
 	String getName();
 	double getAltitude();
+	double getMapAltitude();
 	double getPeriod();
 }

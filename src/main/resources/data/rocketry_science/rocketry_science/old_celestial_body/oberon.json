@@ -1,0 +1,56 @@
+{
+  "name": "rocketry_science:oberon",
+  "icon":"stellarview:textures/environment/planet/sol/oberon.png",
+  "parent": "rocketry_science:uranus",
+  "has_atmosphere": false,
+  "day_length": 19387.05696,
+  "radius": 761400,
+  "altitude": 15,
+  "period": 0.3686,
+  "orbit_color": -7569293,
+  "modifiers":[
+    {
+      "type": "rocketry_science:gravity",
+      "gravity": 0.03653
+    },
+    {
+      "type": "rocketry_science:pressure",
+      "pressure": 0
+    },
+    {
+      "type": "rocketry_science:temperature",
+      "night_temperature": 54,
+      "day_temperature": 82
+    },
+    {
+      "type": "rocketry_science:radiation",
+      "radiation": 0.003
+    }
+  ],
+  "supported_orbits": [
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:low_orbit",
+        "altitude": 25,
+        "period": 1
+      }
+    },
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:medium_orbit",
+        "altitude": 50,
+        "period": 5
+      }
+    },
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:high_orbit",
+        "altitude": 100,
+        "period": 10
+      }
+    }
+  ]
+}

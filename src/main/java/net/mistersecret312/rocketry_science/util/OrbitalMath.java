@@ -13,6 +13,7 @@ import net.mistersecret312.rocketry_science.vessel.Stage;
 public class OrbitalMath
 {
 	public static final double TIME_SCALE = 0.000008;
+	public static final double KM_TO_AU = 1.0 / 149597870;
 
 	public static double getOrbitDeltaV(CelestialBody body, double height)
 	{
@@ -35,42 +36,47 @@ public class OrbitalMath
 		initialHeight += body.getRadius();
 		targetHeight += body.getRadius();
 
-		double part1 = Math.sqrt(EnvironmentUtil.getGravitationalParameter(body)/initialHeight)*(Math.sqrt((2*targetHeight)/(initialHeight+targetHeight))-1);
-		double part2 = Math.sqrt(EnvironmentUtil.getGravitationalParameter(body)/targetHeight)*(1-Math.sqrt((2*initialHeight)/(initialHeight+targetHeight)));
+		double mu = EnvironmentUtil.getGravitationalParameter(body);
+		double part1 = Math.sqrt(mu / initialHeight) * (Math.sqrt((2.0 * targetHeight) / (initialHeight + targetHeight)) - 1.0);
+		double part2 = Math.sqrt(mu / targetHeight) * (1.0 - Math.sqrt((2.0 * initialHeight) / (initialHeight + targetHeight)));
 
-		return part1+part2;
+		return Math.abs(part1) + Math.abs(part2);
 	}
 
 	public static TransferOrbit.TransferData calculateTransfer(Level level, ArtificialOrbit origin, ArtificialOrbit destination, double currentTime) {
 		CelestialBody parentA = OrbitUtil.getCelestialBody(origin.getParent(level.registryAccess()), level);
 		CelestialBody parentB = OrbitUtil.getCelestialBody(destination.getParent(level.registryAccess()), level);
 
-		if (parentA.equals(parentB))
-			return getHohmann(origin.getOrbitalAltitude()+parentA.getRadius(), destination.getOrbitalAltitude()+parentB.getRadius(), parentA, 0);
+		if (parentA.equals(parentB)) {
+			return getHohmann(origin.getOrbitalAltitude() + parentA.getRadius(), destination.getOrbitalAltitude() + parentA.getRadius(), parentA, 0);
+		}
 
 		CelestialBody commonAncestor = OrbitUtil.findCommonAncestor(level.registryAccess(), parentA, parentB);
-		if (commonAncestor == null) {
-			return new TransferOrbit.TransferData(100000,20*60*60*2);
-		}
+		if (commonAncestor == null)
+			return new TransferOrbit.TransferData(100000, 20 * 60 * 60 * 2);
 
 		double totalDv = 0;
 		double totalTime = 0;
 
-		double originVel = Math.sqrt(EnvironmentUtil.getGravitationalParameter(parentA) / origin.getOrbitalAltitude()+parentA.getRadius());
-		double escapeVelA = originVel * Math.sqrt(2);
+		// FIXED: Added missing denominator parentheses
+		double rOrigin = origin.getOrbitalAltitude() + parentA.getRadius();
+		double originVel = Math.sqrt(EnvironmentUtil.getGravitationalParameter(parentA) / rOrigin);
+		double escapeVelA = originVel * Math.sqrt(2.0);
 		totalDv += (escapeVelA - originVel);
 
 		double r1 = OrbitUtil.getRadiusRelativeToAncestor(level, parentA, commonAncestor);
 		double r2 = OrbitUtil.getRadiusRelativeToAncestor(level, parentB, commonAncestor);
 
-		double error = calculateTransferWindowError(level.getGameTime(), parentA, parentB, commonAncestor);
+		double error = calculateTransferWindowError(level.getGameTime(), parentA, parentB);
 		TransferOrbit.TransferData interplanetary = getHohmann(r1, r2, commonAncestor, error);
 
 		totalDv += interplanetary.deltaV;
 		totalTime += interplanetary.transferTime;
 
-		double destVel = Math.sqrt(EnvironmentUtil.getGravitationalParameter(parentB) / destination.getOrbitalAltitude()+parentB.getRadius());
-		double escapeVelB = destVel * Math.sqrt(2);
+		// FIXED: Added missing denominator parentheses
+		double rDest = destination.getOrbitalAltitude() + parentB.getRadius();
+		double destVel = Math.sqrt(EnvironmentUtil.getGravitationalParameter(parentB) / rDest);
+		double escapeVelB = destVel * Math.sqrt(2.0);
 		totalDv += (escapeVelB - destVel);
 
 		return new TransferOrbit.TransferData(totalTime, totalDv);
@@ -79,8 +85,8 @@ public class OrbitalMath
 	private static TransferOrbit.TransferData getHohmann(double r1, double r2, CelestialBody parent, double phaseErrorRads) {
 		double mu = EnvironmentUtil.getGravitationalParameter(parent);
 
-		double dv1 = Math.sqrt(mu / r1) * (Math.sqrt((2 * r2) / (r1 + r2)) - 1);
-		double dv2 = Math.sqrt(mu / r2) * (1 - Math.sqrt((2 * r1) / (r1 + r2)));
+		double dv1 = Math.sqrt(mu / r1) * (Math.sqrt((2.0 * r2) / (r1 + r2)) - 1.0);
+		double dv2 = Math.sqrt(mu / r2) * (1.0 - Math.sqrt((2.0 * r1) / (r1 + r2)));
 		double baseDv = Math.abs(dv1) + Math.abs(dv2);
 
 		double a = (r1 + r2) / 2.0;
@@ -90,22 +96,25 @@ public class OrbitalMath
 		double penalty = 1.0 + ((Math.abs(phaseErrorRads) / Math.PI) * (maxPenaltyMultiplier - 1.0));
 
 		double finalDv = baseDv * penalty;
-
 		double finalTimeReal = baseTime * penalty;
 		double finalTimeGameplay = finalTimeReal * TIME_SCALE;
 
 		return new TransferOrbit.TransferData(finalTimeGameplay, finalDv);
 	}
 
-	private static double calculateTransferWindowError(long time, CelestialBody startPlanet, CelestialBody endPlanet, CelestialBody commonParent) {
-		double r1 = startPlanet.getOrbit().getOrbitalAltitude()+startPlanet.getRadius();
-		double r2 = endPlanet.getOrbit().getOrbitalAltitude()+endPlanet.getRadius();
+	private static double calculateTransferWindowError(long time, CelestialBody startPlanet, CelestialBody endPlanet)
+	{
+		double r1 = startPlanet.getOrbit().getOrbitalAltitude() + startPlanet.getRadius();
+		double r2 = endPlanet.getOrbit().getOrbitalAltitude() + endPlanet.getRadius();
 
-		double idealPhaseAngle = Math.PI * (1 - Math.sqrt(Math.pow(r1 + r2, 3) / (8 * Math.pow(r2, 3))));
-		double currentPhaseAngle = Math.abs(startPlanet.getOrbitAngle(time) - endPlanet.getOrbitAngle(time));
+		double startAngle = Math.toRadians(startPlanet.getOrbit().getAngle(time));
+		double endAngle = Math.toRadians(endPlanet.getOrbit().getAngle(time));
+
+		double idealPhaseAngle = Math.PI * (1.0 - Math.sqrt(Math.pow(r1 + r2, 3) / (8.0 * Math.pow(r2, 3))));
+		double currentPhaseAngle = Math.abs(startAngle - endAngle);
 
 		if (currentPhaseAngle > Math.PI)
-			currentPhaseAngle = (2 * Math.PI) - currentPhaseAngle;
+			currentPhaseAngle = (2.0 * Math.PI) - currentPhaseAngle;
 
 		return Math.abs(idealPhaseAngle - currentPhaseAngle);
 	}

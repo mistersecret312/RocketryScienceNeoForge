@@ -1,0 +1,56 @@
+{
+  "name": "rocketry_science:umbriel",
+  "icon":"stellarview:textures/environment/planet/sol/umbriel.png",
+  "parent": "rocketry_science:uranus",
+  "has_atmosphere": false,
+  "day_length": 5967.36,
+  "radius": 582400,
+  "altitude": 10,
+  "period": 0.113459,
+  "orbit_color": -10921626,
+  "modifiers":[
+    {
+      "type": "rocketry_science:gravity",
+      "gravity": 0.0257
+    },
+    {
+      "type": "rocketry_science:pressure",
+      "pressure": 0
+    },
+    {
+      "type": "rocketry_science:temperature",
+      "night_temperature": 57,
+      "day_temperature": 85
+    },
+    {
+      "type": "rocketry_science:radiation",
+      "radiation": 0.055
+    }
+  ],
+  "supported_orbits": [
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:low_orbit",
+        "altitude": 25,
+        "period": 1
+      }
+    },
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:medium_orbit",
+        "altitude": 50,
+        "period": 5
+      }
+    },
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:high_orbit",
+        "altitude": 100,
+        "period": 10
+      }
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "name": "rocketry_science:pluto",
+  "icon":"stellarview:textures/environment/planet/sol/pluto.png",
+  "parent": "rocketry_science:pluto_charon/barycenter",
+  "has_atmosphere": false,
+  "day_length": -9196.992,
+  "radius": 2376600,
+  "period": 0.17487631494936784,
+  "altitude": 5.268,
+  "orbit_color": -2519962,
+  "modifiers":[
+    {
+      "type": "rocketry_science:gravity",
+      "gravity": 0.0632
+    },
+    {
+      "type": "rocketry_science:pressure",
+      "pressure": 0.0000099
+    },
+    {
+      "type": "rocketry_science:temperature",
+      "night_temperature": 33,
+      "day_temperature": 55
+    },
+    {
+      "type": "rocketry_science:radiation",
+      "radiation": 0.01
+    }
+  ],
+  "supported_orbits": [
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:low_orbit",
+        "altitude": 100,
+        "period": 1
+      }
+    },
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:medium_orbit",
+        "altitude": 500,
+        "period": 5
+      }
+    },
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:high_orbit",
+        "altitude": 1000,
+        "period": 10
+      }
+    }
+  ]
+}

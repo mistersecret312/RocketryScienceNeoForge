@@ -152,7 +152,7 @@ public class Rocket extends VesselData
 				SpaceCraft craft = data.addFreshSpaceCraft(UUID.randomUUID());
 
 				CelestialBody target;
-				if(body.getParentKey().equals(OrbitUtil.THE_SUN))
+				if(body.getOrbitData().isPresent() && body.getOrbitData().get().parent().equals(OrbitUtil.THE_SUN))
 					target = OrbitUtil.getChildren(body, level).getFirst();
 				else target = OrbitUtil.getCelestialBody(OrbitUtil.EARTH, level);
 
@@ -167,8 +167,7 @@ public class Rocket extends VesselData
 
 				TransferOrbit.TransferData transferData = OrbitalMath.calculateTransfer(level, departureOrbit, arrivalOrbit, level.getGameTime());
 
-				TransferOrbit transferOrbit = new TransferOrbit(craft, departure, arrival,
-						(long) transferData.transferTime);
+				TransferOrbit transferOrbit = new TransferOrbit(craft, departure, arrival, (long) transferData.transferTime);
 				ArtificialOrbit orbit = new ArtificialOrbit(OrbitUtil.getKey(body, level), craft, configuredOrbit);
 
 				LinkedHashSet<Stage> spaceCraftStages = new LinkedHashSet<>();

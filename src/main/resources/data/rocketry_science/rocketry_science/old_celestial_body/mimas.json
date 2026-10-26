@@ -1,0 +1,56 @@
+{
+  "name": "rocketry_science:mimas",
+  "icon":"stellarview:textures/environment/planet/sol/mimas.png",
+  "parent": "rocketry_science:saturn",
+  "has_atmosphere": false,
+  "day_length": 1357.0876,
+  "radius": 198200,
+  "altitude": 3,
+  "period": 0.025802658,
+  "orbit_color": -6710874,
+  "modifiers":[
+    {
+      "type": "rocketry_science:gravity",
+      "gravity": 0.00648
+    },
+    {
+      "type": "rocketry_science:pressure",
+      "pressure": 0
+    },
+    {
+      "type": "rocketry_science:temperature",
+      "night_temperature": 64,
+      "day_temperature": 144
+    },
+    {
+      "type": "rocketry_science:radiation",
+      "radiation": 0.275
+    }
+  ],
+  "supported_orbits": [
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:low_orbit",
+        "altitude": 25,
+        "period": 1
+      }
+    },
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:medium_orbit",
+        "altitude": 50,
+        "period": 5
+      }
+    },
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:high_orbit",
+        "altitude": 100,
+        "period": 10
+      }
+    }
+  ]
+}

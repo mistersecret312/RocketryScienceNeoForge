@@ -1,0 +1,56 @@
+{
+  "name": "rocketry_science:callisto",
+  "icon":"stellarview:textures/environment/planet/sol/callisto.png",
+  "parent": "rocketry_science:jupiter",
+  "has_atmosphere": false,
+  "day_length": 24032.186496,
+  "radius": 2410300,
+  "altitude": 18,
+  "period": 0.45693,
+  "orbit_color": -9211021,
+  "modifiers":[
+    {
+      "type": "rocketry_science:gravity",
+      "gravity": 0.126
+    },
+    {
+      "type": "rocketry_science:pressure",
+      "pressure": 0.0000000000074
+    },
+    {
+      "type": "rocketry_science:temperature",
+      "night_temperature": 80,
+      "day_temperature": 165
+    },
+    {
+      "type": "rocketry_science:radiation",
+      "radiation": 0
+    }
+  ],
+  "supported_orbits": [
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:low_orbit",
+        "altitude": 50,
+        "period": 1
+      }
+    },
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:medium_orbit",
+        "altitude": 200,
+        "period": 5
+      }
+    },
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:high_orbit",
+        "altitude": 500,
+        "period": 10
+      }
+    }
+  ]
+}

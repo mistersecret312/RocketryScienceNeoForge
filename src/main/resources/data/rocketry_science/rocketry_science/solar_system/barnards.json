@@ -1,0 +1,9 @@
+{
+  "name": "rocketry_science:barnards",
+  "icon": "stellarview:textures/environment/star/template/red_star.png",
+  "star": "rocketry_science:barnards/barnards",
+  "star_surface_temperature": 5800,
+  "escape_velocity": 618000,
+  "size": 10000,
+  "position": [2950, 8363.5]
+}

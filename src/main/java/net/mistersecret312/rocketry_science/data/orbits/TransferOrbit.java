@@ -72,16 +72,34 @@ public class TransferOrbit extends Orbit<SpaceCraft>
 		CelestialBody departureBody = registry.get(this.getDeparture().getBody());
 		CelestialBody arrivalBody = registry.get(this.getArrival().getBody());
 
-		if(departureBody != null && arrivalBody != null)
+		if (departureBody != null && arrivalBody != null)
 		{
-			Vector2d departurePoint = departureBody.getOrbit().getPosition(getDeparture().getTick(), registryAccess);
-			Vector2d arrivalPoint = arrivalBody.getOrbit().getPosition(getArrival().getTick(), registryAccess);
+			Vector2d depPos = departureBody.getOrbit().getPosition(getDeparture().getTick(), registryAccess);
+			Vector2d arrPos = arrivalBody.getOrbit().getPosition(getArrival().getTick(), registryAccess);
+
+			double startAngle = Math.atan2(depPos.y, depPos.x);
+			double endAngle = Math.atan2(arrPos.y, arrPos.x);
+
+			double startRadius = Math.hypot(depPos.x, depPos.y);
+			double endRadius = Math.hypot(arrPos.x, arrPos.y);
 
 			double progress = getProgress(tick);
-			return new Vector2d(
-					Mth.lerp(progress, departurePoint.x, arrivalPoint.x),
-					Mth.lerp(progress, departurePoint.y, arrivalPoint.y)
-			);
+
+			double angleDiff = endAngle - startAngle;
+			while (angleDiff > Math.PI) angleDiff -= 2.0 * Math.PI;
+			while (angleDiff < -Math.PI) angleDiff += 2.0 * Math.PI;
+
+			double currentAngle = startAngle + (angleDiff * progress);
+			double currentRadius = Mth.lerp(progress, startRadius, endRadius);
+
+			double cos = Math.cos(currentAngle);
+			double sin = Math.sin(currentAngle);
+			double squareScale = 1.0 / Math.max(Math.abs(cos), Math.abs(sin));
+
+			double x = currentRadius * cos * squareScale;
+			double y = currentRadius * sin * squareScale;
+
+			return new Vector2d(x, y);
 		}
 
 		return new Vector2d();
@@ -90,38 +108,21 @@ public class TransferOrbit extends Orbit<SpaceCraft>
 	@Override
 	public double getAngle(long tick)
 	{
-		if(getTravelDuration() <= 0)
-			return 1.0;
+		if (getTravelDuration() <= 0)
+			return 0.0;
 
-		double t = (double) (tick - getDeparture().getTick()) / getTravelDuration();
-		t = Mth.clamp(t, 0D, 1D);
-
-		double r1 = getDeparture().getOrbit().orbit().getAltitude();
-		double r2 = getArrival().getOrbit().orbit().getAltitude();
-
-		double e = Math.abs(r1 - r2) / (r1 + r2);
-
-		boolean outward = r1 <= r2;
-		double M = outward ? (t * Math.PI) : (Math.PI + (t * Math.PI));
-
-		double E = M;
-		for (int i = 0; i < 5; i++)
-			E = E - (E - e * Math.sin(E) - M) / (1.0 - e * Math.cos(E));
-
-		double nu = 2.0 * Math.atan2(Math.sqrt(1.0 + e) * Math.sin(E / 2.0), Math.sqrt(1.0 - e) * Math.cos(E / 2.0));
-		if (nu < 0)
-			nu += 2.0 * Math.PI;
-
-		return outward ? (nu / Math.PI) : ((nu - Math.PI) / Math.PI);
+		double progress = getProgress(tick);
+		return progress * Math.PI;
 	}
 
 	public double getProgress(long tick)
 	{
-		if(getArrival().getTick()-getDeparture().getTick() == 0)
-			return 1;
+		long duration = getArrival().getTick() - getDeparture().getTick();
+		if (duration <= 0)
+			return 1.0;
 
-		double ratio = (double) (tick - getDeparture().getTick()) / (getArrival().getTick() - getDeparture().getTick());
-		return Math.min(1, Math.max(0, ratio));
+		double ratio = (double) (tick - getDeparture().getTick()) / duration;
+		return Mth.clamp(ratio, 0.0, 1.0);
 	}
 
 	@Override

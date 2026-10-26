@@ -1,0 +1,65 @@
+{
+  "name": "rocketry_science:mercury",
+  "type": "rocky_planet",
+  "radius": 2442774,
+  "orbit":
+  {
+    "parent": "rocketry_science:stars/sol",
+    "altitude": 46,
+    "period": 0.24,
+    "orbit_color": -7566196
+  },
+  "display":
+  {
+    "icon": "stellarview:textures/environment/planet/sol/mercury.png",
+    "icon_size": 8
+  },
+  "supported_orbits": [
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:low_orbit",
+        "altitude": 100,
+        "map_altitude": 7,
+        "period": 0.01
+      }
+    },
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:medium_orbit",
+        "altitude": 500,
+        "map_altitude": 13,
+        "period": 0.1
+      }
+    },
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:high_orbit",
+        "altitude": 510720,
+        "map_altitude":24,
+        "period": 1
+      }
+    }
+  ],
+  "modifiers":[
+    {
+      "type": "rocketry_science:gravity",
+      "gravity": 0.38
+    },
+    {
+      "type": "rocketry_science:pressure",
+      "pressure": 0
+    },
+    {
+      "type": "rocketry_science:temperature",
+      "night_temperature": 100,
+      "day_temperature": 700
+    },
+    {
+      "type": "rocketry_science:radiation",
+      "radiation": 0.1
+    }
+  ]
+}

@@ -25,6 +25,8 @@ public class EnvironmentData
 		this.temperature = data.temperature;
 	}
 
+	public EnvironmentData() {}
+
 	public TemperatureGradient getTemperatureGradient()
 	{
 		return temperature;

@@ -1,0 +1,16 @@
+{
+  "name": "rocketry_science:sagittarius_a",
+  "type": "supermassive_black_hole",
+  "radius": 696265000,
+  "galactic":
+  {
+    "position": [0, 0],
+    "escape_velocity_kms": 299792
+  },
+  "display":
+  {
+    "icon": "rocketry_science:textures/misc/black_hole.png",
+    "icon_size": 16,
+    "icon_scale": 5
+  }
+}

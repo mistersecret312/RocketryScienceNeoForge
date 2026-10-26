@@ -1,0 +1,23 @@
+{
+  "name": "rocketry_science:pluto_charon_barycenter",
+  "type": "barycenter",
+  "orbit":
+  {
+    "parent": "rocketry_science:stars/sol",
+    "period": 247.94,
+    "altitude": 1150,
+    "orbit_color": -6717325
+  },
+  "display":
+  {
+    "icon": "stellarview:textures/environment/planet/sol/pluto.png",
+    "icon_size": 8,
+    "icon_scale": 2,
+    "collapse_data":
+    {
+      "system_size": 50,
+      "fade_start_pixels": 16,
+      "fade_end_pixels": 32
+    }
+  }
+}

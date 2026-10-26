@@ -1,0 +1,58 @@
+{
+  "name": "rocketry_science:proxima_centauri",
+  "type": "main_sequence_star",
+  "radius": 107364063,
+  "orbit":
+  {
+    "parent": "rocketry_science:stars/alpha_centauri/barycenter",
+    "altitude": 36,
+    "period": 100,
+    "orbit_color": -3391424
+  },
+  "star":
+  {
+    "luminosity": 0.0017,
+    "surface_temperature": 3050,
+    "spectral_class": "M5V"
+  },
+  "display":
+  {
+    "icon": "stellarview:textures/environment/star/template/red_star.png",
+    "icon_scale": 2,
+    "icon_size": 16
+  },
+
+  "supported_orbits":
+  [
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:low_orbit",
+        "altitude": 6960000,
+        "map_altitude": 100,
+        "period": 0.01
+      }
+    }
+  ],
+
+  "modifiers":
+  [
+    {
+      "type": "rocketry_science:gravity",
+      "gravity": 28.0
+    },
+    {
+      "type": "rocketry_science:pressure",
+      "pressure": 0.088
+    },
+    {
+      "type": "rocketry_science:temperature",
+      "night_temperature": 3050,
+      "day_temperature": 3050
+    },
+    {
+      "type": "rocketry_science:radiation",
+      "radiation": 1000.0
+    }
+  ]
+}

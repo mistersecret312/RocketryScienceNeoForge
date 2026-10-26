@@ -10,11 +10,10 @@
   "uniforms": [
     { "name": "ModelViewMat", "type": "matrix4x4", "count": 16, "values": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ] },
     { "name": "ProjMat",      "type": "matrix4x4", "count": 16, "values": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ] },
-    { "name": "Color",        "type": "float", "count": 4,  "values": [ 1.0, 1.0, 1.0, 1.0 ] },
-    { "name": "InnerRadius",  "type": "float", "count": 1,  "values": [ 0.4 ] },
-    { "name": "OuterRadius",  "type": "float", "count": 1,  "values": [ 0.5 ] },
-    { "name": "SquishFactor", "type": "float", "count":  1, "values": [1.0]},
-    { "name": "DashSegments", "type": "float", "count": 1, "values": [1.0]},
-    { "name": "QuadSize", "type": "float", "count": 1, "values":  [1.0]}
+    { "name": "Color",        "type": "float",     "count": 4,  "values": [ 1.0, 1.0, 1.0, 1.0 ] },
+    { "name": "QuadSize",     "type": "float",     "count": 1,  "values": [ 1.0 ] },
+    { "name": "Thickness",    "type": "float",     "count": 1,  "values": [ 1.0 ] },
+    { "name": "Angle",        "type": "float",     "count": 1,  "values": [ 0.0 ] },
+    { "name": "Direction",    "type": "float",     "count": 1,  "values": [ 1.0 ] }
   ]
 }

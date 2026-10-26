@@ -1,0 +1,56 @@
+{
+  "name": "rocketry_science:tethys",
+  "icon":"stellarview:textures/environment/planet/sol/tethys.png",
+  "parent": "rocketry_science:saturn",
+  "has_atmosphere": false,
+  "day_length": 2718.43488,
+  "radius": 531100,
+  "altitude": 7,
+  "period": 0.0516863,
+  "orbit_color": -4207399,
+  "modifiers":[
+    {
+      "type": "rocketry_science:gravity",
+      "gravity": 0.014897959
+    },
+    {
+      "type": "rocketry_science:pressure",
+      "pressure": 0
+    },
+    {
+      "type": "rocketry_science:temperature",
+      "night_temperature": 86,
+      "day_temperature": 164
+    },
+    {
+      "type": "rocketry_science:radiation",
+      "radiation": 0.11
+    }
+  ],
+  "supported_orbits": [
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:low_orbit",
+        "altitude": 25,
+        "period": 1
+      }
+    },
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:medium_orbit",
+        "altitude": 50,
+        "period": 5
+      }
+    },
+    {
+      "orbit": {
+        "type": "rocketry_science:default",
+        "name": "rocketry_science:high_orbit",
+        "altitude": 100,
+        "period": 10
+      }
+    }
+  ]
+}

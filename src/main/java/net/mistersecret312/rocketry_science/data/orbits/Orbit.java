@@ -32,8 +32,34 @@ public abstract class Orbit<T extends IOrbitObject<?>>
 		double period = getOrbitalPeriod() * 20 * 20 * 60;
 		double velocity = (360D / period);
 
-		double angle = velocity * tick;
-		return angle % 360D;
+		double epoch = getOrbitingObject().getEpoch();
+		double angle = ((velocity * tick) + epoch) % 360;
+		if(isRetrograde())
+			angle = 360D - angle;
+		return angle;
+	}
+
+	public Vector2d getVisualPosition(long tick)
+	{
+		double altitude = getOrbitalAltitude();
+		if(altitude == 0)
+			return new Vector2d();
+		if(getOrbitingObject() instanceof CelestialBody body)
+			if(body.getOrbitData().isPresent())
+				altitude = body.getOrbitData().get().getMapAltitude();
+
+		double angle = getAngle(tick);
+		double radians = Math.toRadians(angle);
+
+		double cos = Math.cos(radians);
+		double sin = Math.sin(radians);
+
+		double squareScale = 1.0 / Math.max(Math.abs(cos), Math.abs(sin));
+
+		double x = altitude * cos * squareScale;
+		double y = altitude * sin * squareScale;
+
+		return new Vector2d(x, y);
 	}
 
 	public void tick(RegistryAccess registryAccess)
@@ -44,6 +70,11 @@ public abstract class Orbit<T extends IOrbitObject<?>>
 
 	public abstract double getOrbitalPeriod();
 	public abstract double getOrbitalAltitude();
+
+	public boolean isRetrograde()
+	{
+		return false;
+	}
 
 	public abstract ResourceKey<CelestialBody> getParent(RegistryAccess registryAccess);
 	public abstract T getOrbitingObject();

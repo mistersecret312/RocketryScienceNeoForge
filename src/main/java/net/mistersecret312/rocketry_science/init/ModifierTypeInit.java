@@ -5,13 +5,12 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.mistersecret312.rocketry_science.RocketryScience;
 import net.mistersecret312.rocketry_science.data.orbits.OrbitType;
+import net.mistersecret312.rocketry_science.environment.modifiers.ModifierConfig;
 import net.mistersecret312.rocketry_science.environment.modifiers.ModifierType;
-import net.mistersecret312.rocketry_science.modifiers.GravityModifierConfig;
-import net.mistersecret312.rocketry_science.modifiers.PressureModifierConfig;
-import net.mistersecret312.rocketry_science.modifiers.RadiationModifierConfig;
-import net.mistersecret312.rocketry_science.modifiers.TemperatureModifierConfig;
+import net.mistersecret312.rocketry_science.modifiers.*;
 import net.mistersecret312.rocketry_science.orbit_types.DefaultOrbitConfig;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.RegistryBuilder;
@@ -32,6 +31,9 @@ public class ModifierTypeInit
 			() -> new ModifierType<>(RadiationModifierConfig.CODEC));
 	public static final DeferredHolder<ModifierType<?>, ModifierType<?>> GRAVITY = TYPES.register("gravity",
 			() -> new ModifierType<>(GravityModifierConfig.CODEC));
+
+	public static final DeferredHolder<ModifierType<?>, ModifierType<?>> BREATHABLE = TYPES.register("breathable_atmosphere",
+			() -> new ModifierType<>(BreathableAtmosphereModifierConfig.CODEC));
 
 	public static void register(IEventBus bus)
 	{

@@ -1,0 +1,9 @@
+{
+  "name": "rocketry_science:sirius",
+  "icon": "stellarview:textures/environment/star/template/bluewhite_star.png",
+  "star": "rocketry_science:sirius/barycenter",
+  "star_surface_temperature": 5800,
+  "escape_velocity": 618000,
+  "size": 10000,
+  "position": [-7150, -10610]
+}
