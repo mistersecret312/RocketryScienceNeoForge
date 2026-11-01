@@ -48,7 +48,7 @@ public class FootprintData extends SavedData
 					rotArr[i] = prints.get(i).rotation();
 				byte[] varArr = new byte[prints.size()];
 				for(int i = 0; i < prints.size(); i++)
-					rotArr[i] = prints.get(i).variant();
+					varArr[i] = prints.get(i).variant();
 
 				chunkTag.putLongArray("pos", posArr);
 				chunkTag.putLongArray("sub", subArr);

@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -29,23 +30,19 @@ public class ChunkFootprintBuffer
 	public static final ResourceLocation FOOTPRINT_TEXTURE = ResourceLocation.fromNamespaceAndPath("rocketry_science",
 			"textures/misc/footprints.png");
 
-	private static final RenderType FOOTPRINT_RENDER_TYPE = RenderType.create(
-			"footprint_rendertype",
-			DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP,
+	private static final RenderType FOOTPRINT_RENDER_TYPE = RenderType.create("test",
+			DefaultVertexFormat.NEW_ENTITY,
 			VertexFormat.Mode.QUADS,
-			256,
-			false,
-			true,
+			256, false, true,
 			RenderType.CompositeState.builder()
-									 .setShaderState(new RenderStateShard.ShaderStateShard(GameRenderer::getPositionColorTexLightmapShader))
+									 .setShaderState(RenderStateShard.RENDERTYPE_ENTITY_TRANSLUCENT_SHADER)
 									 .setTextureState(new RenderStateShard.TextureStateShard(FOOTPRINT_TEXTURE, false, false))
-									 .setDepthTestState(RenderStateShard.LEQUAL_DEPTH_TEST)
-									 .setWriteMaskState(new RenderStateShard.WriteMaskStateShard(true, false))
-									 .setCullState(RenderStateShard.CULL)
 									 .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
+									 .setOutputState(RenderStateShard.TRANSLUCENT_TARGET)
+									 .setWriteMaskState(new RenderStateShard.WriteMaskStateShard(true, false))
 									 .setLightmapState(RenderStateShard.LIGHTMAP)
-									 .createCompositeState(false)
-	);
+									 .setOverlayState(RenderStateShard.OVERLAY)
+									 .createCompositeState(true));
 
 	public ChunkFootprintBuffer(ChunkPos pos)
 	{
@@ -70,7 +67,7 @@ public class ChunkFootprintBuffer
 	{
 		footprints.clear();
 		footprints.addAll(list);
-		rebuildBuffer();
+		setDirty();
 	}
 
 	public boolean isEmpty()
@@ -107,7 +104,7 @@ public class ChunkFootprintBuffer
 		renderType.setupRenderState();
 
 		buffer.bind();
-		buffer.drawWithShader(poseStack.last().pose(), projectionMatrix, GameRenderer.getPositionColorTexLightmapShader());
+		buffer.drawWithShader(poseStack.last().pose(), projectionMatrix, GameRenderer.getRendertypeItemEntityTranslucentCullShader());
 		VertexBuffer.unbind();
 
 		renderType.clearRenderState();
@@ -118,7 +115,7 @@ public class ChunkFootprintBuffer
 	private void rebuildBuffer()
 	{
 		Tesselator tesselator = Tesselator.getInstance();
-		BufferBuilder bufferBuilder = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP);
+		BufferBuilder bufferBuilder = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.NEW_ENTITY);
 
 		int minX = pos.getMinBlockX();
 		int minZ = pos.getMinBlockZ();
@@ -133,14 +130,6 @@ public class ChunkFootprintBuffer
 			float localZ = (blockPos.getZ() - minZ) + fp.getSubBlockZ();
 
 			int packedLight = level != null ? LevelRenderer.getLightColor(level, blockPos.above()) : 0xF000F0;
-
-			int blockLight = LightTexture.block(packedLight);
-			int skyLight = LightTexture.sky(packedLight);
-			float blockFactor = blockLight / 15.0f;
-
-			float finalBrightness = Math.max(0.15f, Math.max(blockFactor, skyLight));
-			finalBrightness = Math.clamp(finalBrightness, 0.05f, 0.7f);
-			int colorByte = (int) (finalBrightness * 255.0f);
 
 			float uMin, uMax, vMin, vMax;
 			float halfWidth, halfHeight;
@@ -185,18 +174,18 @@ public class ChunkFootprintBuffer
 							{-halfWidth, -halfHeight}
 					};
 
-			for (float[] c : corners)
+			for (float[] corner : corners)
 			{
-				float rx = c[0] * cos - c[1] * sin;
-				float rz = c[0] * sin + c[1] * cos;
+				float rx = corner[0] * cos - corner[1] * sin;
+				float rz = corner[0] * sin + corner[1] * cos;
 
-				float u = c[0] < 0 ? uMin : uMax;
-				float v = c[1] > 0 ? vMin : vMax;
+				float u = corner[0] < 0 ? uMin : uMax;
+				float v = corner[1] > 0 ? vMin : vMax;
 
 				bufferBuilder.addVertex(localX + rx + 0.125f, exactY, localZ + rz + 0.125f)
-							 .setColor(colorByte, colorByte, colorByte, 255)
+							 .setColor(255, 255, 255, 255)
 							 .setUv(u, v)
-							 .setLight(packedLight);
+						.setOverlay(OverlayTexture.NO_OVERLAY).setUv2(packedLight, packedLight >> 16).setNormal(0, 1, 0);
 			}
 		}
 
