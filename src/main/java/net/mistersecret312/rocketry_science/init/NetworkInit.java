@@ -1,6 +1,7 @@
 package net.mistersecret312.rocketry_science.init;
 
 import net.mistersecret312.rocketry_science.network.packets.*;
+import net.mistersecret312.rocketry_science.network.packets.footprint.*;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
@@ -82,6 +83,38 @@ public class NetworkInit
 				ClientBoundRoomUpdatePacket.TYPE,
 				ClientBoundRoomUpdatePacket.STREAM_CODEC,
 				ClientBoundRoomUpdatePacket::handle
+		);
+
+		// Footprints
+
+		registrar.playToServer(
+				ServerBoundChunkFootprintsRequestPacket.TYPE,
+				ServerBoundChunkFootprintsRequestPacket.STREAM_CODEC,
+				ServerBoundChunkFootprintsRequestPacket::handle
+		);
+
+		registrar.playToClient(
+				ClientBoundChunkFootprintsRemovePacket.TYPE,
+				ClientBoundChunkFootprintsRemovePacket.STREAM_CODEC,
+				ClientBoundChunkFootprintsRemovePacket::handle
+		);
+
+		registrar.playToClient(
+				ClientBoundChunkFootprintsAddPacket.TYPE,
+				ClientBoundChunkFootprintsAddPacket.STREAM_CODEC,
+				ClientBoundChunkFootprintsAddPacket::handle
+		);
+
+		registrar.playToClient(
+				ClientBoundChunkFootprintsSyncPacket.TYPE,
+				ClientBoundChunkFootprintsSyncPacket.STREAM_CODEC,
+				ClientBoundChunkFootprintsSyncPacket::handle
+		);
+
+		registrar.playToClient(
+				ClientBoundChunkFootprintsRebuildPacket.TYPE,
+				ClientBoundChunkFootprintsRebuildPacket.STREAM_CODEC,
+				ClientBoundChunkFootprintsRebuildPacket::handle
 		);
 	}
 }

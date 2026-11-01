@@ -3,15 +3,18 @@ package net.mistersecret312.rocketry_science.events;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
+import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.mistersecret312.rocketry_science.RocketryScience;
 import net.mistersecret312.rocketry_science.entities.RocketEntity;
+import net.mistersecret312.rocketry_science.footprint.ClientFootprintManager;
 import net.mistersecret312.rocketry_science.vessel.Rocket;
 import net.mistersecret312.rocketry_science.vessel.Stage;
 import net.mistersecret312.rocketry_science.vessel.block_data.BlockData;
@@ -19,6 +22,8 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderHighlightEvent;
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
+import org.joml.Matrix4f;
 
 import java.util.Map;
 import java.util.Optional;
@@ -86,6 +91,20 @@ public class ClientEvents
 					0.0F, 0.0F, 0.0F, 0.4F);
 
 			poseStack.popPose();
+		}
+	}
+
+	@SubscribeEvent
+	public static void renderLevel(RenderLevelStageEvent event)
+	{
+		if(event.getStage().equals(RenderLevelStageEvent.Stage.AFTER_ENTITIES))
+		{
+			PoseStack poseStack = event.getPoseStack();
+			Camera camera = event.getCamera();
+			Matrix4f projection = event.getProjectionMatrix();
+			Frustum frustum = event.getFrustum();
+
+			ClientFootprintManager.renderVisible(poseStack, projection, frustum, camera.getPosition(), camera.rotation());
 		}
 	}
 }

@@ -2,7 +2,9 @@ package net.mistersecret312.rocketry_science.mixin;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelTimeAccess;
 import net.minecraft.world.level.block.state.BlockState;
@@ -10,7 +12,9 @@ import net.minecraft.world.level.dimension.DimensionType;
 import net.mistersecret312.rocketry_science.data.room.RoomManager;
 import net.mistersecret312.rocketry_science.datapack.CelestialBody;
 import net.mistersecret312.rocketry_science.init.AttachmentTypeInit;
+import net.mistersecret312.rocketry_science.network.packets.footprint.ClientBoundChunkFootprintsRebuildPacket;
 import net.mistersecret312.rocketry_science.util.OrbitUtil;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -73,5 +77,7 @@ public abstract class LevelMixin
 
 		RoomManager manager = level.getData(AttachmentTypeInit.ROOM_MANAGER);
 		manager.onBlockStateChanged(pos, oldState, newState);
+		PacketDistributor.sendToPlayersTrackingChunk(
+				(ServerLevel) level, new ChunkPos(pos), new ClientBoundChunkFootprintsRebuildPacket(level.dimension().location(), pos.asLong()));
 	}
 }
