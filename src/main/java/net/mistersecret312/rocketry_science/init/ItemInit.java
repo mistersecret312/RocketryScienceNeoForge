@@ -17,6 +17,8 @@ public class ItemInit
 	public static final DeferredItem<Item> CHROMIUM_INGOT = ITEMS.registerSimpleItem("chromium_ingot");
 	public static final DeferredItem<Item> STAINLESS_STEEL_INGOT = ITEMS.registerSimpleItem("stainless_steel_ingot");
 
+	public static final DeferredItem<Item> WATER_ICE_CRYSTAL = ITEMS.registerSimpleItem("water_ice_crystal");
+
 	public static final DeferredItem<CombustionChamberItem> STAINLESS_STEEL_COMBUSTION_CHAMBER = ITEMS.register("stainless_steel_combustion_chamber",
 			() -> new CombustionChamberItem(new Item.Properties().stacksTo(64)));
 	public static final DeferredItem<TurboPumpItem> STAINLESS_STEEL_TURBOPUMP = ITEMS.register("stainless_steel_turbopump",

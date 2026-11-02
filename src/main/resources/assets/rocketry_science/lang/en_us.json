@@ -3,6 +3,7 @@
 
   "item.rocketry_science.chromium_ingot": "Chromium Ingot",
   "item.rocketry_science.stainless_steel_ingot": "Stainless Steel Ingot",
+  "item.rocketry_science.water_ice_crystal": "Water Ice Crystal",
 
   "item.rocketry_science.stainless_steel_combustion_chamber": "Combustion Chamber",
   "item.rocketry_science.stainless_steel_turbopump": "Turbopump",
@@ -13,6 +14,9 @@
   "block.rocketry_science.rocket_assembler": "Rocket Assembler",
   "block.rocketry_science.rocket_pad": "Rocket Pad",
   "block.rocketry_science.launch_tower": "Launch Tower",
+
+  "block.rocketry_science.water_ice_crystal_block": "Water Ice Block",
+  "block.rocketry_science.lunar_regolith": "Lunar Regolith",
 
   "block.rocketry_science.fuel_tank": "Fuel Tank",
   "block.rocketry_science.steel_combustion_chamber": "Stainless Steel Combustion Chamber",
@@ -130,5 +134,6 @@
   "rocketry_science.celestial_body.type.stellar_remnant": "Stellar Remnant",
   "rocketry_science.celestial_body.type.barycenter": "Barycenter",
 
-  "rocketry_science.star.spectral_class": "Spectral Class: "
+  "rocketry_science.star.spectral_class": "Spectral Class: ",
+  "tabs.luna": "Luna"
 }

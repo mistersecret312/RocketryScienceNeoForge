@@ -61,6 +61,8 @@ public class BlockInit
 
 	public static final DeferredBlock<Block> LUNAR_REGOLITH = registerBlock("lunar_regolith",
 			() -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.DIRT)));
+	public static final DeferredBlock<Block> WATER_ICE_CRYSTAL = registerBlock("water_ice_crystal_block",
+			() -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.BLUE_ICE)));
 
 
 	private static <T extends Block> DeferredBlock<T> registerBlock(String name, Supplier<T> block)

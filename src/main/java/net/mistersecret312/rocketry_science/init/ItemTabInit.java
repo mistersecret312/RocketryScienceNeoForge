@@ -51,6 +51,17 @@ public class ItemTabInit
 										 output.accept(ItemInit.LIQUID_OXYGEN_BUCKET);
 									 }).build());
 
+	public static final DeferredHolder<CreativeModeTab, CreativeModeTab> LUNA = TABS.register(
+			"luna",
+			() -> CreativeModeTab.builder().withTabsBefore(ROCKETRY_SCIENCE.getKey()).icon(() -> new ItemStack(BlockInit.LUNAR_REGOLITH.get()))
+								 .title(Component.translatable("tabs.luna"))
+								 .displayItems((parameters, output) ->
+									 {
+										 output.accept(BlockInit.LUNAR_REGOLITH);
+										 output.accept(BlockInit.WATER_ICE_CRYSTAL);
+										 output.accept(ItemInit.WATER_ICE_CRYSTAL);
+									 }).build());
+
 	public static void register(IEventBus bus)
 	{
 		TABS.register(bus);
