@@ -34,6 +34,8 @@ public class BlockInit
 
 	public static final DeferredBlock<OxygenVentBlock> OXYGEN_VENT = registerBlock("oxygen_vent",
 			() -> new OxygenVentBlock(BlockBehaviour.Properties.of().noOcclusion()));
+	public static final DeferredBlock<SolarPanelBlock> SOLAR_PANEL = registerBlock("solar_panel",
+			() -> new SolarPanelBlock(BlockBehaviour.Properties.of().noOcclusion()));
 
 	public static final DeferredBlock<RocketPadBlock> ROCKET_PAD = registerBlock("rocket_pad",
 			() -> new RocketPadBlock(BlockBehaviour.Properties.of()));

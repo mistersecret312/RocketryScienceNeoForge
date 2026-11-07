@@ -3,10 +3,7 @@ package net.mistersecret312.rocketry_science.init;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.mistersecret312.rocketry_science.RocketryScience;
-import net.mistersecret312.rocketry_science.block_entities.LaunchControllerBlockEntity;
-import net.mistersecret312.rocketry_science.block_entities.OxygenVentBlockEntity;
-import net.mistersecret312.rocketry_science.block_entities.RocketAssemblerBlockEntity;
-import net.mistersecret312.rocketry_science.block_entities.SeparatorBlockEntity;
+import net.mistersecret312.rocketry_science.block_entities.*;
 import net.mistersecret312.rocketry_science.block_entities.fuel_tank.FuelTankBlockEntity;
 import net.mistersecret312.rocketry_science.block_entities.multiblock.LaunchTowerBlockEntity;
 import net.mistersecret312.rocketry_science.block_entities.multiblock.RocketPadBlockEntity;
@@ -42,6 +39,11 @@ public class BlockEntityInit
 			BLOCK_ENTITIES.register("oxygen_vent",
 					() -> BlockEntityType.Builder.of(OxygenVentBlockEntity::new,
 							BlockInit.OXYGEN_VENT.get()).build(null));
+
+	public static final Supplier<BlockEntityType<SolarPanelBlockEntity>> SOLAR_PANEL =
+			BLOCK_ENTITIES.register("solar_panel",
+					() -> BlockEntityType.Builder.of(SolarPanelBlockEntity::new,
+							BlockInit.SOLAR_PANEL.get()).build(null));
 
 
 	public static final Supplier<BlockEntityType<FuelTankBlockEntity>> FUEL_TANK =

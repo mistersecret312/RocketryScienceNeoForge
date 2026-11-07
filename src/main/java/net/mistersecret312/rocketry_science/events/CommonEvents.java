@@ -1,5 +1,6 @@
 package net.mistersecret312.rocketry_science.events;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -33,6 +34,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.neoforge.event.level.ChunkWatchEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
@@ -125,6 +127,12 @@ public class CommonEvents
 			PacketDistributor.sendToAllPlayers(new ClientBoundChunkFootprintsRemovePacket(dimKey, placedPos.asLong()));
 			PacketDistributor.sendToAllPlayers(new ClientBoundChunkFootprintsRemovePacket(dimKey, belowPos.asLong()));
 		}
+	}
+
+	@SubscribeEvent
+	public static void chunkLoad(ChunkEvent.Load event)
+	{
+
 	}
 
 	@SubscribeEvent

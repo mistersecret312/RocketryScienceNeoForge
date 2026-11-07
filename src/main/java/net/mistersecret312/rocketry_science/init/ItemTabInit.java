@@ -33,6 +33,8 @@ public class ItemTabInit
 										 output.accept(BlockInit.SPACE_MAP_BLOCK);
 										 output.accept(BlockInit.OXYGEN_VENT);
 
+										 output.accept(BlockInit.SOLAR_PANEL);
+
 										 output.accept(BlockInit.ROCKET_PAD);
 										 output.accept(BlockInit.LAUNCH_TOWER);
 

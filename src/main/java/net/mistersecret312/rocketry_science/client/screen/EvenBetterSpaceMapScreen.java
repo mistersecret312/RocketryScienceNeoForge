@@ -128,7 +128,7 @@ public class EvenBetterSpaceMapScreen extends Screen
 		int sizeX = 145;
 		int widthBoost = 40;
 
-		poseStack.translate(width/2f, height/2f, 0);
+		poseStack.translate(width/6f, height/2f, 0);
 		poseStack.scale(0.75f, 0.75f, 1f);
 
 		int orbitColor = -1;
@@ -209,6 +209,9 @@ public class EvenBetterSpaceMapScreen extends Screen
 		EnvironmentData environment = focusedBody.getEnvironment();
 		if(environment == null) return;
 
+		float basePosX = width/6f;
+		float basePosY = height/2f;
+
 		poseStack.pushPose();
 		poseStack.translate(-sizeX / 2f + 24, -sizeY / 2f + 52, 0);
 		poseStack.scale(1.5f, 1.5f, 1f);
@@ -225,8 +228,8 @@ public class EvenBetterSpaceMapScreen extends Screen
 		if(textRating)
 			graphics.drawString(font, String.valueOf(Mth.abs(distance)), 16, 0, -1);
 
-		float posX = (width/2f)+(-sizeX/2f+35)*0.75f;
-		float posY = (height/2f)+(-sizeY/2f+63)*0.75f;
+		float posX = (basePosX)+(-sizeX/2f+35)*0.75f;
+		float posY = (basePosY)+(-sizeY/2f+63)*0.75f;
 		int radius = 10;
 
 		int minX = (int) (posX - radius);
@@ -252,8 +255,8 @@ public class EvenBetterSpaceMapScreen extends Screen
 		if(textRating)
 			graphics.drawString(font, String.valueOf(Mth.abs(distance)), 16, 0, -1);
 
-		posX = (width/2f)+(-sizeX/2f+35+36)*0.75f;
-		posY = (height/2f)+(-sizeY/2f+63)*0.75f;
+		posX = (basePosX)+(-sizeX/2f+35+36)*0.75f;
+		posY = (basePosY)+(-sizeY/2f+63)*0.75f;
 
 		minX = (int) (posX - radius);
 		minY = (int) (posY - radius);
@@ -277,8 +280,8 @@ public class EvenBetterSpaceMapScreen extends Screen
 				1f, 1f);
 		if(textRating)
 			graphics.drawString(font, String.valueOf(Mth.abs(distance)), 16, 0, -1);
-		posX = (width/2f)+(-sizeX/2f+35+72)*0.75f;
-		posY = (height/2f)+(-sizeY/2f+63)*0.75f;
+		posX = (basePosX)+(-sizeX/2f+35+72)*0.75f;
+		posY = (basePosY)+(-sizeY/2f+63)*0.75f;
 
 		minX = (int) (posX - radius);
 		minY = (int) (posY - radius);
@@ -302,18 +305,16 @@ public class EvenBetterSpaceMapScreen extends Screen
 				1f, 1f);
 		if(textRating)
 			graphics.drawString(font, String.valueOf(Mth.abs(distance)), 16, 0, -1);
-		posX = (width/2f)+(-sizeX/2f+35+108)*0.75f;
-		posY = (height/2f)+(-sizeY/2f+63)*0.75f;
+		posX = (basePosX)+(-sizeX/2f+35+108)*0.75f;
+		posY = (basePosY)+(-sizeY/2f+63)*0.75f;
 
 		minX = (int) (posX - radius);
 		minY = (int) (posY - radius);
 		maxX = (int) (posX + radius);
 		maxY = (int) (posY + radius);
 		if(mouseX > minX && mouseX < maxX && mouseY > minY && mouseY < maxY)
-		{
 			graphics.renderTooltip(font, Component.literal("Radiation"), -16, 16);
-			graphics.fill(minX-64, minY, maxX-64, maxY, 0xFFFFFFFF);
-		}
+
 		poseStack.popPose();
 
 		poseStack.popPose();
@@ -353,7 +354,7 @@ public class EvenBetterSpaceMapScreen extends Screen
 					1f,1f,1f,1f);
 			poseStack.scale(0.75f, 0.75f, 1f);
 
-			float posX = (width/2f)+(-35)+(i*28);
+			float posX = (width/6f)+(-35)+(i*28);
 			float posY = (height/2f)+(42);
 			int radius = 12;
 

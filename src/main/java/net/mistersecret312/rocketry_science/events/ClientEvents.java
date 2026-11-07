@@ -5,26 +5,37 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.mistersecret312.rocketry_science.RocketryScience;
 import net.mistersecret312.rocketry_science.entities.RocketEntity;
 import net.mistersecret312.rocketry_science.footprint.ClientFootprintManager;
+import net.mistersecret312.rocketry_science.footprint.Footprint;
+import net.mistersecret312.rocketry_science.footprint.FootprintData;
+import net.mistersecret312.rocketry_science.network.packets.footprint.ClientBoundChunkFootprintsSyncPacket;
 import net.mistersecret312.rocketry_science.vessel.Rocket;
 import net.mistersecret312.rocketry_science.vessel.Stage;
 import net.mistersecret312.rocketry_science.vessel.block_data.BlockData;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.AddSectionGeometryEvent;
 import net.neoforged.neoforge.client.event.RenderHighlightEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.joml.Matrix4f;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -106,5 +117,12 @@ public class ClientEvents
 
 			ClientFootprintManager.renderVisible(poseStack, projection, frustum, camera.getPosition(), camera.rotation());
 		}
+	}
+
+	@SubscribeEvent
+	public static void addGeometry(AddSectionGeometryEvent event)
+	{
+		BlockPos blockPos = event.getSectionOrigin();
+		ClientFootprintManager.markChunkDirty(blockPos);
 	}
 }

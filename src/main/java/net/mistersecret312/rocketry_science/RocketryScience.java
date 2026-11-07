@@ -16,10 +16,7 @@ import net.mistersecret312.rocketry_science.client.model.assembler_gantry.Assemb
 import net.mistersecret312.rocketry_science.client.model.assembler_gantry.AssemblerGantryRingCornerModel;
 import net.mistersecret312.rocketry_science.client.model.assembler_gantry.AssemblerGantryRingSideModel;
 import net.mistersecret312.rocketry_science.client.overlay.EnvironmentDataOverlay;
-import net.mistersecret312.rocketry_science.client.renderer.block.FuelTankRenderer;
-import net.mistersecret312.rocketry_science.client.renderer.block.LaunchControllerRenderer;
-import net.mistersecret312.rocketry_science.client.renderer.block.RocketAssemblerRenderer;
-import net.mistersecret312.rocketry_science.client.renderer.block.SeparatorRenderer;
+import net.mistersecret312.rocketry_science.client.renderer.block.*;
 import net.mistersecret312.rocketry_science.client.renderer.entity.AssemblerGantryRenderer;
 import net.mistersecret312.rocketry_science.client.renderer.entity.RocketRenderer;
 import net.mistersecret312.rocketry_science.client.screen.CombustionChamberScreen;
@@ -246,6 +243,7 @@ public class RocketryScience
 
 			event.registerBlockEntityRenderer(BlockEntityInit.FUEL_TANK.get(), FuelTankRenderer::new);
 			event.registerBlockEntityRenderer(BlockEntityInit.SEPARATOR.get(), SeparatorRenderer::new);
+			event.registerBlockEntityRenderer(BlockEntityInit.SOLAR_PANEL.get(), SolarPanelRenderer::new);
 
 			event.registerBlockEntityRenderer(BlockEntityInit.ROCKET_ASSEMBLER.get(), RocketAssemblerRenderer::new);
 			event.registerBlockEntityRenderer(BlockEntityInit.LAUNCH_CONTROLLER.get(), LaunchControllerRenderer::new);
