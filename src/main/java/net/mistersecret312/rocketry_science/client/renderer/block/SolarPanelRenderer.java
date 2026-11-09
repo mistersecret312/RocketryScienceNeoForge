@@ -9,35 +9,19 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.mistersecret312.rocketry_science.block_entities.SolarPanelBlockEntity;
 import net.mistersecret312.rocketry_science.datapack.CelestialBody;
 import net.mistersecret312.rocketry_science.mixin.StellarViewResourcepackReloadListenerMixin;
 import net.mistersecret312.rocketry_science.util.OrbitUtil;
 import net.povstalec.stellarview.api.client.StellarViewRendering;
-import net.povstalec.stellarview.api.common.space_objects.OrbitingObject;
 import net.povstalec.stellarview.api.common.space_objects.SpaceObject;
-import net.povstalec.stellarview.api.common.space_objects.distinct.Luna;
-import net.povstalec.stellarview.api.common.space_objects.resourcepack.Star;
-import net.povstalec.stellarview.api.common.space_objects.resourcepack.StarField;
 import net.povstalec.stellarview.client.render.space_objects.SpaceObjectRenderer;
 import net.povstalec.stellarview.client.render.space_objects.resourcepack.StarRenderer;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
-import net.povstalec.stellarview.common.util.AxisRotation;
-import net.povstalec.stellarview.common.util.SpaceCoords;
-import net.povstalec.stellarview.common.util.SphericalCoords;
-import org.joml.Quaternionf;
-import org.joml.Vector3d;
-import org.joml.Vector3f;
-import org.lwjgl.system.windows.POINT;
+import net.povstalec.stellarview.common.util.*;
 
-import java.text.NumberFormat;
 import java.util.HashMap;
 
 public class SolarPanelRenderer implements BlockEntityRenderer<SolarPanelBlockEntity>
@@ -90,7 +74,9 @@ public class SolarPanelRenderer implements BlockEntityRenderer<SolarPanelBlockEn
 						ResourceLocation location = ResourceLocation.fromNamespaceAndPath("stellarview", "star/milky_way/sol");
 						StarRenderer<?> star = (StarRenderer<?>) map.get(location);
 
-						SphericalCoords coords = star.spaceCoords().skyPosition(level, center, 1, partialTick, true);
+						SphericalCoords coords = new SphericalCoords();
+						star.spaceCoords().skyPosition(coords, level, center, 1, partialTick, true);
+
 						float phiDegrees = (float) Math.toDegrees(coords.phi);
 						float thetaDegrees = (float) Math.toDegrees(coords.theta);
 						float zDegrees = (float) Math.toDegrees(center.getZRotation(level, mc.gameRenderer.getMainCamera(), partialTick));
